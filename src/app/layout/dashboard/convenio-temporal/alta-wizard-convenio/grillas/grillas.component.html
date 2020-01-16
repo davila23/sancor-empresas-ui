@@ -1,0 +1,57 @@
+<form [formGroup]="grillasForm">
+    
+  <div class="grid">
+    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <mat-card class="custom" *ngIf="caracteristicas_list?.length || edit">
+      <mat-card-header>
+        <mat-card-title>Añadir característica</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <label class="radio-btns-label">Caracteristica: &nbsp;</label>
+        <mat-radio-group formControlName="seleccion" required class="mat-radio-group">
+          <mat-radio-button class="mat-radio-button" color="primary" *ngFor="let carac of caracteristicas_list" (click)="patchNroGrilla(carac)" value="{{carac.id}}">{{carac.caracteristica}}</mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field *ngIf="grillasForm.value.seleccion == 6">
+          <input matInput type="number" #car (keydown.enter)="applyFilter($event)" formControlName="nroGrilla" placeholder="Nro de grilla" >
+        </mat-form-field>
+        <mat-card-actions align="end">
+          <button mat-raised-button color ="accent" (click)="grillasSaveAndRender()" [disabled]="grillasForm.invalid || isPosting">AÑADIR</button>
+        </mat-card-actions>
+      </mat-card-content>
+    </mat-card>
+
+  <div class="no-data-container" *ngIf="!grillasProductoDataSource.data.length">
+    No hay grillas cargadas...
+  </div>
+
+  <mat-card class="custom" [ngClass]="{'not-show':!grillasProductoDataSource.data.length}">
+    <mat-card-header>
+      <mat-card-title>
+        Grillas
+      </mat-card-title>
+    </mat-card-header>
+    <mat-table [dataSource]="grillasProductoDataSource"> 
+      
+      <ng-container matColumnDef="idGrilla">
+            <mat-header-cell *matHeaderCellDef> Nro Grilla </mat-header-cell>
+            <mat-cell *matCellDef="let row" data-label="producto"> {{row.grilla.nrogrilla}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="grilla">
+        <mat-header-cell *matHeaderCellDef> Grilla </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="nroGrilla"> {{row.grilla.nombre}} </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="grillasProducto_displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: grillasProducto_displayedColumns;" class="table-row"></mat-row>
+    </mat-table>
+    <mat-paginator *ngIf="grillasProductoDataSource.data?.length > 0 && grillasProductoDataSource.filteredData?.length > 0" 
+      class="paginator--centered"
+      #paginator 
+      [pageSize]="10" 
+      [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </mat-card>
+
+</form>

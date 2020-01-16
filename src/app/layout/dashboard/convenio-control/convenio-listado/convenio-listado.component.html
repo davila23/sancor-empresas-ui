@@ -1,0 +1,67 @@
+<div class="grid">
+  <mat-card class="ribbon">
+    <mat-card-header>
+      <mat-card-title>Control de convenios temporales</mat-card-title>
+    </mat-card-header>
+    <mat-card-content *apploading="controlsLoading.list">
+
+      <form [formGroup]="filtrosForm" class="grid responsive-grid">
+
+        <mat-form-field>
+          <input matInput placeholder="Filtrar" (keyup)="applyFilter($event.target.value)">
+          <mat-hint>filtro por cualquier campo</mat-hint>
+        </mat-form-field>
+
+        <!--
+        <mat-form-field>
+          <mat-select placeholder="Estado" formControlName="estado">
+            <mat-option value="2">Control</mat-option>
+            <mat-option value="4">Alta Finalizada</mat-option>
+            <mat-option value="2,4">Todos</mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+        <app-button color="primary" (click)="refresh()"><mat-icon>refresh</mat-icon>Aplicar filtro</app-button>
+-->
+      </form>
+
+      <mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="nombreConvenio">
+          <mat-header-cell *matHeaderCellDef> Convenio </mat-header-cell>
+          <mat-cell *matCellDef="let element" data-label="convenio"> {{element.nombre}} </mat-cell>
+        </ng-container>
+      
+        <ng-container matColumnDef="nombreEmpresa">
+          <mat-header-cell *matHeaderCellDef> Empresa </mat-header-cell>
+          <mat-cell *matCellDef="let element" data-label="empresa"> {{element.empresaDescripcion}} </mat-cell>
+        </ng-container>
+      
+        <ng-container matColumnDef="usuario">
+          <mat-header-cell *matHeaderCellDef> Usuario </mat-header-cell>
+          <mat-cell *matCellDef="let element" data-label="usuario"> {{element.usuario}} </mat-cell>
+        </ng-container>
+      
+        <ng-container matColumnDef="fecha">
+          <mat-header-cell *matHeaderCellDef> Fecha </mat-header-cell>
+          <mat-cell *matCellDef="let element" data-label="fecha"> {{element.vigenciaDesde | date: 'dd/MM/yyyy'}} </mat-cell>
+        </ng-container>
+      
+        <ng-container matColumnDef="estado">
+          <mat-header-cell *matHeaderCellDef> Estado </mat-header-cell>
+          <mat-cell *matCellDef="let element" data-label="estado"> {{element.estadoControlDescripcion}} </mat-cell>
+        </ng-container>
+      
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let convenio; columns: displayedColumns;" class="table-row" matTooltip="ir a control" (click)="redirectToDetails(convenio)"></mat-row>
+      </mat-table>
+      <div *ngIf="dataSource.data.length <= 0 || dataSource.filteredData.length <= 0" class="zero-result">
+        <span>No se han encontrado resultados</span>
+      </div>
+      <mat-paginator *ngIf="dataSource.data.length > 0 && dataSource.filteredData.length > 0" 
+        #paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

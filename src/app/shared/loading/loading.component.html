@@ -1,0 +1,10 @@
+<div class="input-loader" *ngIf="type === 'input'">
+  <div class="container">
+    <span>Obteniendo {{description}}...</span>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>  
+  </div>
+</div>
+
+<div class="table-loader" *ngIf="type === 'table'">
+  <mat-spinner></mat-spinner>
+</div> 

@@ -1,0 +1,70 @@
+<div class="col s12" *ngIf="abm">
+	<form (keydown.enter)="$event.preventDefault()" (ngSubmit)="addRow()" #retencionForm="ngForm">
+		<div class="col s10">
+			<ng-content></ng-content>
+		</div>
+		<div class="col s1">
+			<button (keydown.enter)="addRow()" #submitBtn type="submit" mat-icon-button color="primary">
+				<mat-icon>done</mat-icon>
+			</button>
+		</div>
+		<div class="col s1">
+			<button (click)="reset($event)" mat-icon-button>
+				<mat-icon>clear</mat-icon>
+			</button>
+		</div>
+	</form>
+</div>
+<ng-container *ngIf="inicializado">
+	<table width="100%" class="fija scroll-table" mat-table [dataSource]="dataSource" matSort [ngStyle]="{display: dataSource.data.length > 0 ? 'table' : 'none'}">
+		<ng-container *ngFor="let columna of columnas" [matColumnDef]="columna.def">
+			<!--
+				Definición de columna común
+			-->
+			<ng-container *ngIf="columna.def != 'acciones'">
+				<th [title]="columna.nombre" [width]="(columna.ancho ? columna.ancho : 100) + '%'" [ngClass]="[columna.clase ? columna.clase : '']" mat-header-cell *matHeaderCellDef mat-sort-header>
+					{{ columna.nombre }}
+				</th>
+				<td *matCellDef="let element" [ngClass]="['tbl',columna.clase ? columna.clase : '']" [class.rtl]="columna.tipo == 'comprobante'" [width]="(columna.ancho ? columna.ancho : 100) + '%'" mat-cell [style.text-align]="columna.tipo == 'numero' || columna.tipo == 'monto' ? 'right' : ''" [title]="columna.tipo == 'monto' ? numForm(element[columna.def], false) : (element[columna.def]) ? element[columna.def] : ''">
+					<ng-container *ngIf="!estaVacio(element)">
+						<span *ngIf="columna.tipo == 'monto' && mostrarPeso" matPrefix>$&nbsp;</span>
+						{{ columna.tipo == 'monto' ? numForm(element[columna.def], false) : element[columna.def] }}
+					</ng-container>
+				</td>
+			</ng-container>
+
+			<!--
+				Definición de columna acciones
+			-->
+			<ng-container *ngIf="columna.def == 'acciones'">
+				<th [title]="columna.nombre" width="{{ columna.ancho ? columna.ancho : 100 }}%" mat-header-cell *matHeaderCellDef>
+					{{ columna.nombre }}
+				</th>
+				<td mat-cell *matCellDef="let element" style="text-align: center">
+					<ng-container *ngIf="acciones.length < 3">
+						<ng-container *ngFor="let accion of acciones">
+							<i *ngIf="!estaVacio(element) && (!accion.condicion || accion.condicion(element))" (click)="accion.handler ? accion.handler(element, $event) : ''" class="material-icons" [ngStyle]="{'color': accion.color ? accion.color(element) : ''}" [ngClass]="{'accion': accion.handler, 'visualiza': !accion.handler}" [title]="accion.title(element)"> {{ accion.icon(element) }} </i>
+						</ng-container>
+					</ng-container>
+					<ng-container *ngIf="acciones.length > 2">
+						<button mat-button [matMenuTriggerFor]="menuacciones">
+							<i class="material-icons">more_vert</i>
+						</button>
+						<mat-menu #menuacciones="matMenu">
+							<ng-container *ngFor="let accion of acciones">
+								<button mat-menu-item *ngIf="!estaVacio(element) && (!accion.condicion || accion.condicion(element))" (click)="accion.handler ? accion.handler(element, $event) : ''" [ngStyle]="{'color': accion.color ? accion.color() : ''}" [ngClass]="{'accion': accion.handler, 'visualiza': !accion.handler}" [title]="accion.title(element)">
+									<mat-icon class="material-icons">{{ accion.icon() }}</mat-icon>
+									<span>{{ accion.title(element) }}</span>
+								</button>
+							</ng-container>
+						</mat-menu>
+					</ng-container>
+				</td>
+			</ng-container>
+		</ng-container>
+		<tr mat-header-row *matHeaderRowDef="headers; sticky: true"></tr>
+		<tr mat-row *matRowDef="let row; columns: headers;" [ngClass]="clasesRow(row)"></tr>
+		<!-- <tr mat-row *matRowDef="let row; columns: headers;" [ngClass]="{'editando': editando === row}"></tr> -->
+	</table>
+</ng-container>
+<mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" tabindex="-1" [length]="resultsLength" [pageSize]="cuantos" showFirstLastButtons [ngStyle]="{display: dataSource.data.length > 0 ? 'table' : 'none'}"></mat-paginator>

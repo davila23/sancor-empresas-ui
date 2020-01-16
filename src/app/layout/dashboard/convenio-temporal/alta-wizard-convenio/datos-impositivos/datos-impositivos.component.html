@@ -1,0 +1,90 @@
+<form [formGroup]="datosImpositivosForm">
+    
+    <div class="no-data-container" *ngIf="!datosImpositivosDataSource.data?.length">
+      No hay datos impositivos cargados...
+    </div>
+    <mat-card class="custom" [ngClass]="{'not-show':!datosImpositivosDataSource.data?.length}">
+      <mat-card-header>
+        <mat-card-title>
+          Datos Impositivos
+        </mat-card-title>
+      </mat-card-header>
+      <mat-table [dataSource]="datosImpositivosDataSource"> 
+        <ng-container matColumnDef="modalidadImpresion">
+          <mat-header-cell *matHeaderCellDef> Modalidad Impresion </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="Modalidad impresion"> 
+           
+            <ng-container *ngIf="row.modalidad == 'C'">Conceptos</ng-container>
+            <ng-container *ngIf="row.modalidad == 'D'">Detallado</ng-container>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="empresasFacturan">
+          <mat-header-cell *matHeaderCellDef> Empresas que facturan </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="Empresas que facturan"> {{row.facturadoraDescripcion}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="tipoComprobante">
+          <mat-header-cell *matHeaderCellDef> Tipo comprobante </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="Tipo comprobante"> 
+            
+            <ng-container *ngIf="row.tipoComprobante == 'F'">Factura</ng-container>
+            <ng-container *ngIf="row.tipoComprobante == 'R'">Resumen</ng-container>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="delete">
+          <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="eliminar">
+            <button mat-icon-button color="primary" (click)="datosImpositivosDelete(row)"><mat-icon>remove</mat-icon></button>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="datosImpositivos_displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: datosImpositivos_displayedColumns;" class="table-row"></mat-row>
+      </mat-table>
+      
+       <mat-paginator *ngIf="datosImpositivosDataSource.data?.length > 0 && datosImpositivosDataSource.filteredData?.length > 0"
+        class="paginator--centered"  
+        #paginator 
+          [pageSize]="10" 
+          [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+      </mat-paginator>
+    </mat-card>
+    <mat-card class="custom">
+      <mat-card-header>
+        <mat-card-title>
+          Añadir Datos impositivos
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid">
+          <mat-form-field>
+            <mat-select placeholder="Modalidad Impresion" formControlName="modalidad" (selectionChange)="changeModalidadImpresion($event)">
+              <mat-option *ngFor="let modalidad of modalidadImpresionList;" [value]="modalidad.id">
+                {{modalidad.descripcion}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Empresas que Facturan" formControlName="facturadoraId" (selectionChange)="changeEmpresasFacturan($event)">
+              <mat-option *ngFor="let empresasFact of empresasFacturanList;" [value]="empresasFact.id">
+                {{empresasFact.descripcion}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Tipo de comprobante" formControlName="tipoComprobante" (selectionChange)="changeTipoComprobante($event)">
+              <mat-option *ngFor="let tipoComprobante of tipoComprobantesList;" [value]="tipoComprobante.id">
+                {{tipoComprobante.descripcion}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-fab color="accent" (click)="datosImpositivosSaveAndRender()" [disabled]="datosImpositivosForm.invalid"><mat-icon>add</mat-icon></button>
+      </mat-card-actions>
+    </mat-card>
+    <!--
+    <div class="stepper-btns">
+      <button mat-button matStepperNext>Guardar</button>
+    </div>
+    -->
+  </form>

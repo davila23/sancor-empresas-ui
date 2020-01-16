@@ -1,0 +1,43 @@
+
+<div class="no-data-container" *ngIf="!referenteDataSource.data?.length">
+  No hay referentes cargados...
+</div>
+<mat-card class="custom" [ngClass]="{'not-show':!referenteDataSource.data?.length}">
+  <mat-card-header>
+    <mat-card-title>
+      Referentes
+    </mat-card-title>
+  </mat-card-header>
+  <mat-table [dataSource]="referenteDataSource">
+    <ng-container matColumnDef="nombreApellido">
+      <mat-header-cell *matHeaderCellDef> Nombre y Apellido </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="nombreYApellido"> {{row.nombreApellido}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="fechaNacimiento">
+      <mat-header-cell *matHeaderCellDef> Fecha nacimiento </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="fechaNacimiento"> {{row.fechaNacimiento}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="numeroDocumento">
+      <mat-header-cell *matHeaderCellDef> DNI </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="numeroDocumento"> {{row.numeroDocumento}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="numeroTelefono">
+      <mat-header-cell *matHeaderCellDef> Teléfono </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="numeroTelefono"> {{row.numeroTelefono}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="email"> {{row.email}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="referente_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: referente_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+</mat-card>
+
+  

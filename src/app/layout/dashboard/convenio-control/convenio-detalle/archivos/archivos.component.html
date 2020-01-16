@@ -1,0 +1,20 @@
+<div class="grid responsive-grid" *ngIf="typesState.length">
+  <input type="file" style="display: none;" #inputFile (change)="renderFile($event)">
+
+  <div class="download-card" *ngFor="let x of typesState">
+    <label>{{x.descripcion}}</label>
+    <div class="wrapper">
+      <button mat-raised-button color="accent" (click)="download($event.currentTarget.id)" id="{{x.id}}" [disabled]="!x.download.file.length || x.download.isDownloading">
+          <mat-icon aria-label="download icon">cloud_download</mat-icon>
+          Descargar
+      </button>
+    </div>
+    <div class="progress-bar-wrapper" *ngIf="x.download.isDownloading || x.download.waitingForServer">
+      <label *ngIf="x.download.isDownloading">Descargando {{x.progress}} Kb</label>
+      <label *ngIf="x.download.waitingForServer">{{(x.download.waitingForServer) ? 'Procesando...' : 'Esperando al servidor...'}}</label>
+      <mat-progress-bar *ngIf="x.download.waitingForServer" mode="indeterminate"></mat-progress-bar>
+      <mat-progress-bar *ngIf="x.download.isDownloading" mode="query"></mat-progress-bar>
+    </div>
+  </div> 
+
+</div>

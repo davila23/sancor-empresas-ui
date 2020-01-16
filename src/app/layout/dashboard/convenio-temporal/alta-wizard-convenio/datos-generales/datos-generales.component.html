@@ -1,0 +1,188 @@
+<form [formGroup]="datosGeneralesForm">
+  <div class="grid">
+    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+  </div>
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Parte 1</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="grid responsive-grid" *apploading="controlsLoading.parteUno">
+        <mat-form-field>
+          <input matInput type="text" formControlName="nombre" placeholder="Nombre de convenio" maxlength="50" required>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <tr-fecha placeholder="Vigente desde" [form]="datosGeneralesForm" nombre="vigenciaDesde" required></tr-fecha>
+
+        <mat-form-field>
+          <mat-select placeholder="Compensa aportes" formControlName="compensaAportes" required>
+            <mat-option value="S">Si</mat-option>
+            <mat-option value="N">No</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field formGroupName="modalidadLiquidacion">
+          <mat-select placeholder="Modalidad de liquidación" formControlName="id">
+            <mat-option [value]="1">Anticipada</mat-option>
+            <mat-option [value]="2">Vencida</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
+        <mat-form-field class="observaciones">
+          <textarea matInput placeholder="Observaciones" formControlName="observaciones" maxlength="255"></textarea>
+        </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Parte 2</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="grid responsive-grid">
+        <mat-form-field>
+          <input matInput type="number" formControlName="cantidadEmpleados" numMask="5" placeholder="Cant. de cápitas prometidas" required>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <custom-autocomplete [form]="datosGeneralesForm.get('ejecutivoConvenio')"
+                             nombre="nombre"
+                             idNombre="idpersona"
+                             nombreResultado="nombre"
+                             idNombreResultado="idpersona"
+                             [customSearch]="ejecutivoConvenioCustom"
+                             [min]="1"
+                             placeholder="Ejecutivo convenio">
+        </custom-autocomplete>
+
+        <mat-form-field>
+          <mat-select placeholder="Acepta monotributistas" formControlName="aceptaMonotributistas" required>
+            <mat-option value="S">Si</mat-option>
+            <mat-option value="N">No</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field formGroupName="holding" *apploading="controlsLoading.holdings">
+          <mat-select formControlName="id" placeholder="Holding">
+            <mat-option *ngFor="let holding of holdingsList" [value]="holding.id">{{holding.descripcion}}</mat-option>
+            <mat-option [value]="0">- sin holding -</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <custom-autocomplete [form]="datosGeneralesForm.get('relacionista')"
+                             nombre="nombre"
+                             idNombre="idpersona"
+                             busca="/Empresas/api/RelacionistaConvenio/autocompletar?descripcion={query}"
+                             [min]="1"
+                             placeholder="Ejecutivo de venta">
+        </custom-autocomplete>
+
+        <mat-form-field>
+          <mat-select placeholder="Mutual" formControlName="mutual" required>
+            <mat-option value="S">Si</mat-option>
+            <mat-option value="N">No</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field formGroupName="tipoIngreso" *apploading="controlsLoading.tipoIngreso">
+          <mat-select placeholder="Tipo de ingreso" formControlName="id" required>
+            <mat-option *ngFor="let item of tipoIngresoList" [value]="item.id">{{item.descripcion}}</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="showFirmaDes">
+          <mat-select placeholder="Firma DES" formControlName="firmaDes">
+            <mat-option value="S">Si</mat-option>
+            <mat-option value="N">No</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field formGroupName="tipoMovimientoAsociado" *apploading="controlsLoading.movimientosAsociados">
+          <mat-select placeholder="Movimiento de asociado" formControlName="id" required>
+            <mat-option *ngFor="let item of movimientosAsociadosList" [value]="item.id">{{item.descripcion}}</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Adicional a cargo de:" formControlName="adicionalACargo" required>
+            <mat-option value="E">Empresa</mat-option>
+            <mat-option value="A">Asociado</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Interés comercial" formControlName="interesComercial" required>
+            <mat-option value="S">Si</mat-option>
+            <mat-option value="N">No</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Copagos a cargo" formControlName="copagosACargo" required>
+            <mat-option value="E">Empresa</mat-option>
+            <mat-option value="A">Asociado</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Factura Electronica" formControlName="facturaElectronica" required>
+            <mat-option value="S">Si</mat-option>
+            <mat-option value="N">No</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field formGroupName="enviosCredenciales" *apploading="controlsLoading.credenciales">
+          <mat-select placeholder="Credenciales" formControlName="id" required (selectionChange)="listenCredencialesId($event.value)">
+            <mat-option *ngFor="let item of credencialesList" [value]="item.id">{{item.descripcion}}</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <!-- nombre: descripcion que vas a parchear
+             idNombre: id que vas a parchear
+             nombreResultado: Nombre que vas a mostrar y va a entrar en nombre
+             idNombreResultado: Id que vas a reemplazar en idNombre
+             [customSearch]: bindeas una funcion en una variable para que la ejecute y devuelva la lista que encuentre
+             cada vez que filtrás.
+             [min]: mínimo de caracteres antes de que haga la primer búsqueda  -->
+
+        <custom-autocomplete *ngIf="showCredenciales"
+                             [form]="credencialesForm"
+                             nombre="descripcion"
+                             idNombre="carEntidadId"
+                             nombreResultado="descripcion"
+                             idNombreResultado="id"
+                             [customSearch]="entidadesCustom"
+                             [min]="1"
+                             placeholder="Car - Entidad"
+                             required>
+        </custom-autocomplete>
+
+        <form [formGroup]="credencialesForm" *ngIf="showCredenciales">
+          <mat-form-field>
+            <input matInput type="text" formControlName="recepcionista" placeholder="Recepcionista" maxlength="50" required>
+            <mat-error>Campo requerido</mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</form>
+<div class="stepper-btns">
+  <button mat-button *ngIf="edit"
+          matStepperNext
+          [disabled]="datosGeneralesForm.invalid || isPosting || credencialesForm.invalid"
+          (click)="postDatosGenerales()"
+          style="float: right; margin-top: 10px;">Guardar</button>
+</div>

@@ -1,0 +1,110 @@
+@import 'variables';
+
+mat-toolbar {
+	position: fixed;
+	width: 100vw;
+	height: 64px;
+	top: 0;
+	z-index: 2;
+	mat-toolbar-row.mat-toolbar-row {
+		height: 64px;
+	}
+}
+
+.settings {
+	color: white;
+	right: 0.5em;
+	top: 0.55em;
+	position: absolute;
+	button {
+		margin-left: 0.5em;
+		margin-right: 0.5em;
+		i {
+			font-size: 2em;
+		}
+	}
+}
+
+.logo {
+	max-height: 64px;
+}
+
+.menu-toggle span:not(.mat-button-wrapper) {
+	padding-left: 1em;
+	font-size: 1.3em;
+}
+
+.search-container {
+	background-color: #f2f2f2;
+    border-radius: 13px;
+    width: 50vw;
+	height: 1.7em;
+	
+	mat-icon {
+		margin-top: 0.25em;
+		color: grey;
+		margin-left: 0.4em;
+	}
+
+	@media screen and (max-width: 600px) {
+		display: none;
+	}
+}
+
+.filter-options {
+	@media screen and (max-width: 600px) {
+		display: none;
+	}
+}
+
+.search-bar {
+	color: grey;
+	width: 27vw;
+	font-size: 19px;
+    position: absolute;
+    height: 1.8em;
+	background: transparent;
+	border: 0;
+	padding-left: 0.5em;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.nav-end {
+	display: initial;
+	@media screen and (max-width: 600px) {
+		display: none;
+	}
+	span {
+		@media screen and (max-width: 992px) {
+			display: none;
+		}
+	}
+}
+
+.nav-end > span {
+	font-weight: 400;
+	position: absolute;
+	right: 3em;
+	top: 0.8em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 12em;
+}
+
+.nav-end-btn {
+	span {
+		font-size: 1.5em;
+	}
+	i {
+		font-size: 2em;
+		margin-left: 0.5em;
+		@media #{$s} {
+			margin-left: 0;
+		}
+	}
+	margin-right: 0.5em;
+}

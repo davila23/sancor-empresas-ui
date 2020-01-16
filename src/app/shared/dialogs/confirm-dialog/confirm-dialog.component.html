@@ -1,0 +1,13 @@
+<h4 mat-dialog-title>{{ data.titulo }}</h4>
+<div mat-dialog-content>
+	<ng-container *ngIf="isHtml">
+		<p [innerHTML]="data.texto"></p>
+	</ng-container>
+	<ng-container *ngIf="!isHtml">
+		<p>{{ data.texto }}</p>
+	</ng-container>
+</div>
+<div mat-dialog-actions align="end">
+	<button mat-button color="accent" [mat-dialog-close]="false">{{ data.cancelar | uppercase }}</button>
+	<button mat-button color="accent" [mat-dialog-close]="true">{{ data.confirmar | uppercase }}</button>
+</div>

@@ -1,0 +1,62 @@
+<div class="grid">
+  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+</div>
+
+<mat-card class="custom" *ngIf="edit">
+  <mat-card-header>
+    <mat-card-title>Añadir combinación</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="grid" [formGroup]="subsidiosForm">
+      <mat-form-field>
+      <mat-select placeholder="Producto" formControlName="producto">
+        <mat-option
+          (onSelectionChange)="onEnter($event)"
+          *ngFor="let producto of productosList;" [value]="producto">
+          {{producto.descripcion}}
+        </mat-option>
+      </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select placeholder="Planes" formControlName="plan">
+          <mat-option *ngFor="let plan of planesList;" [value]="plan">
+            {{plan.descripcionParaSocio}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button color="accent" mat-raised-button [disabled]="isPosting || subsidiosForm.invalid" (click)="subsidiosDataSourceSaveAndRender()">AÑADIR</button>
+  </mat-card-actions>
+</mat-card>
+
+<mat-card class="custom" [ngClass]="{'not-show':!subsidiosDataSource.data?.length}">
+  <mat-card-content>
+    <mat-table [dataSource]="subsidiosDataSource">
+      <ng-container matColumnDef="producto">
+        <mat-header-cell *matHeaderCellDef> Producto </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="producto"> {{row.producto.descripcion}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="plan">
+        <mat-header-cell *matHeaderCellDef> Plan </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="plan"> {{row.plan.descripcion}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="eliminar">
+          <button mat-icon-button color="accent" *ngIf="delete" matTooltip="eliminar" (click)="subsidiosDelete(row)"><mat-icon>delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="subsidios_displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: subsidios_displayedColumns;" class="table-row"></mat-row>
+    </mat-table>
+  </mat-card-content>
+</mat-card>
+
+<div class="no-data-container" *ngIf="!subsidiosDataSource.data?.length">
+  No hay subsidios cargadas...
+</div>

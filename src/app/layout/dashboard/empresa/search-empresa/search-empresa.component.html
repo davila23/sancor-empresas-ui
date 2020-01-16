@@ -1,0 +1,28 @@
+<!--<div class="search-div">
+    <button mat-raised-button>
+      <mat-icon>add</mat-icon>Create
+    </button>
+    <mat-form-field class="search-form-field" floatLabel="never">
+      <input matInput ngModel name="nombreEmpresa" placeholder="Empresa" autocomplete="off" >
+      <button mat-button matSuffix mat-icon-button aria-label="Clear"*ngIf="searchKey"  (click)="onSearchClear()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+-->
+<div>
+    <form (ngSubmit)="onSubmit(f)" #f="ngForm" >
+        <mat-form-field >
+            <input matInput placeholder="Empresa" value="" ngModel name="nombreEmpresa">
+        </mat-form-field>
+<!--
+        <button mat-raised-button color="primary">Buscar</button>
+-->
+       
+            <button mat-mini-fab color="primary">
+              <mat-icon>add</mat-icon>
+            </button>
+          
+    </form>
+    <button _ngcontent-c48="" color="accent" mat-mini-fab="" class="mat-mini-fab mat-accent"><span class="mat-button-wrapper"><mat-icon _ngcontent-c48="" class="mat-icon material-icons mat-icon-no-color" role="img" aria-hidden="true">add</mat-icon></span><div class="mat-button-ripple mat-ripple mat-button-ripple-round" matripple=""></div><div class="mat-button-focus-overlay"></div></button>
+</div>

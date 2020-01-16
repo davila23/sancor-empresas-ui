@@ -1,0 +1,77 @@
+<div class="grid">
+  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+</div>
+
+<mat-card class="custom" *ngIf="isEditionFlag">
+  <mat-card-header>
+    <mat-card-title>
+      Añadir Entidad
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="grid responsive-grid" [formGroup]="entidadesForm">
+      <mat-form-field>
+        <input [formControl]="empresaCtrl" 
+              #stateInput
+              type="text" 
+              placeholder="Empresa a relacionar" 
+              aria-label="Number" 
+              matInput [matAutocomplete]="auto"
+              (keyup)="0">
+        <mat-autocomplete #auto="matAutocomplete">
+            <mat-option (onSelectionChange)="stateInput.value != undefined && onEnter($event)"  
+              *ngFor="let item of filteredEmpresas | async" [value]="item">
+              {{ item.descripcion}}
+            </mat-option>
+        </mat-autocomplete>
+        <mat-error>Campo requerido</mat-error>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <app-button color="accent" (click)="entidadSaveAndRender()" [disabled]="empresaCtrl.invalid || entidadesForm.invalid || isPosting"><mat-icon>add</mat-icon>Añadir</app-button>
+  </mat-card-actions>
+</mat-card>
+
+<mat-card class="custom" [ngClass]="{'not-show':!entidadDataSource.data?.length}">
+  <mat-card-header>
+    <mat-card-title>
+      Entidades
+    </mat-card-title>
+  </mat-card-header>
+  <mat-table [dataSource]="entidadDataSource"> 
+    <ng-container matColumnDef="nro_empresa">
+      <mat-header-cell *matHeaderCellDef> Nro Empresa </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Nro Empresa"> {{row.id}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="cuit">
+      <mat-header-cell *matHeaderCellDef> Cuit </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Cuit"> {{row.cuit}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="descripcion">
+      <mat-header-cell *matHeaderCellDef> Descripcion </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="descripcion"> {{row.descripcion}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="delete">
+      <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="eliminar">
+        <button mat-icon-button color="accent" matTooltip="eliminar" (click)="entidadDelete(row)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="entidad_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: entidad_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+  <mat-paginator 
+        class="paginator--centered"
+        #entidad_pag
+        [pageSize]="10" 
+        [pageSizeOptions]="[5, 10, 20]" 
+        showFirstLastButtons>
+  </mat-paginator>
+</mat-card>
+
+<div class="no-data-container" *ngIf="!entidadDataSource.data?.length">
+  No hay entidades cargados...
+</div>

@@ -1,0 +1,160 @@
+<form class="grid" [formGroup]="formGroup">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Alta de empresa</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+      <div class="grid">
+        <mat-progress-bar mode="indeterminate" *ngIf="posting"></mat-progress-bar>
+      </div>
+
+      <div class="grid responsive-grid">
+
+        <mat-form-field>
+          <input formControlName="cuit" matInput placeholder="CUIT" cuitMask required>
+          <mat-error *ngIf="formGroup.get('cuit').errors && formGroup.get('cuit').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('cuit').errors  && formGroup.get('cuit').errors?.max">
+            Hasta 11 carateres
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('cuit').errors && formGroup.get('cuit').errors?.cuit">
+            Cuit inválido
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input formControlName="razonSocial" matInput placeholder="Razon Social" maxlength="100" required>
+          <mat-error *ngIf="formGroup.get('razonSocial').errors && formGroup.get('razonSocial').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('razonSocial').errors && formGroup.get('razonSocial').errors?.maxlength">
+            Máximo 100 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Condicion IVA" formControlName="condicionIvaId">
+            <mat-option *ngFor="let condicion of condicionesIva" [value]="condicion.id">
+              {{condicion.descripcion}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="!formGroup.get('condicionIvaId').valid && formGroup.get('condicionIvaId').touched">
+            Condicion IVA es requerido
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input formControlName="numeroIngresosBrutos" matInput placeholder="Numero IIBB" maxlength="15">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input #stateInput (keyup)="0" matInput placeholder="Actividad AFIP" [matAutocomplete]="acAfip"
+            [formControl]="actividadCtrl">
+          <mat-autocomplete #acAfip="matAutocomplete">
+            <mat-option (onSelectionChange)="stateInput.value !=undefined && onEnter($event)"
+              *ngFor="let actividadAfip of filteredActividades | async" [value]="actividadAfip">
+              <span>{{ actividadAfip.id }}</span> |
+              <small> {{actividadAfip.descripcion}}</small>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="grid responsive-grid">
+        <mat-form-field>
+          <input formControlName="calle" matInput placeholder="Calle" maxlength="30" required>
+          <mat-error *ngIf="formGroup.get('calle').errors && formGroup.get('calle').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('calle').errors && formGroup.get('calle').errors?.maxlength">
+            Máximo 30 caracteres de largo
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="numeroCalle" placeholder="Numero de Calle" numMask="5" required>
+          <mat-error *ngIf="formGroup.get('numeroCalle').errors && formGroup.get('numeroCalle').errors?.required">
+            Campo requerido
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input formControlName="piso" matInput placeholder="Piso" numMask="2">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input formControlName="departamento" matInput placeholder="Departamento" maxlength="5">
+          <mat-error *ngIf="formGroup.get('departamento').errors && formGroup.get('departamento').errors?.maxlength">
+            Máximo 5 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input type="text" placeholder="Código postal" 
+          (input)="codigoPostalListFill($event.target.value)" 
+          matInput 
+          [formControl]="codPostalControl" 
+          [matAutocomplete]="codPostal">
+          <mat-autocomplete #codPostal="matAutocomplete">
+            <mat-option *ngFor="let cod of codPostalList" 
+                        [value]="cod.detalle" 
+                        (onSelect)="codigoPostalPatchValue(cod, $event)" 
+                        (click)="codigoPostalPatchValue(cod, $event)">
+              {{cod.detalle + ' ' + cod.codigoPostal}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-hint><i>Búsqueda por número</i></mat-hint>
+        </mat-form-field>
+
+        <!-- <mat-form-field>
+          <input formControlName="cpLocalidad" matInput placeholder="CP localidad" maxlength="8" required>
+          <mat-error *ngIf="formGroup.get('cpLocalidad').errors && formGroup.get('cpLocalidad').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('cpLocalidad').errors && formGroup.get('cpLocalidad').errors?.maxlength">
+            Máximo 8 caracteres
+          </mat-error>
+        </mat-form-field> -->
+
+        <mat-form-field>
+          <input formControlName="telFijo" matInput placeholder="Tel Fijo" maxlength="15" numMask="15">
+          <mat-error *ngIf="formGroup.get('telFijo').errors && formGroup.get('telFijo').errors?.touched">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('telFijo').errors && formGroup.get('telFijo').errors?.maxlength">
+            Máximo 50 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input formControlName="telCelular" matInput placeholder="Tel Celular" maxlength="15" numMask="15">
+          <mat-error *ngIf="formGroup.get('telCelular').errors && formGroup.get('telCelular').errors?.touched">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('telCelular').errors && formGroup.get('telCelular').errors?.maxlength">
+            Máximo 50 caracteres
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput  type="email" formControlName="email" placeholder="Email">
+          <mat-error *ngIf="formGroup.get('email').errors && formGroup.get('email').errors?.email">
+            Email inválido
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('email').errors && formGroup.get('email').errors?.maxlength">
+            Hasta 50 caracteres
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+    </mat-card-content>
+    <mat-card-footer align="end">
+      <app-button color="accent"  type="button" routerLink="/empresa/busqueda"><mat-icon>close</mat-icon>Cancelar</app-button>
+      <app-button color="primary" type="button" (click)="onSubmit()" [disabled]="formGroup.invalid || posting">
+        <mat-icon>add</mat-icon>Añadir
+      </app-button>
+    </mat-card-footer>
+  </mat-card>
+</form> 

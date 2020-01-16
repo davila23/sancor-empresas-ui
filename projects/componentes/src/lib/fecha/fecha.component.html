@@ -1,0 +1,21 @@
+<mat-form-field [ngClass]="clase" [formGroup]="form">
+	<mat-label [ngClass]="'fecha-label'">{{ placeholder }}</mat-label>
+	<input *ngIf="form === formDefault" #input trFecha matInput [required]="required" [matDatepicker]="fecha" [ngModelOptions]="{standalone: true}" maxlength="10" [(ngModel)]="date" [name]="name" [tabindex]="tab" (dateChange)="onCambiaFecha($event)" (blur)="check()" (focus)="onFocus($event)" [min]="min" [max]="max">
+	<input *ngIf="form !== formDefault" #input trFecha matInput [required]="required" [matDatepicker]="fecha" maxlength="10" [name]="name" [tabindex]="tab" (dateChange)="onCambiaFecha($event)" (blur)="check()" (focus)="onFocus($event)" [min]="min" [max]="max" formControlName="{{ name }}">
+	<button *ngFor="let prefix of prefixes" (click)="prefix.handler()" (hover)="prefix.onHover()" [title]="prefix.title()" matPrefix tabindex="-1" mat-icon-button>
+		<mat-icon>{{ prefix.icon() }}</mat-icon>
+	</button>
+
+	<button *ngFor="let suffix of suffixes" (click)="suffix.handler()" (hover)="suffix.onHover()" [title]="suffix.title()" matSuffix tabindex="-1" mat-icon-button>
+		<mat-icon>{{ suffix.icon() }}</mat-icon>
+	</button>
+
+	<mat-datepicker-toggle matSuffix [for]="fecha" title="Abrir calendario">
+		<mat-icon *ngIf="openIcon" matDatepickerToggleIcon>{{ openIcon }}</mat-icon>
+	</mat-datepicker-toggle>
+	<mat-datepicker #fecha startView="month"></mat-datepicker>
+	<mat-error *ngIf="isReactive && form.get(name).hasError('matDatepickerMin')">Fecha mínima: {{ form.get(name).errors.matDatepickerMin.min | date : 'dd/MM/yyyy' }}</mat-error>
+    <mat-error *ngIf="isReactive && form.get(name).hasError('matDatepickerMax')">Fecha máxima: {{ form.get(name).errors.matDatepickerMax.max | date : 'dd/MM/yyyy' }}</mat-error>
+    <mat-error *ngIf="isReactive && form.get(name).hasError('required')">Campo requerido</mat-error>
+</mat-form-field>
+ 

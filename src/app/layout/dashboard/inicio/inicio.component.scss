@@ -1,0 +1,133 @@
+@import 'variables';
+
+.grid {
+	grid-template-rows: repeat(4, 1fr);
+	grid-template-columns: repeat(6, 1fr);
+	grid-template-areas: "map map map cal msg msg"
+						 "map map map cal msg msg"
+						 "bar bar bar ch1 msg msg"
+						 "bar bar bar ch2 ch3 ch4";
+	@media #{$m} {
+		grid-template-rows: repeat(8, 1fr);
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-areas: "map map map"
+							 "map map map"
+							 "bar bar bar"
+							 "bar bar bar"
+							 "cal msg msg"
+							 "cal msg msg"
+							 "ch1 msg msg"
+							 "ch2 ch3 ch4";
+	}
+	@media #{$s} {
+		grid-template-rows: repeat(8, 1fr);
+		grid-template-columns: repeat(1, 1fr);
+		grid-template-areas: "map"
+							 "bar"
+							 "cal"
+							 "msg"
+							 "ch1"
+							 "ch2"
+							 "ch3"
+							 "ch4";
+	}
+	grid-gap: 15px;
+}
+
+
+mat-card.mat-card {
+	margin-bottom: 0.75rem;
+}
+
+mat-card.mat-card-map {
+	grid-area: map;
+}
+
+.sebm-google-map-container {
+	height: 17em;
+	margin-top: 0.2em;
+}
+
+mat-card.mat-card-calendario {
+	grid-area: cal;
+	div.mat-card-header-text {
+		margin: 0;
+	}
+	mat-card-content.mat-card-content {
+		padding: 0;	
+	}
+	mat-card-actions.mat-card-actions {
+		display: grid;
+		justify-items: center;
+		align-items: end;
+	}
+}
+
+div.calendar-container {
+	border-left: 1px solid #f2f2f2;
+	.calendar-item {
+		p {
+			margin: 0;
+			padding-left: 16px;
+		}
+		margin-bottom: 1em;
+	}
+}
+
+.calendar-item p:not(.fw-500) {
+	font-size: 0.75em;
+}
+
+.mat-card-mensajes {
+	grid-area: msg;
+	p:not(.fw-500) {
+		font-size: 0.9em;
+	}
+}
+.dgh-1 {
+	grid-area: ch1;
+	canvas {
+		transform: scale(1.3);
+	}
+	align-self: center;
+	justify-self: center;
+}
+.dgh-2 {
+	grid-area: ch2;
+	canvas {
+		transform: scale(1.3);
+	}
+	align-self: center;
+	justify-self: center;
+}
+.dgh-3 {
+	grid-area: ch3;
+	canvas {
+		transform: scale(1.3);
+	}
+	align-self: center;
+	justify-self: center;
+}
+.dgh-4 {
+	grid-area: ch4;
+	canvas {
+		transform: scale(1.3);
+	}
+	align-self: center;
+	justify-self: center;
+}
+
+.mat-card-bar {
+	grid-area: bar;
+}
+/*div.mat-card-calendario-container {
+	padding: 0;
+	.mat-card-calendario {
+		.mat-card-actions, .mat-card-content, .mat-card-subtitle {
+			margin-bottom: 0;
+		}
+		.calendar-item {
+			margin-bottom: 0.2em;
+		}
+	}
+}*/

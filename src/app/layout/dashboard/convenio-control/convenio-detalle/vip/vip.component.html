@@ -1,0 +1,22 @@
+<div class="no-data-container" *ngIf="!vipDataSource.data?.length">
+  No hay usuarios vip cargados...
+</div>
+
+<mat-card class="custom" [ngClass]="{'not-show':!vipDataSource.data?.length}">
+  <mat-card-header>
+    <mat-card-title>
+      VIP'S
+    </mat-card-title>
+  </mat-card-header>
+  <mat-table [dataSource]="vipDataSource">
+  
+    <ng-container matColumnDef="dni">
+      <mat-header-cell *matHeaderCellDef> DNI </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="dni"> {{row.dni}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="vip_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: vip_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+  <mat-paginator #paginator [length]="vipDataSource.data.length" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+</mat-card>

@@ -1,0 +1,30 @@
+
+<div class="no-data-container" *ngIf="!entidadDataSource.data?.length">
+  No hay entidades cargados...
+</div>
+<div class="custom" [ngClass]="{'not-show':!entidadDataSource.data?.length}">
+  <mat-table [dataSource]="entidadDataSource"> 
+    <ng-container matColumnDef="nro_empresa">
+      <mat-header-cell *matHeaderCellDef> Nro Empresa </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Nro Empresa"> {{row.id}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="cuit">
+      <mat-header-cell *matHeaderCellDef> Cuit </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Cuit"> {{row.cuit}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="descripcion">
+      <mat-header-cell *matHeaderCellDef> Descripcion </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="descripcion"> {{row.descripcion}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="entidad_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: entidad_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+  <mat-paginator 
+        class="paginator--centered"
+        #entidad_pag
+        [pageSize]="10" 
+        [pageSizeOptions]="[5, 10, 20]" 
+        showFirstLastButtons>
+  </mat-paginator>
+</div>

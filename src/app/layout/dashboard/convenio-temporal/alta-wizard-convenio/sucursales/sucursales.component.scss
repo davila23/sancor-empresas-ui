@@ -1,0 +1,73 @@
+@import '../../../../../../styles/variables.scss';
+
+.container {
+    padding: 10px;
+
+    @media #{$s} {
+        padding: 0;
+    }
+}
+mat-paginator.mat-paginator.paginator--centered {
+    display: flex;
+    justify-content: center;
+} 
+
+mat-form-field.mat-form-field.observaciones {
+    grid-column: 1 / 3;
+
+    @media #{$m} {
+        grid-column: 1/3;
+    }
+
+    @media #{$s} {
+        grid-column: 1;
+    }
+}
+
+:host /deep/ .mat-card {
+    padding: 0;
+}
+
+:host /deep/ mat-card mat-card-content.mat-card-content {
+    padding: 0;
+}
+
+:host /deep/ .mat-vertical-content {
+    padding: 0 12px 24px 12px
+}
+
+.no-data-container {
+    display: flex;
+    justify-content: center;
+    font-style: italic;
+    font-weight: bold;
+
+    margin-bottom: 20px;
+}
+
+.custom {
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.not-show {
+    display: none !important;
+}
+
+.mat-card-header .mat-card-title {
+    color: white;
+}
+
+.stepper-btns {
+    float: right;
+}
+
+.mat-radio-button {
+    margin-right: 15px;
+    margin-bottom: 8.5px;
+}
+
+.radio-btns-label {
+    display: block;
+    margin: 10px 0;
+}

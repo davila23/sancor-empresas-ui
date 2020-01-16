@@ -1,0 +1,165 @@
+@import 'variables';
+@import 'materialize-grid';
+
+.row.no-margin {
+	margin: 0;
+}
+
+.accion.td-subtabla {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+i.accion, table .accion {
+	cursor: pointer;
+	user-select: none;
+}
+
+i.accion:hover, table .accion:hover {
+	color: $primary-color;
+	transition: 0.2s color ease-in-out;
+}
+
+i.accion:active, table .accion:active {
+	color: lighten($primary-color, 25%);
+	transition: 0s color;
+}
+
+div.mat-checkbox-inner-container {
+    height: 23px;
+    width: 23px;
+}
+
+i.visualiza, table .visualiza {
+	cursor: help;
+}
+
+i.visualiza:hover, table .visualiza:hover {
+	color: darkorange;
+	transition: 0.2s color ease-in-out;
+}
+
+i.visualiza:active, table .visualiza:active {
+	color: gold;
+	transition: 0s color;
+}
+
+.mat-slide-toggle {
+    margin-left: 10px;
+}
+
+.loading {
+	position: fixed;
+    height: 100vh;
+    max-height: 100%;
+	top: 0;
+	left: 0;
+	bottom: 56px;
+	right: 0;
+	background: rgba(255, 255, 255, 0.4);
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+tr.mat-row.fila-expansion {
+    height: 0;
+}
+
+tr.fila-expandible:not(.fila-expandida):hover {
+    background: #f5f5f5;
+}
+
+tr.fila-expandible:not(.fila-expandida):active {
+    background: #efefef;
+}
+
+.fila-expandible td.mat-cell {
+    border-bottom-width: 0;
+}
+
+.contenido-expandible {
+    overflow: hidden;
+    display: flex;
+}
+
+tr.fila-expansion td.mat-cell.expansion {
+    padding: 0;
+}
+
+td.mat-cell, th.mat-header-cell {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fija td.mat-cell {
+	padding: 0 2px;
+}
+
+th.mat-header-cell {
+    text-align: center !important;
+}
+table.mat-table {
+	width: 100%;
+}
+
+.subtabla th.mat-header-cell {
+    color: $primary-color;
+	border-bottom-color: $primary-color;
+}
+
+.subtabla td.mat-cell {
+    color: darken($color: $primary-color, $amount: 25);
+}
+table:not(.subtabla) > tbody > tr.mat-row:nth-child(even) {
+    background-color: #fafafa;
+}
+
+thead:not(.subtablahead):not(.mat-calendar-table-header) {
+    background-color: #fafafa;
+}
+.mat-sort-header-container {
+	justify-content: center;
+}
+
+.fija {
+	table-layout:fixed;
+}
+.fija td {
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+}
+.fija th button{
+	text-overflow:ellipsis;
+	overflow:hidden;
+	white-space:nowrap;
+}
+.fija td.denumero {
+	padding-right:10px;
+	text-align:right;
+}
+
+mat-paginator {
+	outline: none;
+}
+.mat-cell.num {
+	text-align: right;
+}
+
+.rtl {
+	direction: rtl;
+}
+tr.editando, table:not(.subtabla) > tbody > tr.mat-row:nth-child(even).editando {
+	background: $primary-color;
+}
+
+tr.editando td, table:not(.subtabla) > tbody > tr.mat-row:nth-child(even).editando td {
+	color: white;
+}
+
+td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, th.mat-header-cell:first-of-type, td.mat-cell:last-of-type, td.mat-footer-cell:last-of-type, th.mat-header-cell:last-of-type {
+	padding: 0;
+}
+

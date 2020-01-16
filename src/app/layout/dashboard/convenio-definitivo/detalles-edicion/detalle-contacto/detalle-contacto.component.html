@@ -1,0 +1,142 @@
+<form [formGroup]="contactoForm">
+
+  <div class="grid">
+    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div class="grid" *ngIf="contactoForm.value.codigoDomicilio == null || !controlsLoading.contacto?.isLoading">
+    <app-alert color="accent" [fill]="false">
+      Se han precargado datos correspondientes al domicilio de la empresa.
+      Por favor, complete los datos requeridos del formulario y seleccione guardar.
+    </app-alert>
+  </div>
+
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Domicilio</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="grid responsive-grid" *apploading="controlsLoading.contacto">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Calle" formControlName="calle" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="number" placeholder="Número" formControlName="numero" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="number" placeholder="Piso" formControlName="piso">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Departamento" formControlName="departamento">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Barrio" formControlName="barrio">
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <input type="text" placeholder="Código postal" (input)="codigoPostalListFill($event.target.value)" matInput [formControl]="codPostalControl" [matAutocomplete]="auto" required>
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let cod of codPostalList" [value]="cod.codigoPostal" (keyup.enter)="codigoPostalPatchValue()" (click)="codigoPostalPatchValue()">
+              {{cod.detalle + ' ' + cod.codigoPostal}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        
+        <!-- <mat-form-field>
+          <input matInput type="text" placeholder="Código postal argentino" formControlName="cpArgentino">
+        </mat-form-field> -->
+<!--         
+        <mat-form-field>
+          <input matInput type="text" placeholder="Orientación" formControlName="orientacion" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (1)" formControlName="otrosDatos1" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (2)" formControlName="otrosDatos2" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (3)" formControlName="otrosDatos3" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (4)" formControlName="otrosDatos4" [disabled]="true">
+        </mat-form-field> -->
+      </div>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel *ngIf="contactoForm.value.codigoDomicilio != null">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Teléfonos / Emails</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-card class="custom">
+        <mat-card-header>
+          <mat-card-title>Alta de teléfono/email</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="telefonosForm" class="grid responsive-grid">
+            <mat-form-field>
+              <mat-select placeholder="Tipo" formControlName="tipoTelefono" (selectionChange)="resetNumeroCarac()">
+                <mat-option value="T">Teléfono</mat-option>
+                <mat-option value="C">Celular</mat-option>
+                <mat-option value="E">Email</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field *ngIf="telefonosForm.value.tipoTelefono == 'E'">
+              <input matInput type="email" placeholder="Email" formControlName="numero" required>
+              <mat-error *ngIf="telefonosForm.value.tipoTelefono == 'E' && (telefonosForm.get('numero').errors && telefonosForm.get('numero').errors?.required)">
+                Campo requerido
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field *ngIf="telefonosForm.value.tipoTelefono != 'E'">
+              <telefono-input [form]="telefonosForm" name="telefono" placeholder="{{telefonosForm.value.tipoTelefono == 'C' ? 'Celular' : 'Teléfono'}}" #tel required></telefono-input>
+              <mat-hint>ej: 011 - 23972164</mat-hint>
+              <mat-error *ngIf="(telefonosForm.get('numero').errors && telefonosForm.get('numero').errors?.required) && 
+                                (telefonosForm.get('caracteristica').errors && telefonosForm.get('caracteristica').errors?.required)">
+                Campo requerido
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Observaciones" formControlName="observaciones">
+            </mat-form-field>
+            <app-button color="primary" [disabled]="telefonosForm.invalid || isPosting" (click)="saveAndRenderTel()"><mat-icon>add</mat-icon>Añadir</app-button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+      
+      <mat-card class="custom" *ngFor="let item of telefonosEmails; index as i;">
+        <mat-card-header>
+          <mat-card-title>{{'Información de contacto'}} {{i+1}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="grid responsive-grid">
+            <mat-form-field>
+              <input matInput type="text" placeholder="{{item.tipo == 'T' ? 'Teléfono' : item.tipo == 'C' ? 'Celular' : 'Email'}}" readonly value="{{item.tipo != 'E' ? (item.caracteristica + ' - ' + item.numero) : item.numero}}">
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput type="text" placeholder="Observaciones" [value]="item.observaciones" readonly>
+            </mat-form-field>
+            <p>-</p>
+            <button mat-icon-button color="primary" [disabled]="isPosting" (click)="delTel(item)" matTooltip="eliminar"><mat-icon color="accent">delete</mat-icon></button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+
+    </mat-expansion-panel>
+  </mat-accordion>
+
+</form>
+<div class="stepper-btns">
+  <button [disabled]="contactoForm.invalid || isPosting || (!isEditionFlag)" mat-button style="float: right; margin-top: 10px;" (click)="saveAndRenderContacto()">Guardar</button>
+</div>

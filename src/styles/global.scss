@@ -1,0 +1,459 @@
+@import 'theme';
+
+html {
+	font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+body {
+	margin: 0;
+}
+
+.grid {
+	display: grid;
+	grid-gap: 0.75rem;
+	overflow-x: hidden;
+	padding: 50px 25px 25px 25px;
+	@media #{$s} {
+		&:last-of-type {
+			padding: 50px 0;
+		}
+	}
+}
+
+.responsive-img {
+	max-width: 100%;
+	height: auto;
+}
+
+.mat-drawer-inner-container::-webkit-scrollbar {
+	height: 4px;
+	width: 4px;
+}
+	
+.mat-drawer-inner-container::-webkit-scrollbar-thumb {
+	background: lighten($color: $primary-color, $amount: 10);
+}
+
+.full-page {
+	min-height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+	margin: 0;
+}
+
+mat-icon.action {
+	cursor: pointer;
+}
+
+a {
+	cursor: pointer;
+	color: $accent-color;
+}
+
+mat-icon {
+	user-select: none;
+}
+
+mat-card.mat-card {
+	border-radius: 0;
+	&.tabs mat-card-content.mat-card-content {
+		padding: 0;
+	}
+}
+
+.mat-card-header .mat-card-title {
+	font-size: 18px;
+	font-weight: 400;
+}
+
+// Quita el width de 180px por defecto
+mat-form-field:not(.sel-width) div.mat-form-field-infix {
+    width: auto;
+}
+
+mat-table tr:nth-child(even) {
+	background-color: transparentize($color: $primary-color, $amount: 0.95);
+}
+
+.btn-eliminar {
+	color: $accent-color;
+}
+
+.btn-acciones {
+	margin-right: -4em;
+}
+
+.search-filter {
+	padding: 15px 24px;
+	display: flex !important;
+}
+
+.zero-result {
+	display: flex;
+	font-style: italic;
+	align-items: center;
+	justify-content: center;
+	border-left: 0;
+	border-right: 0;
+	border-bottom: 1px;
+	border-color: #e5ebed;
+	border-style: solid;
+	border-top: 0;
+	padding: 15px 15px;
+}
+
+/*.action-column {
+	float: right;
+}*/
+
+.table-style {
+	width: 100%
+}
+
+.message-success {
+	background: #28a745 !important;
+	color: white !important;
+}
+
+.message-error {
+	background: #dc3545 !important;
+	color: white !important;
+}
+
+.message-info {
+	background: #17a2b8 !important;
+	color: white !important;
+}
+
+@media screen and (max-width: 960px) {
+	.mat-table {
+		border: 0;
+		vertical-align: middle
+	}
+
+	.mat-table caption {
+		font-size: 1em;
+	}
+	
+	.mat-table .mat-header-cell {
+	
+		border: 10px solid;
+		clip: rect(0 0 0 0);
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		position: absolute;
+		width: 1px;
+	}
+
+	.mat-table .mat-row {
+		border-bottom: 5px solid #ddd;
+		display: block;
+	}
+	/*
+	.mat-table .mat-row:nth-child(even) {background: #CCC}
+	.mat-table .mat-row:nth-child(odd) {background: #FFF}
+	*/
+	.mat-table .mat-cell {
+		border-bottom: 1px solid #ddd;
+		display: block;
+		font-size: 1em;
+		text-align: right;
+		font-weight: bold;
+		height:30px;
+		margin-bottom: 4%;
+	}
+	.mat-table .mat-cell:before {
+	/*
+	* aria-label has no advantage, it won't be read inside a table
+	content: attr(aria-label);
+	*/
+	content: attr(data-label);
+		float: left;
+		text-transform: uppercase;
+		font-weight: normal;
+		
+		font-size: .85em;
+	}
+	.mat-table .mat-cell:last-child {
+		border-bottom: 0;
+	}
+	.mat-table .mat-cell:first-child {
+		margin-top: 4%;
+	}
+
+	mat-cell.mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-header-cell:first-of-type {
+		padding-left: 0;
+	}
+
+	mat-cell.mat-cell:last-of-type, mat-footer-cell:last-of-type, mat-header-cell:last-of-type {
+		padding-left: 0;
+	}
+}
+
+mat-card {
+	&.mat-card.ribbon {
+		padding-bottom: 1.5em;
+		mat-card-header.mat-card-header {
+			width: calc(100% + 32px);
+			margin-left: -16px;
+			margin-top: -16px;
+			background-color: $normal-color;
+			// padding-left: 16px;
+			padding-top: 10px;
+			color: white;
+			font-weight: 300;
+			margin-bottom: 1.5em;
+			div.mat-card-header-text {
+				height: 100%;
+			}
+		}
+	}
+	mat-card-content.mat-card-content {
+		padding: 0 16px;
+	}
+}
+
+button.mat-warning.mat-icon-button span.mat-button-wrapper {
+	color: $warning-color;
+}
+
+mat-pseudo-checkbox.mat-pseudo-checkbox:after {
+	box-sizing: content-box;
+}
+
+mat-chip.normal-bg.mat-chip {
+	background-color: $normal-color;
+	color: white;
+}
+
+mat-chip.accent-bg.mat-chip {
+	background-color: $accent-color;
+	color: white;
+}
+
+mat-chip.mat-chip {
+	user-select: none;
+}
+
+button.mat-raised-button {
+	span.mat-badge {
+		padding: 0 3px;
+		display: inline-block;
+		background-color: white;
+		margin-right: 10px;
+		span.mat-badge-content {
+			width: 21px;
+			height: 21px;
+		}
+	}
+	
+	&.mat-primary span.mat-badge-content {
+		transition: 0.2s all;
+		background-color: white;
+		color: $primary-color;
+	}
+	&.mat-primary:hover span.mat-badge-content {
+		transition: 0.1s all;
+		background-color: $primary-color;
+		color: white;
+	}
+
+	&.mat-accent span.mat-badge-content {
+		transition: 0.2s all;
+		background-color: white;
+		color: $accent-color;
+	}
+	&.mat-accent:hover span.mat-badge-content {
+		transition: 0.1s all;
+		background-color: white;
+		color: $grey-color;
+	}
+
+	&.mat-warning span.mat-badge-content {
+		transition: 0.2s all;
+		background-color: white;
+		color: $warning-color;
+	}
+	&.mat-warning:hover span.mat-badge-content {
+		transition: 0.1s all;
+		background-color: $warning-color;
+		color: white;
+	}
+}
+
+.mat-badge-medium.mat-badge-overlap.mat-badge-after .mat-badge-content {
+	right: -22px;
+}
+
+button[mat-icon-button] {
+	mat-icon.new-badge.mat-badge-medium.mat-badge-overlap.mat-badge-after {
+		.mat-badge-content {
+			color: transparent;
+			width: 10px;
+			right: -4px;
+			height: 10px;
+			top: 19px;
+		}
+	}
+	&.mat-primary mat-icon.new-badge.mat-badge-medium.mat-badge-overlap.mat-badge-after .mat-badge-content {
+		background-color: $primary-color;
+	}
+	&.mat-accent mat-icon.new-badge.mat-badge-medium.mat-badge-overlap.mat-badge-after .mat-badge-content {
+		background-color: $accent-color;
+	}
+	&.mat-warning mat-icon.new-badge.mat-badge-medium.mat-badge-overlap.mat-badge-after .mat-badge-content {
+		background-color: $warning-color;
+	}
+	&.mat-icon-button[disabled] {
+		color: #535353;
+		mat-icon.new-badge.mat-badge-medium.mat-badge-overlap.mat-badge-after .mat-badge-content {
+			background-color: rgba(0, 0, 0, 0.26);
+		}
+	}
+}
+
+mat-tab-group.pad mat-tab-body.mat-tab-body {
+	padding: 2em 16px;
+}
+
+mat-tab-body.mat-tab-body {
+	color: grey;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-underline {
+    background-color: rgba(0, 0, 0, 0.20);
+}
+
+button.mat-fab span {
+	color: white;
+}
+
+button.mat-mini-fab span mat-icon {
+	color: white;
+	font-size: 1.5em;
+}
+
+mat-accordion.mat-accordion {
+	.mat-expansion-panel:first-of-type {
+		border-top-right-radius: 0;
+		border-top-left-radius: 0;
+	}
+	.mat-expansion-panel:last-of-type {
+		border-bottom-right-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+	mat-expansion-panel.mat-expansion-panel {
+		border-radius: 0;
+	}
+}
+
+mat-card.mat-card.background {
+	background-position: center;
+    background-size: cover;
+}
+
+mat-card.contacto {
+	img {
+		width: 100%;
+	}
+	display: grid;
+	grid-template-columns: 20% 80%;
+	@media #{$m} {
+		grid-template-columns: 25% 75%;
+	}
+	@media #{$s} {
+		grid-template-columns: 40% 60%;
+	}
+}
+
+.no-padding {
+	padding: 0 !important;
+	overflow: hidden !important;
+}
+
+.confirm-dialog > .mat-dialog-container {
+	padding: 0.75em;
+	overflow: hidden;
+	border-radius: 0;
+	@media #{$s} {
+		padding: 0;
+	}
+}
+
+.fw-100 {
+	font-weight: 100;
+}
+
+.fw-300 {
+	font-weight: 300;
+}
+
+.fw-400 {
+	font-weight: 400;
+}
+
+.fw-500 {
+	font-weight: 500;
+}
+
+app-inicio {
+	canvas {
+		width: 100%;
+		height: auto;
+	}
+}
+
+.mat-paginator {
+	display: flex !important;
+	justify-content: center !important;
+}
+
+.responsive-modal {	
+
+	::-webkit-scrollbar {
+		height: 4px;
+		width: 4px;
+	}
+	
+	::-webkit-scrollbar-thumb {
+		background: lighten($color: $primary-color, $amount: 10);
+	}
+
+	mat-dialog-container.mat-dialog-container {
+		padding: 0;
+		border-radius: 0px;
+	}
+
+	@media #{$s} {
+		width: 100%;
+		height: 100%;
+		max-height: 100%;
+		max-width: 100% !important;
+	}
+}
+
+.grid.responsive-grid {
+	padding: 0;
+    grid-template-columns: repeat(4, 1fr);
+
+    @media #{$m} {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media #{$s} {
+        grid-template-columns: repeat(1, 1fr);
+	}
+
+	mat-form-field.mat-form-field.observaciones {
+		grid-column: 1 / 5;
+
+		@media #{$m} {
+			grid-column: 1/3;
+		}
+
+		@media #{$s} {
+			grid-column: 1;
+		}
+	}
+}

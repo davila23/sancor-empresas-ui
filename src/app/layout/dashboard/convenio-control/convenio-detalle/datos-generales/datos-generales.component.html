@@ -1,0 +1,110 @@
+<form [formGroup]="datosGeneralesForm">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Parte 1</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="grid responsive-grid" *apploading="controlsLoading.parteUno">
+        <mat-form-field>
+          <input matInput type="text" formControlName="nombre" placeholder="Nombre de convenio" [readonly]="true">
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" value="{{datosGeneralesForm.value.vigenciaDesde | date: 'dd/MM/yyyy'}}" placeholder="Vigencia Desde" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="contratoPorBonificacion" placeholder="Contrato por bonificación" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="compensaAportes" placeholder="Compensa aportes" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field formGroupName="modalidadLiquidacion">
+          <input matInput type="text" placeholder="Modalidad liquidación" formControlName="descripcion" [readonly]="true">
+        </mat-form-field>
+
+
+        <mat-form-field class="observaciones">
+          <textarea matInput placeholder="Observaciones" formControlName="observaciones" [readonly]="true"></textarea>
+        </mat-form-field>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Parte 2</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="grid responsive-grid">
+        <mat-form-field>
+          <input matInput type="number" formControlName="cantidadEmpleados" placeholder="Cant. de cápitas prometidas" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field formGroupName="ejecutivoConvenio">
+          <input matInput type="text" placeholder="Ejecutivo convenio" formControlName="nombre" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="aceptaMonotributistas" placeholder="Acepta monotributistas" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field formGroupName="holding">
+          <input matInput type="text" formControlName="descripcion" placeholder="Holding" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field formGroupName="relacionista">
+          <input matInput type="text" formControlName="nombre" placeholder="Ejecutivo de venta" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="mutual" placeholder="Mutual" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field formGroupName="tipoIngreso">
+          <input matInput type="text" formControlName="descripcion" placeholder="Tipo ingreso" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field *ngIf="showFirmaDes">
+          <input matInput type="text" formControlName="firmaDes" placeholder="Firma DES" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field formGroupName="tipoMovimientoAsociado">
+          <input matInput type="text" formControlName="descripcion" placeholder="Tipo movimiento asociado" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="adicionalACargo" placeholder="Adicional a cargo de:" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="interesComercial" placeholder="Interés comercial" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="copagosACargo" placeholder="Copagos a cargo" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="facturaElectronica" placeholder="Factura Electronica" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field formGroupName="enviosCredenciales">
+          <input matInput type="text" formControlName="descripcion" placeholder="Credenciales" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field *ngIf="datosGeneralesForm.value.enviosCredenciales.id == 3">
+          <input matInput type="text" formControlName="carEntidadDescripcion" placeholder="CAR / Entidad" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field *ngIf="datosGeneralesForm.value.enviosCredenciales.id == 3">
+          <input matInput type="text" formControlName="recepcionista" placeholder="Recepcionista" [readonly]="true">
+        </mat-form-field>
+
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</form>

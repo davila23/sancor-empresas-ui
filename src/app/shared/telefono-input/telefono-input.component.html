@@ -1,0 +1,5 @@
+<div [formGroup]="form" class="tel-input-container">
+  <input style="width:30%" (keydown)="onKeyDown($event, 1)" class="tel-input-element" formControlName="caracteristica" [readonly]="readonly">
+  <span class="tel-input-spacer">&ndash;</span>
+  <input style="width:70%" (keydown)="onKeyDown($event, 2)" class="tel-input-element" formControlName="numero" [readonly]="readonly">
+</div>

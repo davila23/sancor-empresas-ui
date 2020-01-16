@@ -1,0 +1,28 @@
+<div class="grid">
+	<form (keydown.enter)="$event.preventDefault()" #loginForm="ngForm" (ngSubmit)="login()">
+		<mat-card class="mat-elevation-z8">
+			<div class="logo">
+				<img src="assets/img/logo.png" class="responsive-img" alt="Logo Sancor">
+			</div>
+			<mat-card-content>
+				<div class="grid-login">
+					<mat-form-field hideRequiredMarker>
+						<input autofocus appFocusNext="1" name="user" matInput [(ngModel)]="user" placeholder="Nombre de usuario" required>
+						<mat-icon matPrefix>person</mat-icon>
+					</mat-form-field>
+					<mat-form-field hideRequiredMarker>
+						<mat-icon matPrefix>lock</mat-icon>
+						<input appFocusNext="2" matInput [(ngModel)]="password" name="password" placeholder="Contraseña" [type]="!showPass ? 'password' : 'text'" required>
+						<mat-icon class="action" matSuffix (click)="showPass = !showPass">{{!showPass ? 'visibility_off' : 'visibility'}}</mat-icon>
+					</mat-form-field>
+					<div>
+						<a>Olvidé mi contraseña</a>
+					</div>
+				</div>
+			</mat-card-content>
+			<mat-card-actions>
+				<button appFocusNext="3" [disabled]="!loginForm.form.valid" color="accent" (click)="login()" (keyup.enter)="login()" mat-raised-button>Iniciar sesión</button>
+			</mat-card-actions>
+		</mat-card>
+	</form>
+</div>

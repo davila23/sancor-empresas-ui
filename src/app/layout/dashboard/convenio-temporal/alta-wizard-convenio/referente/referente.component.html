@@ -1,0 +1,105 @@
+ <form [formGroup]="referenteForm">
+
+  <div class="grid">
+    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <mat-card class="custom" *ngIf="edit">
+    <mat-card-header>
+      <mat-card-title>
+        Añadir referente
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="grid responsive-grid">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Nombre y apellido" formControlName="nombreApellido" required>
+          <mat-error *ngIf="referenteForm.get('nombreApellido').errors && referenteForm.get('nombreApellido').errors?.required">
+            Campo requerido
+          </mat-error>
+        </mat-form-field>
+
+        <tr-fecha placeholder="Fecha nacimiento" [form]="referenteForm" nombre="fechaNacimiento"></tr-fecha>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="DNI" formControlName="numeroDocumento" numMask="8">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Hobbie" formControlName="hobbie">
+        </mat-form-field>
+        <mat-form-field>
+          <telefono-input [form]="telefonoForm" name="telefono" placeholder="Teléfono" #tel required></telefono-input>
+          <mat-hint>ej: 5411 - 23972164</mat-hint>
+          <mat-error *ngIf="(telefonoForm.get('caracteristica').errors && telefonoForm.get('caracteristica').errors?.required)
+          || (telefonoForm.get('numero').errors && telefonoForm.get('numero').errors?.required)">
+            Campo requerido
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="email" placeholder="Email" formControlName="email" required>
+          <mat-error *ngIf="referenteForm.get('email').errors && referenteForm.get('email').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="referenteForm.get('email').errors && referenteForm.get('email').errors?.email">
+            Formato de email inválido
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button color="accent" mat-raised-button (click)="referenteSaveAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting">AÑADIR</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <div class="no-data-container" *ngIf="!referenteDataSource.data?.length">
+    No hay referentes cargados...
+  </div>
+
+  <mat-card class="custom" [ngClass]="{'not-show':!referenteDataSource.data?.length}">
+    <mat-card-header>
+      <mat-card-title>
+        Referentes
+      </mat-card-title>
+    </mat-card-header>
+    <mat-table [dataSource]="referenteDataSource">
+      <ng-container matColumnDef="nombreApellido">
+        <mat-header-cell *matHeaderCellDef> Nombre y Apellido </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="nombreYApellido"> {{row.nombreApellido}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaNacimiento">
+        <mat-header-cell *matHeaderCellDef> Fecha nacimiento </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="fechaNacimiento"> {{row.fechaNacimiento}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="numeroDocumento">
+        <mat-header-cell *matHeaderCellDef> DNI </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="numeroDocumento"> {{row.numeroDocumento}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="numeroTelefono">
+        <mat-header-cell *matHeaderCellDef> Teléfono </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="numeroTelefono"> {{row.numeroTelefono}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="email"> {{row.email}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="eliminar">
+          <button mat-icon-button *ngIf="delete" color="primary" matTooltip="eliminar" (click)="referenteDelete(row)"><mat-icon color="accent">delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="referente_displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: referente_displayedColumns;" class="table-row"></mat-row>
+    </mat-table>
+    <mat-card-footer>
+      <mat-paginator #paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    </mat-card-footer>
+  </mat-card>
+
+</form>

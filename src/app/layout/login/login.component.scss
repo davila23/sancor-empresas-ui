@@ -1,0 +1,98 @@
+@import 'variables';
+
+app-login {
+	
+	.grid {
+		background-color: darken($color: $primary-color, $amount: 15);
+		background-image: url('assets/img/bg-login.jpg');
+		background-size: cover;
+		background-position: center;
+		min-height: 100vh;
+		grid-template-columns: 1fr auto 1fr;
+		grid-template-rows: 1fr auto 1fr;
+		padding: 0;
+
+		@media #{$s} {
+			grid-template-columns: auto;
+			grid-template-rows: auto;
+			&:first-of-type {
+				padding: 0;
+			}
+		}
+	}
+
+	.grid form {
+		display: grid;
+		@media (min-width: 600px) {
+			align-items: center;
+			justify-items: center;
+			grid-row-start: 2;
+			grid-row-end: 3;
+			grid-column-start: 2;
+			grid-column-end: 3;
+		}
+	}
+
+	.grid-login {
+		display: grid;
+		grid-template-rows: 1fr;
+		grid-template-columns: 1fr auto 1fr;
+
+		justify-items: center;
+		div, mat-form-field {
+			grid-column: 2;
+		}
+		div {
+			justify-self: left;
+		}
+	}
+
+	mat-icon {
+		color: rgba(0,0,0,.5);
+	}
+
+	mat-card.mat-card {
+		padding: 0;
+		padding-bottom: 4em;
+		min-width: 45vw;
+		@media #{$m} {
+			min-width: 60vw;
+		}
+	}
+
+	mat-icon[matPrefix] {
+		padding-right: 0.5em;
+	}
+
+	mat-icon[matSuffix] {
+		margin-left: -1em;
+	}
+
+	.mat-form-field-appearance-legacy div.mat-form-field-infix {
+		padding-right: 2em;
+	}
+
+	mat-card-content {
+		margin-top: 4em;
+	}
+
+	mat-card-actions.mat-card-actions {
+		display: grid;
+		justify-items: center;
+	}
+
+	div.logo {
+		display: grid;
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+		background-color: $primary-color;
+		img {
+			justify-self: center;
+			height: 64px;
+		}
+	}
+
+	a, label, img {
+		user-select: none;
+	}
+}

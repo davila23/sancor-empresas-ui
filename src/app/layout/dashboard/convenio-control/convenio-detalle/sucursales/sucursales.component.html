@@ -1,0 +1,43 @@
+<div class="no-data-container" *ngIf="!sucursalDataSource.data?.length">
+  No hay sucursales cargados...
+</div>
+<div [ngClass]="{'not-show':!sucursalDataSource.data?.length}">
+  <mat-table [dataSource]="sucursalDataSource"> 
+    <ng-container matColumnDef="descripcion">
+      <mat-header-cell *matHeaderCellDef> Descripcion </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Descripcion"> {{row.descripcion}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="domicilio">
+      <mat-header-cell *matHeaderCellDef> Domicilio </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Domicilio"> {{row.domicilio}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="categoria">
+      <mat-header-cell *matHeaderCellDef> Categoria </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Categoria"> {{row.categoria}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="telefono">
+        <mat-header-cell *matHeaderCellDef> Telefono </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Telefono"> {{row.telefono}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="email">
+          <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="Email"> {{row.email}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="localidad">
+            <mat-header-cell *matHeaderCellDef> Localidad </mat-header-cell>
+            <mat-cell *matCellDef="let row" data-label="Localidad"> {{row.localidad.detalle}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="sucursal_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: sucursal_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+</div>
+<mat-paginator class="paginator--centered"
+      *ngIf="sucursalDataSource.data?.length > 0 && sucursalDataSource.filteredData?.length > 0" 
+      #paginator 
+      [pageSize]="10" 
+      [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+</mat-paginator>
+

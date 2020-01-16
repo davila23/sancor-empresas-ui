@@ -1,0 +1,24 @@
+<div class="container" [ngSwitch]="data.tipo" *ngIf="inicializado">
+    <mat-form-field *ngSwitchCase="'input'" class="full-width">
+        <input #input (keydown.enter)="cerrar()" matInput [(ngModel)]="modelo.value" (focus)="onFocus($event)">
+    </mat-form-field>
+
+    <mat-form-field *ngSwitchCase="'textarea'" class="full-width">
+        <textarea cdkTextareaAutosize #input matInput (keydown.enter)="cerrar()" [(ngModel)]="modelo.value" (focus)="onFocus($event)"></textarea>
+    </mat-form-field>
+
+    <tr-autocomplete
+        *ngSwitchCase="'autocomplete'"
+        clase="full-width"
+        [(modelo)]="modelo"
+        (establecido)="cerrar($event)"
+    ></tr-autocomplete>
+
+    <tr-fecha
+        *ngSwitchCase="'fecha'"
+        clase="full-width"
+        [(modelo)]="modelo.value"
+        nombre="formattedValue"
+        (cambiaFecha)="cerrar($event)"
+    ></tr-fecha>
+</div>

@@ -1,0 +1,26 @@
+@import 'variables';
+
+.mat-button-toggle-label-content {
+    padding: 0 !important;
+}
+
+.mat-button-toggle > label {
+    margin-bottom: 0 !important;
+    width: 100%;
+    cursor: pointer;
+}
+
+.mat-button-toggle-group, .mat-button-toggle-standalone {
+    overflow: initial !important;
+}
+
+.mat-button-toggle {
+    border-left: 1px solid #e8e8e8;
+}
+
+.mat-button-toggle.mat-button-toggle-checked {
+    border-left: 1px solid lighten($primary-color, 25%);
+}
+.toggleancho {
+    width: 70px;
+}

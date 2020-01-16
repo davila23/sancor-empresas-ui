@@ -1,0 +1,72 @@
+<form [formGroup]="planesConvenidosForm">
+  <div class="grid">
+    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <mat-card class="custom">
+    <mat-card-header>
+      <mat-card-title>
+        Añadir Planes Convenidos Detalle
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="grid">
+        <mat-form-field>
+          <mat-select placeholder="Productos" formControlName="producto">
+            <mat-option 
+              (onSelectionChange)="onEnter($event)"
+              *ngFor="let producto of productosList;" [value]="producto">
+              {{producto.descripcion}}
+            </mat-option>
+          </mat-select>   
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Planes" 
+                      formControlName="plan">
+            <mat-option *ngFor="let plan of planesList;" [value]="plan">
+               {{plan.descripcionComercial}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <app-button color="accent" mat-fab color="accent" [disabled]="isPosting" (click)="planesCabeceraSaveAndRender()"><mat-icon>add</mat-icon>Añadir</app-button>
+    </mat-card-actions>
+  </mat-card>
+  <div class="no-data-container" *ngIf="!cabeceraDataSource.data?.length">
+    No hay cabeceras cargados...
+  </div>
+  <mat-card class="custom" [ngClass]="{'not-show':!cabeceraDataSource.data?.length}">
+    <mat-card-header>
+      <mat-card-title>
+        Cabeceras
+      </mat-card-title>
+    </mat-card-header>
+    <mat-table [dataSource]="cabeceraDataSource">
+      
+      <ng-container matColumnDef="planDescripcion">
+        <mat-header-cell *matHeaderCellDef> Plan </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Plan"> {{row.plan.codigo}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="producto">
+        <mat-header-cell *matHeaderCellDef> Producto </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Producto"> {{row.producto}} </mat-cell>
+      </ng-container>
+     
+
+      <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="eliminar">
+          <button mat-icon-button color="accent" matTooltip="eliminar" (click)="planesCabeceraDelete(row)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="cabeceraDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: cabeceraDisplayedColumns;" class="table-row"></mat-row>
+    </mat-table>
+    <mat-paginator #entidad_pag [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </mat-card>
+</form>

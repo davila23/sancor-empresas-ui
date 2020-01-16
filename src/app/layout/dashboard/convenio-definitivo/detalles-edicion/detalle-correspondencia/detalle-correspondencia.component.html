@@ -1,0 +1,77 @@
+<form [formGroup]="correspondenciaForm">
+  <div class="no-data-container" *ngIf="!correspondenciaDataSource.data?.length">
+    No hay correspondencia cargados...
+  </div>
+  <mat-card class="custom" [ngClass]="{'not-show':!correspondenciaDataSource.data?.length}">
+    <mat-card-header>
+      <mat-card-title>
+        Correspondencia
+      </mat-card-title>
+    </mat-card-header>
+    <mat-table [dataSource]="correspondenciaDataSource"> 
+      <ng-container matColumnDef="destino">
+        <mat-header-cell *matHeaderCellDef> Destino </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Destino"> 
+          <ng-container *ngIf="row.destino == 'E'">Entidad</ng-container>
+          <ng-container *ngIf="row.destino == 'A'">Domicilio</ng-container>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="formas_pago">
+        <mat-header-cell *matHeaderCellDef> Cuit </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Cuit"> {{row.formaPago.descripcion}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="tipo_envio">
+        <mat-header-cell *matHeaderCellDef> Tipo Envio </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Tipo envio"> {{row.tipoEnvio.descripcion}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef> {{(isEditionFlag) ? 'Acción' : ''}} </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="eliminar">
+          <button *ngIf="isEditionFlag" mat-icon-button color="primary" (click)="correspondenciaDelete(row)"><mat-icon>remove</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="correspondenciaDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: correspondenciaDisplayedColumns;" class="table-row"></mat-row>
+    </mat-table>
+    <mat-paginator *ngIf="correspondenciaDataSource.data?.length > 0 && correspondenciaDataSource.filteredData?.length > 0"
+            #paginator
+            [pageSize]="10" 
+            [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </mat-card>
+
+  <mat-card class="custom" *ngIf="isEditionFlag">
+    <mat-card-header>
+      <mat-card-title>
+        Añadir Correspondencia
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="grid responsive-grid">
+        <mat-form-field>
+          <mat-select placeholder="Destino" formControlName="destino" (selectionChange)="changeDestino($event)">
+            <mat-option *ngFor="let destino of destinoList;" [value]="destino.id">
+              {{destino.descripcion}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Formas de Pago" formControlName="formaPago" (selectionChange)="changeFormasPago($event)">
+            <mat-option *ngFor="let forma of formasPagoList;" [value]="forma">
+              {{forma.descripcion}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-select placeholder="Tipos de Envio" formControlName="tipoEnvio" (selectionChange)="changeTiposEnvios($event)">
+              <mat-option *ngFor="let tipo of tipoEnviosList;" [value]="tipo">
+                {{tipo.descripcion}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-fab color="accent" (click)="correspondenciaSaveAndRender()" [disabled]="correspondenciaForm.invalid"><mat-icon>add</mat-icon></button>
+    </mat-card-actions>
+  </mat-card>
+</form>

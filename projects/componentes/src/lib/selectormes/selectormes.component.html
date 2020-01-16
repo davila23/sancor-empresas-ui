@@ -1,0 +1,7 @@
+<div class="contenedor center-align">
+	<button class="btn-periodo" (click)="calcularPeriodos($event, 'antes')" mat-icon-button><i class="material-icons">keyboard_arrow_left</i></button>
+	<mat-button-toggle-group appearance="legacy" multiple="true">
+		<mat-button-toggle class="center-align" [ngClass]="clase" *ngFor="let periodo of periodos" (click)="onSeleccionarMes($event, periodo)" [checked]="periodo.seleccionado" [value]="periodo">{{ periodo.etiqueta }}</mat-button-toggle>
+	</mat-button-toggle-group>
+	<button class="btn-periodo" (click)="calcularPeriodos($event, 'despues')" [disabled]="fecha.isSame(hoy, 'month')" mat-icon-button><i class="material-icons">keyboard_arrow_right</i></button>
+</div>

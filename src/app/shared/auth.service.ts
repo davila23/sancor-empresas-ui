@@ -1,0 +1,9 @@
+import { Injectable } from '@angular/core';
+
+
+@Injectable()
+export class AuthService {
+  getAuthorizationToken() {
+    return 'eyJhbGciOiJIUzI1NiJ9.eyJ1c3VfZGVzY3JpcGNpb24iOiJTVVBFUlZJU09SIFNJU1RFTUFTIiwidXN1X2lkIjoxNzQ4ODEsInN1YiI6IlNVUEVSVklTT1IgU0lTVEVNQVMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIiwidXN1X3RpcG8iOjUsInVzdV9jb2RpZ28iOiJTVVBFUlZJU09SIiwidXN1X21haWwiOiIiLCJpc3MiOiJzYW5jb3JzYWx1ZC5jb20uYXIiLCJ1c3Vfcm9sX2lkIjoxLCJleHAiOjE1NTA0MzkxNzAsInVzdV9yb2xfZGVzY3JpcGNpb24iOiJTdXBlcnVzdWFyaW8gIn0.ZccF5bXve7K9xbNl9rQgyteGFAYpGiQT0wZHvPd056U';
+  }
+}

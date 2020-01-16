@@ -1,0 +1,16 @@
+@import 'variables';
+
+.breadcrumbs span:not(.dash) {
+    color: $normal-color;
+    font-size: 1.2em;
+    font-weight: 300;
+}
+
+.breadcrumbs span.actual {
+    color: $accent-color;
+    font-weight: 500;
+}
+
+span.dash {
+    padding: 0 0.5em;
+}

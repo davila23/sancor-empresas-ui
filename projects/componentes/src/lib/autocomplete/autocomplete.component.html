@@ -1,0 +1,46 @@
+<mat-form-field [ngClass]="clase" [formGroup]="form">
+	<mat-chip-list *ngIf="chips" #chipList>
+		<mat-chip *ngFor="let chip of listaChips"
+		[selectable]="selectable"
+		[removable]="removable"
+		(removed)="sacaChip(chip)">
+		{{chip.label}}
+			<mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+		</mat-chip>
+		<input *ngIf="form === formDefault" [autofocus]="autoFocus" (focus)="onFocus($event)" #input [disabled]="disabled"
+			[ngModelOptions]="{standalone: true}" [required]="required" [tabindex]="tab" matInput [placeholder]="placeholder"
+			[matAutocomplete]="autocomplete" [name]="nombre" [(ngModel)]="modelo[nombre]" (ngModelChange)="buscar($event)"
+			(blur)="onBlur($event)" [readonly]="readonly" 
+			[matChipInputFor]="chipList"
+			[matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+			[matChipInputAddOnBlur]="addOnBlur"
+			(matChipInputTokenEnd)="agregaChip($event)">
+		<input *ngIf="form !== formDefault" [autofocus]="autoFocus" (focus)="onFocus($event)" #input [required]="required"
+			[tabindex]="tab" matInput [placeholder]="placeholder" [matAutocomplete]="autocomplete" [name]="nombre"
+			(blur)="onBlur($event)" [readonly]="readonly" formControlName="{{ name }}"
+			[matChipInputFor]="chipList"
+			[matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+			[matChipInputAddOnBlur]="addOnBlur"
+			(matChipInputTokenEnd)="agregaChip($event)">
+	</mat-chip-list>
+	<input *ngIf="!chips && form === formDefault" [autofocus]="autoFocus" (focus)="onFocus($event)" #input [disabled]="disabled" [ngModelOptions]="{standalone: true}" [required]="required" [tabindex]="tab" matInput [placeholder]="placeholder" [matAutocomplete]="autocomplete" [name]="nombre" [(ngModel)]="modelo[nombre]" (ngModelChange)="buscar($event)" (blur)="onBlur($event)" [readonly]="readonly">
+	<input *ngIf="!chips && form !== formDefault" [autofocus]="autoFocus" (focus)="onFocus($event)" #input [required]="required" [tabindex]="tab" matInput [placeholder]="placeholder" [matAutocomplete]="autocomplete" [name]="nombre" (blur)="onBlur($event)" [readonly]="readonly" formControlName="{{ name }}" [title]="form.get(name).value">
+	<mat-hint *ngIf="hint.length > 0" align="start">{{ hint }}</mat-hint>
+	<button type="button" #limpiarBtn *ngIf="readonly" mat-button (click)="limpiar()" matSuffix mat-icon-button>
+		<mat-icon>close</mat-icon>
+	</button>
+	<button type="button" *ngIf="boton.length > 0" tabindex="-1" mat-button (click)="onClickBoton($event)" matSuffix mat-icon-button>
+		<mat-icon>{{boton}}</mat-icon>
+	</button>
+	<mat-autocomplete autoActiveFirstOption="true" [class]="classList" #autocomplete="matAutocomplete" (optionSelected)="establecer($event)">
+		<mat-option *ngFor="let resultado of resultadosFiltrados" [value]="resultado" [ngClass]="destacable(resultado)" [title]="resultado[nombreResultado]">
+			<ng-container *ngIf="optHtml">
+				<div [innerHtml]="resultado[nombreResultado]"></div>
+			</ng-container>
+			<ng-container *ngIf="!optHtml">
+				{{ resultado[nombreResultado] }}
+			</ng-container>
+		</mat-option>
+	</mat-autocomplete>
+	<mat-icon *ngIf="request != null" class="spin-on-load" matSuffix>search</mat-icon>
+</mat-form-field>

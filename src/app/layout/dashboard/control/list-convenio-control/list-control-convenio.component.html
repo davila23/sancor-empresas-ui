@@ -1,0 +1,66 @@
+<div class="grid">
+    
+
+    <mat-card class="ribbon" [ngClass]="{'not-show':!convenioControlDataSource.data?.length}">
+        <mat-card-header>
+          <mat-card-title>
+            Control de Convenios
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content >
+        <mat-table [dataSource]="convenioControlDataSource">
+
+            <ng-container matColumnDef="nombreConvenio">
+                <mat-header-cell *matHeaderCellDef> Nombre Convenio </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="Convenio"> {{row.nombreConvenio}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="nombreEmpresa">
+                 <mat-header-cell *matHeaderCellDef> Nombre Empresa </mat-header-cell>
+                 <mat-cell *matCellDef="let row" data-label="Empresa"> {{row.nombreEmpresa}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="usuario">
+                <mat-header-cell *matHeaderCellDef> Usuario </mat-header-cell>
+                <mat-cell *matCellDef="let row" data-label="Empresa"> {{row.usuario}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="fecha">
+                    <mat-header-cell *matHeaderCellDef> Fecha </mat-header-cell>
+                    <mat-cell *matCellDef="let row" data-label="Empresa"> {{row.fecha}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="estado">
+                    <mat-header-cell *matHeaderCellDef> Estado </mat-header-cell>
+                    <mat-cell *matCellDef="let row" data-label="Empresa"> {{row.estado}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+                    <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+                    <mat-cell *matCellDef="let element" data-label="acciones">
+                      <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #menu="matMenu">
+                        <button mat-menu-item routerLink="/convenio/estado/{{element.id}}/ver">            
+                          <mat-icon>visibility</mat-icon>
+                          <span>Ver</span>
+                        </button>
+                      </mat-menu>
+                    </mat-cell>
+            </ng-container>
+
+
+
+
+            <mat-header-row *matHeaderRowDef="listaControl_displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: listaControl_displayedColumns;" class="table-row"></mat-row>
+        </mat-table> 
+        <mat-paginator class="paginator--centered"
+           *ngIf="convenioControlDataSource.data?.length > 0 && convenioControlDataSource.filteredData?.length > 0" 
+           #paginator 
+           [pageSize]="10" 
+           [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</div>

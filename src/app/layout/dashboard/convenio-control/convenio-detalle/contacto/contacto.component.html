@@ -1,0 +1,97 @@
+<form [formGroup]="contactoForm">
+
+  <div class="grid" *ngIf="contactoForm.value.codigoDomicilio == null || !controlsLoading.contacto?.isLoading">
+    <app-alert color="accent" [fill]="false">
+      No hay datos precargados de contacto, por favor enviar a corrección.
+    </app-alert>
+  </div>
+
+  <mat-accordion *ngIf="!noDataAvailable">
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Domicilio</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="grid responsive-grid" *apploading="controlsLoading.contacto">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Calle" formControlName="calle" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="number" placeholder="Número" formControlName="numero" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="number" placeholder="Piso" formControlName="piso" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Departamento" formControlName="departamento" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Barrio" formControlName="barrio" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Código postal" [formControl]="codPostalControl" [readonly]="true">
+        </mat-form-field>
+        
+        <!-- <mat-form-field>
+          <input matInput type="text" placeholder="Código postal argentino" formControlName="cpArgentino">
+        </mat-form-field> -->
+<!--         
+        <mat-form-field>
+          <input matInput type="text" placeholder="Orientación" formControlName="orientacion" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (1)" formControlName="otrosDatos1" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (2)" formControlName="otrosDatos2" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (3)" formControlName="otrosDatos3" [disabled]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" placeholder="Otros datos (4)" formControlName="otrosDatos4" [disabled]="true">
+        </mat-form-field> -->
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel *ngIf="telefonosEmails.length">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Teléfonos / Emails</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-table [dataSource]="telefonosEmailsDataSource">
+        <ng-container matColumnDef="tipo">
+          <mat-header-cell *matHeaderCellDef> Tipo de contacto </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="tipoDeContacto"> {{row.tipo}} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="valor">
+          <mat-header-cell *matHeaderCellDef> Contacto </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="contacto"> {{row.numero}} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="observaciones">
+          <mat-header-cell *matHeaderCellDef> Observaciones </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="observaciones"> {{row.observaciones}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="telefonosEmails_displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: telefonosEmails_displayedColumns;" class="table-row"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+
+    </mat-expansion-panel>
+
+  </mat-accordion>
+
+</form>
+  

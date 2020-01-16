@@ -1,0 +1,71 @@
+@import 'theme';
+.grid.responsive-grid {
+    padding: 20px;
+    grid-template-columns: repeat(3, 1fr);
+
+    @media #{$m} {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    @media #{$s} {
+        grid-template-columns: repeat(1, 1fr);
+	}
+}
+
+.download-card {
+  padding: 20px;
+  min-width: 250px;
+  width: 80%;
+  font-family: 'Roboto';
+  font-weight: 300;
+
+  -webkit-box-shadow: 0 8px 6px -3px darkgray;
+    -moz-box-shadow: 0 8px 6px -3px darkgray;
+        box-shadow: 0 8px 6px -3px darkgray;
+
+  user-select: none;
+
+  transition: .3s;
+}
+  
+.download-card:hover {
+  -webkit-box-shadow: 0 10px 6px 0px darkgray;
+        -moz-box-shadow: 0 10px 6px 0px darkgray;
+            box-shadow: 0 10px 6px 0px darkgray;
+
+  transform: scale(1.050);
+
+  transition: 225ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.wrapper, label, button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 10px;
+
+  button {
+    width: 100%;
+    padding: 0px 5px;
+    margin: 0px 10px;
+    font-size: .8em;
+  
+    transition: .1s;
+  }
+
+  button:hover {
+    transform: scale(1.1);
+   
+    transition: .3;
+   }
+} 
+
+.progress-bar-wrapper {
+  margin:0;
+  padding: 0;
+  font-size: .8em;
+
+  label, mat-progress-bar {
+    margin: 5px;
+  }
+}

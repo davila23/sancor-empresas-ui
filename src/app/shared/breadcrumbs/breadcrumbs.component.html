@@ -1,0 +1,6 @@
+<div class="breadcrumbs">
+	<span *ngFor="let page of pages; let i = index" [ngClass]="{'actual': pages.length > 0 && i === (pages.length - 1) }">
+		{{ page | uppercase }}
+		<span class="dash" *ngIf="pages.length > 0 && i != (pages.length - 1)">&mdash;</span>
+	</span>
+</div>

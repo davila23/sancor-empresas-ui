@@ -1,0 +1,58 @@
+@import 'variables';
+
+.alert {
+    font-size: 0.8em;
+    &.primary {
+        border: 1px solid $primary-color !important;
+        color: $primary-color !important;
+        background-color: #f2f2f2;
+        &.filled {
+            color: white !important;
+            background-color: $primary-color !important;
+            border: 0;
+        }
+    }
+    &.accent {
+        border: 1px solid $accent-color !important;
+        color: $accent-color !important;
+        background-color: #f2f2f2;
+        &.filled {
+            color: white !important;
+            background-color: $accent-color !important;
+            border: 0;
+        }
+    }
+    &.warning {
+        border: 1px solid $warning-color !important;
+        color: $warning-color !important;
+        background-color: #f2f2f2;
+        &.filled {
+            color: white !important;
+            background-color: $warning-color !important;
+            border: 0;
+        }
+    }
+    &.normal {
+        border: 1px solid $normal-color !important;
+        color: $normal-color;
+        background-color: #f2f2f2;
+        &.filled {
+            color: white !important;
+            background-color: $normal-color !important; 
+            border: 0;
+        }
+    }
+
+    p {
+        display: inline-block;
+        padding-left: 4em;
+    }
+
+    i {
+        font-size: 1.5em;
+        position: absolute;
+        width: 30px;
+        padding-top: 10px;
+        padding-left: 15px;
+    }
+}

@@ -1,0 +1,62 @@
+<mat-toolbar color="primary" class="mat-elevation-z5">
+	<mat-toolbar-row>
+		<button class="menu-toggle" mat-button tabindex="-1" (click)="toggleSidenav()">
+			<mat-icon>menu</mat-icon>
+			<span *ngIf="!sViewport">{{ pagina | titlecase }}</span>
+		</button>
+		
+		
+		<span style="flex: 1 1 auto;"></span>
+
+		<p *ngIf="sViewport">{{ pagina | titlecase }}</p>
+
+		<div class="search-container">
+			<mat-icon>search</mat-icon>
+			<input class="search-bar" placeholder="Buscar">
+		</div>
+		<button class="filter-options" mat-icon-button [matMenuTriggerFor]="menuOpciones">
+			<mat-icon>more_vert</mat-icon>
+		</button>
+
+		<span style="flex: 1 1 auto;"></span>
+
+		<button class="nav-end-btn" mat-button tabindex="-1" [matMenuTriggerFor]="menuUsuario">
+			<span *ngIf="!sViewport">{{ user.name }}</span>
+			<i class="material-icons">account_circle</i>
+		</button>
+
+	</mat-toolbar-row>
+</mat-toolbar>
+
+<mat-menu #menuUsuario="matMenu" overlapTrigger="false" xPosition="before">
+	<button *ngIf="sViewport" disabled mat-menu-item>{{ user.name }}</button>
+	<button (click)="logout()" mat-menu-item>
+		<mat-icon>exit_to_app</mat-icon>
+		Cerrar sesión
+	</button>
+</mat-menu>
+
+<mat-menu #menuOpciones="matMenu" yPosition="below" xPosition="before">
+	<button mat-menu-item>
+		<mat-icon>assignment</mat-icon>
+		<span>Filtro 1</span>
+	</button>
+	<button mat-menu-item>
+		<mat-icon>assignment_turned_in</mat-icon>
+		<span>Filtro 2</span>
+	</button>
+	<mat-divider></mat-divider>
+	<button mat-menu-item>
+		<mat-icon>assignment_return</mat-icon>
+		<span>Filtro 3</span>
+	</button>
+	<button mat-menu-item>
+		<mat-icon>assignment_late</mat-icon>
+		<span>Filtro 4</span>
+	</button>
+	<mat-divider></mat-divider>
+	<button mat-menu-item>
+		<mat-icon>assignment_ind</mat-icon>
+		<span>Filtro 5</span>
+	</button>
+</mat-menu>

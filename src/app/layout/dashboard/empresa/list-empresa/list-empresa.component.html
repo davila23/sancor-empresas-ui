@@ -1,0 +1,42 @@
+
+<div class="mat-elevation-z8">
+<table mat-table [dataSource]="dataSource" >
+
+    <!-- Cuit Column -->
+    <ng-container matColumnDef="cuit">
+      <th mat-header-cell *matHeaderCellDef> Cuit </th>
+      <td mat-cell *matCellDef="let element"> {{element.cuit}} </td>
+    </ng-container>
+  
+    <!-- Razon Social Column -->
+    <ng-container matColumnDef="razonSocial">
+      <th mat-header-cell *matHeaderCellDef> Razon Social </th>
+      <td mat-cell *matCellDef="let element"> {{element.razonSocial}} </td>
+    </ng-container>
+      <!-- Nombre de fantasia -->
+     <ng-container matColumnDef="nombreFantasia">
+          <th mat-header-cell *matHeaderCellDef> Nombre de fantasia </th>
+          <td mat-cell *matCellDef="let element"> {{element.nombreFantasia}} </td>
+     </ng-container> 
+      <!-- NumeroEmpresa -->
+
+      <ng-container matColumnDef="numeroEmpresa">
+          <th mat-header-cell *matHeaderCellDef> Numero de empresa </th>
+          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+     </ng-container>
+     
+     <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <button mat-icon-button><mat-icon>launch</mat-icon></button>
+          <button mat-icon-button color="warn"><mat-icon>delete_outline</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  
+</div>

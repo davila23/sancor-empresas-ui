@@ -1,0 +1,154 @@
+@import 'variables';
+
+mat-sidenav-content.mat-sidenav-content {
+	transition: all 225ms cubic-bezier(0.4, 0.0, 0.2, 1);
+	margin-left: 0;
+	&.opened {
+		// width: calc( 100vw - 300px );
+		overflow-x: hidden;
+	}
+}
+
+mat-list {
+	margin-left: -5px;
+	@media #{$s} {
+		margin-left: -4px;
+	}
+}
+
+mat-sidenav-container.mat-sidenav-container {
+	margin-top: 64px;
+	min-height: calc( 100vh - 64px );
+}
+
+.mat-sidenav {
+	width: 300px;
+}
+
+.mat-sidenav-content {
+	margin-bottom: 10px;
+}
+
+a.mat-list-item.subnav span {
+	padding-left: 0.75em;
+	font-size: 0.8em;
+}
+
+div.pages-links a.mat-list-item.subnav span.texto-nav {
+	padding-left: 20px;
+}
+
+a.subnav.expanded {
+	background-color: transparentize($color: $accent-color, $amount: 0.75);
+}
+
+.pages-links {
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	padding-bottom: 0.5em;
+}
+
+a.mat-list-item.subnav span.texto-nav {
+	z-index: 10000;
+	padding-left: 0;
+}
+
+.mat-nav-list * {
+	user-select: none;
+}
+
+.nav-dropdown-icon {
+	transition: 0.3s all;
+	position: absolute;
+    right: 0.5em;
+}
+
+.nav-dropdown-icon.expandido {
+	transform: rotate(-180deg);
+}
+
+.section.expanded {
+	background-color: transparentize($color: $accent-color, $amount: 0.5);
+}
+
+.mat-nav-list .mat-list-item.section.expanded:hover {
+	background-color: transparentize($color: $accent-color, $amount: 0.6);
+}
+
+a.mat-list-item.subnav.active {
+	@include mat-elevation-transition;
+	@include mat-elevation(5);
+	background-color: $accent-color;
+	transition: background-color 0.3s ease-in-out;
+	&:hover {
+		background-color: transparentize($color: $accent-color, $amount: 0.15);
+	}
+}
+
+a.mat-list-item.subnav.active {
+	color: white;
+}
+
+.subnav.active div {
+	padding-left: 9px;
+}
+
+.mat-sidenav {
+	background-color: #eeeeee;
+	// background: url('assets/imgs/fondo-web.jpg') repeat-y;
+}
+
+/*a.mat-list-item:not(.subnav) {
+	font-weight: bold;
+	color: black;
+}*/
+
+.mat-list .mat-list-item, .mat-nav-list .mat-list-item, .mat-selection-list .mat-list-item {
+	color:	rgba(0,0,0,0.7);
+}
+
+.mat-list-option:hover, .mat-nav-list .mat-list-item:hover {
+	background: transparentize($color: $accent-color, $amount: 0.9);
+	&.expanded {
+		background: transparentize($color: $accent-color, $amount: 0.6);
+	}
+}
+
+.mat-list-option, .mat-list-option, .mat-nav-list .mat-list-item, .mat-nav-list .mat-list-item {
+	transition: background 0.2s linear;
+}
+
+a.subnav div.mat-ripple-element {
+	background-color: lighten($color: $accent-color, $amount: 0.6);
+}
+
+.section-title {
+	padding-left: 1em;
+    color: $accent-color;
+    font-weight: 400;
+    font-size: 1.2em;
+}
+
+a.mat-list-item.subnav span.dropdown {
+	padding-left: 4em;
+}
+
+.logo-container {
+	user-select: none;
+	background-color: $primary-color;
+	margin-top: 56px;
+	padding-bottom: 1.8em;
+	.logo {
+		width: calc(300px - 3em);
+		padding: 1.5em;
+		padding-bottom: 0.5em;
+	}
+	span {
+		text-align: left;
+		padding-left: 2em;
+		color: white;
+		font-size: 1em;
+		font-weight: 500;
+	}
+}

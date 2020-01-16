@@ -1,0 +1,33 @@
+@import 'variables';
+
+mat-toolbar {
+	position: fixed;
+	top: 0;
+	z-index: 1010;
+}
+
+mat-toolbar span {
+	margin-left: 20px;
+}
+
+.container-fluid {
+	margin: 2em;
+}
+
+.spacer {
+	flex: 1 1 auto;
+}
+
+main {
+	/*padding: 50px 25px 25px 25px;
+	@media #{$s} {
+		padding: 0 0 25px 0;
+	}*/
+}
+
+/*main {
+	width: calc( 100vw - 300px );
+	@media screen and (max-width: 600px) {
+		width: 100vw;
+	}
+}*/

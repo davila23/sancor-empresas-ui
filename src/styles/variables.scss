@@ -1,0 +1,106 @@
+@import '~@angular/material/theming';
+
+/**
+$mat-red
+$mat-pink
+$mat-purple
+$mat-deep-purple
+$mat-indigo
+$mat-blue
+$mat-light-blue
+$mat-cyan
+$mat-teal
+$mat-green
+$mat-light-green
+$mat-lime
+$mat-yellow
+$mat-amber
+$mat-orange
+$mat-deep-orange
+$mat-brown
+$mat-grey
+$mat-gray
+$mat-blue-grey
+*/
+
+$mat-sancor-primary: (
+	50: #e7e9ec,
+	100: #c3c8d0,
+	200: #9ba4b1,
+	300: #728091,
+	400: #54647a,
+	500: #364962,
+	600: #30425a,
+	700: #293950,
+	800: #223146,
+	900: #162134,
+	A100: #75a5ff,
+	A200: #4284ff,
+	A400: #0f62ff,
+	A700: #0055f5,
+	contrast: (
+		50: $dark-primary-text,
+		100: $dark-primary-text,
+		200: $dark-primary-text,
+		300: $light-primary-text,
+		400: $light-primary-text,
+		500: $light-primary-text,
+		600: $light-primary-text,
+		700: $light-primary-text,
+		800: $light-primary-text,
+		900: $light-primary-text,
+		A100: $dark-primary-text,
+		A200: $light-primary-text,
+		A400: $light-primary-text,
+		A700: $light-primary-text,
+	)
+);
+
+$mat-sancor-accent: (
+	50: #ffebec,
+	100: #ffcecf,
+	200: #ffadaf,
+	300: #ff8c8f,
+	400: #ff7377,
+	500: #ff5a5f,
+	600: #ff5257,
+	700: #ff484d,
+	800: #ff3f43,
+	900: #ff2e32,
+	A100: #ff5a5f,
+	A200: #ff5a5f,
+	A400: #ff5a5f,
+	A700: #ff5a5f,
+	contrast: (
+		50: $light-primary-text,
+		100: $light-primary-text,
+		200: $light-primary-text,
+		300: $light-primary-text,
+		400: $light-primary-text,
+		500: $light-primary-text,
+		600: $light-primary-text,
+		700: $light-primary-text,
+		800: $light-primary-text,
+		900: $light-primary-text,
+		A100: $light-primary-text,
+		A200: $light-primary-text,
+		A400: $light-primary-text,
+		A700: $light-primary-text,
+	)
+);
+
+$primary: $mat-sancor-primary;
+$accent: $mat-sancor-accent;
+
+$primary-color: map-get($primary, 500);
+$accent-color: map-get($accent, 500);
+$normal-color: rgb(41, 115, 162);
+$warning-color: rgb(228, 6, 19);
+$grey-color: rgb(102, 102, 102);
+
+$xs: "screen and (max-width : 300px)";
+$s: "screen and (max-width : 600px)";
+$m: "screen and (max-width : 992px)";
+$l: "screen and (max-width : 1200px)";
+
+$m-tables: "screen and (max-width : 960px)";

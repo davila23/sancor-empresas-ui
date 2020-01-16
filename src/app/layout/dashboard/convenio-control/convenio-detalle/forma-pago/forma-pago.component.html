@@ -1,0 +1,24 @@
+
+              
+<div class="no-data-container" *ngIf="!formaPagoDataSource.data?.length">
+  No hay medios de pago añadidos...
+</div>
+
+<div class="custom" [ngClass]="{'not-show':!formaPagoDataSource.data?.length}">
+  <mat-table [dataSource]="formaPagoDataSource"> 
+    <ng-container matColumnDef="formaPago">
+      <mat-header-cell *matHeaderCellDef> Forma de pago </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="formaPago"> {{row.descripcion}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="detalle">
+      <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="detalle">
+        <button mat-icon-button color="primary" matTooltip="Ver detalle" (click)="openFormaPagoModal(row)"><mat-icon>search</mat-icon></button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="formaPago_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: formaPago_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+</div>

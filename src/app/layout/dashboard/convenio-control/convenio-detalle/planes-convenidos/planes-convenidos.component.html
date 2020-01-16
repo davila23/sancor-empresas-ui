@@ -1,0 +1,22 @@
+
+<div class="no-data-container" *ngIf="!cabeceraDataSource.data?.length">
+  No hay cabeceras cargados...
+</div>
+<div class="custom" [ngClass]="{'not-show':!cabeceraDataSource.data?.length}">
+  <mat-table [dataSource]="cabeceraDataSource">
+    <ng-container matColumnDef="planDescripcion">
+      <mat-header-cell *matHeaderCellDef> Plan </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Plan"> {{row.plan.codigo}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="producto">
+      <mat-header-cell *matHeaderCellDef> Producto </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Producto"> {{row.producto}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="cabeceraDisplayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: cabeceraDisplayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
+
+

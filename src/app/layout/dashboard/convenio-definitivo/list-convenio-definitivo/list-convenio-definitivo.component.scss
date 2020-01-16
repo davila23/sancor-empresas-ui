@@ -1,0 +1,121 @@
+@import '../../../../../styles/variables.scss';
+
+mat-card {
+    &.mat-card.ribbon {
+        mat-card-header.mat-card-header {
+            background-color: $primary-color;
+        }
+    }
+}
+
+.convenios-container {
+	overflow-x: hidden;
+    padding: 50px 25px 25px 25px;
+
+	@media #{$s} {
+		&:last-of-type {
+            grid-template-columns: 1fr;
+			padding: 50px 10px;
+		}
+    }
+    
+    @media #{$m} {
+        grid-template-columns: 1fr;
+    }
+}
+
+mat-table.mat-table {
+    transition: .2s;
+
+    .seleccion-btn {
+        display: block;
+    }
+
+    .table-row {
+        transition: .1s;
+
+        &:hover {
+            transition: .1s;
+            cursor: pointer;
+            background-color: rgba(200,200,200, .5);
+        }
+            
+        &:active {
+            transition: .2s;
+            background-color: rgba(180,180,180, .5);
+        }
+    }
+
+    @media #{$m-tables} {
+        .table-row {
+            &:hover { cursor: initial; }
+
+            &:hover, &:active, &:focus {
+                background-color: #fff;
+            }
+        }
+
+        .mat-cell:last-child {
+            display: flex;
+            justify-content: center;
+        }
+    }
+}
+
+:host /deep/.mat-paginator-container {
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media #{$m} {
+    .actions {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+@media #{$s} {
+    :host /deep/.mat-paginator-page-size {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        margin: 0;
+    }
+
+    :host /deep/.mat-paginator-range-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    :host /deep/.mat-paginator-range-label {
+        margin: 0;
+    }
+}
+
+.filter {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+:host /deep/ mat-card.custom {
+    padding: 0;
+    .mat-card-header { 
+        padding: 5px 0 2.5px 0px;
+        background-color: $grey-color !important;
+        .mat-card-title {
+            color: white; 
+        }
+    }
+
+    .mat-card-content {
+        padding: 20px;
+    }
+}
+
+.custom.info {
+    .mat-card-header {
+        background-color: $normal-color !important;
+    }
+}

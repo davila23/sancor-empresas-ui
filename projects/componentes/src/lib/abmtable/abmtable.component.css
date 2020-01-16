@@ -1,0 +1,59 @@
+.accion.td-subtabla {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+div.mat-checkbox-inner-container {
+    height: 23px;
+    width: 23px;
+}
+
+i.visualiza, table .visualiza {
+	cursor: help;
+}
+
+i.visualiza:hover, table .visualiza:hover {
+	color: darkorange;
+	transition: 0.2s color ease-in-out;
+}
+
+i.visualiza:active, table .visualiza:active {
+	color: gold;
+	transition: 0s color;
+}
+
+.mat-slide-toggle {
+    margin-left: 10px;
+}
+
+.loading {
+	position: fixed;
+    height: 100vh;
+    max-height: 100%;
+	top: 0;
+	left: 0;
+	bottom: 56px;
+	right: 0;
+	background: rgba(255, 255, 255, 0.4);
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.mat-sort-header-container{
+	display: inline-flex !important;
+}
+
+th.mat-header-cell.center, th.mat-header-cell.center-align{
+	text-align: center !important;
+}
+th.mat-header-cell.left-align{
+	text-align: left !important;
+}
+th.mat-header-cell.right-align{
+	text-align: right !important;
+}
+td.mat-column-acciones i.accion{
+	cursor: pointer;
+}

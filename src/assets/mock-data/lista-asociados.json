@@ -1,0 +1,12 @@
+[
+    { "id": 10045, "nroAsociado": 1596325874, "apellido": "Perez", "nombre": "Juan", "dni": 20456789, "domicilio": "San martin", "localidad": "Cacharí", "ficha": 1234 },
+    { "id": 11212, "nroAsociado": 1458796588, "apellido": "Galarza", "nombre": "Martin", "dni": 20145896, "domicilio": "Belgrano", "localidad": "Campos Salles", "ficha": 1546 },
+    { "id": 10115, "nroAsociado": 1458796322, "apellido": "Segismundo", "nombre": "Elvio", "dni": 21547896, "domicilio": "Sarmiento", "localidad": "Casbas", "ficha": 1478 },
+    { "id": 20100, "nroAsociado": 5478963255, "apellido": "Esteves", "nombre": "Carlos", "dni": 23658974, "domicilio": "Almafuerte", "localidad": "Chascomús Country Club", "ficha": 1598 },
+    { "id": 24533, "nroAsociado": 1255569874, "apellido": "Puentes", "nombre": "Ramiro", "dni": 12435698, "domicilio": "Castillos", "localidad": "Juan José Paso", "ficha": 4578 },
+    { "id": 46922, "nroAsociado": 7895463255, "apellido": "Quiroga", "nombre": "Pepe", "dni": 15478963, "domicilio": "España", "localidad": "La Dulce", "ficha": 5869 },
+    { "id": 57888, "nroAsociado": 6932587444, "apellido": "Cortazar", "nombre": "Julio", "dni": 14785693, "domicilio": "Mitre", "localidad": "Luján", "ficha": 5899 },
+    { "id": 56546, "nroAsociado": 4578963697, "apellido": "Arnaldo", "nombre": "Alberto", "dni": 12859637, "domicilio": "9 de Julio", "localidad": "Nicolás Levalle", "ficha": 5699 },
+    { "id": 56993, "nroAsociado": 4578898852, "apellido": "Aquiles", "nombre": "Pedro", "dni": 24587966, "domicilio": "Talcahuano", "localidad": "Quequén", "ficha": 3655 },
+    { "id": 35327, "nroAsociado": 5478996366, "apellido": "Guzman", "nombre": "Sergio", "dni": 17856999, "domicilio": "Laprida", "localidad": "Villa Ramallo", "ficha": 2036 }
+]

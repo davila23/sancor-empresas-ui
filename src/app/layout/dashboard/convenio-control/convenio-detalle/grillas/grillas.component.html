@@ -1,0 +1,30 @@
+
+  
+
+
+
+<div class="no-data-container" *ngIf="!grillasProductoDataSource.data.length">
+  No hay grillas cargadas...
+</div>
+<div class="custom" [ngClass]="{'not-show':!grillasProductoDataSource.data.length}">
+  <mat-table [dataSource]="grillasProductoDataSource"> 
+    
+    <ng-container matColumnDef="idGrilla">
+          <mat-header-cell *matHeaderCellDef> Nro Grilla </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="producto"> {{row.grilla.nrogrilla}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="grilla">
+      <mat-header-cell *matHeaderCellDef> Grilla </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="nroGrilla"> {{row.grilla.nombre}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="grillasProducto_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: grillasProducto_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+  <mat-paginator *ngIf="grillasProductoDataSource.data?.length > 0 && grillasProductoDataSource.filteredData?.length > 0" 
+    class="paginator--centered"
+    #paginator 
+    [pageSize]="10" 
+    [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>

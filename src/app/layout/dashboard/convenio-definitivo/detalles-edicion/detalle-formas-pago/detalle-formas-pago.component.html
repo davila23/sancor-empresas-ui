@@ -1,0 +1,117 @@
+<div class="grid">
+  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+</div>
+  
+<div class="no-data-container" *ngIf="!formaPagoDataSource.data?.length">
+  No hay medios de pago añadidos...
+</div>
+
+<mat-card class="custom" [ngClass]="{'not-show':!formaPagoDataSource.data?.length}">
+  <mat-card-content>
+    <mat-table [dataSource]="formaPagoDataSource"> 
+      <ng-container matColumnDef="formaPago">
+        <mat-header-cell *matHeaderCellDef> Forma de pago </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="formaPago"> {{row.descripcion}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="detalle">
+        <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="detalle">
+          <button mat-icon-button color="primary" matTooltip="ver detalle" (click)="openFormaPagoModal(row)"><mat-icon>search</mat-icon></button>
+          <button mat-icon-button color="accent" matTooltip="eliminar" (click)="deleteFormaPagoModal(row)"><mat-icon>delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="formaPago_displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: formaPago_displayedColumns;" class="table-row"></mat-row>
+    </mat-table>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="custom" [ngClass]="{'not-show':formaPagoDataSource.data?.length}" *ngIf="isEditionFlag">
+  <mat-card-header>
+    <mat-card-title>Añadir forma de pago</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="grid" [formGroup]="formaPagoForm">
+      <mat-form-field>
+        <mat-select formControlName="formaPago" placeholder="Forma de pago" required>
+          <mat-option *ngFor="let item of list" value="{{item.id}}" (onSelectionChange)="selectTipo($event)">{{item.descripcion}}</mat-option>
+        </mat-select>
+        <mat-error>Campo requerido</mat-error>
+      </mat-form-field>
+    
+      <div *ngIf="show==1" class="grid responsive-grid">
+        <tr-fecha placeholder="Vencimiento" [form]="formaPagoForm" nombre="vencimiento" ></tr-fecha>
+      
+        <mat-form-field>
+          <input matInput type="number" placeholder="Nro Tarjeta" formControlName="nrotarjeta" numMask="16">
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Banco" formControlName="bancoEmisor" (selectionChange)="changeBancoTC($event)">
+            <mat-option *ngFor="let item of tarjetasList;" [value]="item.codigo">
+              {{item.descripcion}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+      <div class="grid" *ngIf="!cbuValido">
+        <app-alert color="accent" [fill]="false">
+          {{mensajeError}}
+        </app-alert>
+      </div>
+      <div *ngIf="show==2" class="grid responsive-grid">
+    
+        <mat-form-field>
+          <input matInput placeholder="Nro Cbu" formControlName="nrocbu" cbuMask required on-focusout="focusOutFunction($event)">
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+    
+        <mat-form-field>
+          <input 
+            [formControl]="bancoCtrl" 
+            #stateInput
+            type="text" 
+            placeholder="Banco" 
+            matInput 
+            [matAutocomplete]="auto"
+            (keyup)="0">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option
+              (onSelectionChange)="stateInput.value != undefined && onEnter($event)"  
+              *ngFor="let item of filteredBancos | async" 
+              [value]="item">
+              {{ item.descripcion}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Tipo Cuenta" formControlName="tipoCuenta" (selectionChange)="changeTipoCuenta($event)">
+            <mat-option *ngFor="let tipoCuenta of tipoCuentaList;" [value]="tipoCuenta.id">
+              {{tipoCuenta.descripcion}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput type="number" formControlName="nroctabco" placeholder="Nro Cta Bco"  required>
+            <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput type="text" formControlName="apellido" placeholder="Apellido" required>
+            <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput type="text" formControlName="nombre" placeholder="Nombre" required>
+            <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <app-button color="accent" [disabled]="isPosting" (click)="formaPagoDataSourceSaveAndRender()"><mat-icon>add</mat-icon>Añadir</app-button>
+  </mat-card-actions>
+</mat-card>

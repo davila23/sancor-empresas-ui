@@ -1,0 +1,56 @@
+
+<form class="grid" [formGroup]="formGroup">
+  <mat-card>
+
+    <mat-card-header>
+      <mat-card-title>Vista de empresa</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="grid responsive-grid" *apploading="controlsLoading.vista">
+        <mat-form-field>
+          <input formControlName="cuit" matInput placeholder="CUIT" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="razonSocial" matInput placeholder="Razón Social" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="numeroIngresosBrutos" matInput placeholder="Número IIBB" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field formGroupName="actividadAfip">
+          <input formControlName="descripcion" matInput placeholder="Actividad AFIP" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field formGroupName="condicionIva">
+          <input formControlName="descripcion" matInput placeholder="Condición IVA" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="calle" matInput placeholder="Calle" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+            <input formControlName="numeroCalle" matInput placeholder="Número de Calle" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="piso" matInput placeholder="Piso" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="departamento" matInput placeholder="Departamento" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="cpLocalidad" matInput placeholder="CP localidad" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="telFijo" matInput placeholder="Tel Fijo" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="telCelular" matInput placeholder="Tel Celular" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input formControlName="email" matInput placeholder="Email" [readonly]="true">
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+    <mat-card-footer align="end">
+      <app-button color="accent"  type="button" routerLink="/empresa/busqueda"><mat-icon>arrow_back_ios</mat-icon>Atrás</app-button>
+    </mat-card-footer>
+  </mat-card>
+</form>

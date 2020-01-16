@@ -1,0 +1,79 @@
+<div class="grid">
+    <mat-card class="ribbon mat-card-map">
+        <mat-card-header>
+            <mat-card-title>ÁREA DE INFLUENCIA</mat-card-title>
+        </mat-card-header>
+        <agm-map [latitude]="lat" [longitude]="lng"></agm-map>
+    </mat-card>
+    
+    <mat-card class="ribbon mat-card-bar">
+        <mat-card-header>
+            <mat-card-title>NUEVOS ABONADOS</mat-card-title>
+        </mat-card-header>
+        <div>
+            <canvas #canva1>{{ chart1 }}</canvas>
+        </div>
+    </mat-card>
+    
+    <mat-card class="ribbon mat-card-calendario">
+        <mat-card-header>
+            <mat-card-title>CALENDARIO</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div class="calendar-container">
+                <div class="calendar-item">
+                    <p class="fw-500">21.01.19</p>
+                    <p>Reunión </p>
+                    <p>20 hs</p>
+                    <p>Puerto Madero</p>
+                </div>
+                <div class="calendar-item">
+                    <p class="fw-500">20.02.19</p>
+                    <p>Entrevista con el cliente</p>
+                    <p>16 hs</p>
+                    <p>Microcentro</p>
+                </div>
+            </div>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-button color="accent">Ver calendario</button>
+        </mat-card-actions>
+    </mat-card>
+    
+    <mat-card class="ribbon mat-card-mensajes">
+        <mat-card-header>
+            <mat-card-title>MENSAJES</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div>
+                <p class="fw-500">APROBACIÓN PENDIENTE</p>
+                <p>Tienes 7 generadores pendientes de aprobación</p>
+            </div>
+            <div>
+                <p class="fw-500">MANTENIMIENTO DE SISTEMA</p>
+                <p>El día 29 de enero el sistema se encontrará detenido por
+                    mantenimiento desde las 4.00 hs
+                    hasta
+                    las 13.30 hs
+                </p>
+            </div>
+            <div>
+                <p class="fw-500">APROBACIÓN PENDIENTE</p>
+                <p>Tienes 7 generadores pendientes de aprobación</p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+    
+    <div class="dgh-1">
+        <canvas #canva2>{{ chart2 }}</canvas>
+    </div>
+    <div class="dgh-2">
+        <canvas #canva3>{{ chart3 }}</canvas>
+    </div>
+    <div class="dgh-3">
+        <canvas #canva4>{{ chart4 }}</canvas>
+    </div>
+    <div class="dgh-4">
+        <canvas #canva5>{{ chart5 }}</canvas>
+    </div>
+</div>

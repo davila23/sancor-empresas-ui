@@ -1,0 +1,174 @@
+@import 'variables';
+
+.grid-form {
+	grid-template-columns: repeat(2, 1fr);
+	@media #{$m} {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	@media #{$s} {
+		grid-template-columns: 1fr;
+	}
+}
+
+.grid-email {
+	grid-template-columns: 1fr 1fr;
+	@media #{$m} {
+		grid-template-columns: 1fr;
+		padding-bottom: 2em;
+	}
+	@media #{$s} {
+		grid-template-columns: 1fr;
+	}
+}
+
+.grid-sel {
+	grid-template-columns: repeat(3, 1fr);
+	justify-items: stretch;
+	@media #{$m} {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	@media #{$s} {
+		grid-template-columns: 1fr;
+	}
+}
+
+.grid-cred {
+	justify-items: center;
+	grid-template-columns: 15% repeat(3, 20%);
+	@media #{$s} {
+		grid-template-columns: 1fr;
+	}
+}
+
+.profile-pic {
+	height: 9em;
+	width: 9em;
+}
+
+.dato-credencial {
+	font-size: 0.9em;
+	font-weight: 300;
+	span {
+		margin-left: 1em;
+	}
+}
+
+
+
+.mat-chip {
+	&.activo {
+		background-color: $normal-color;
+		color: white;
+	}
+	&.inactivo {
+		background-color: $accent-color;
+		color: white;
+	}
+	mat-icon {
+		color: white;
+	}
+}
+
+app-button {
+    justify-self: end;
+    padding-left: 15px;
+	@media #{$s} {
+		justify-self: center;
+	}
+}
+
+//@import '../../../../../../styles/variables.scss';
+
+mat-card {
+
+    &.mat-card.ribbon {
+        mat-card-header.mat-card-header {
+            background-color: $primary-color;
+        }
+    }
+}
+
+.convenios-container {
+	overflow-x: hidden;
+    padding: 50px 25px 25px 25px;
+
+	@media #{$s} {
+		&:last-of-type {
+            grid-template-columns: 1fr;
+			padding: 50px 10px;
+		}
+    }
+    
+    @media #{$m} {
+        grid-template-columns: 1fr;
+    }
+}
+
+mat-table.mat-table {
+    transition: .2s;
+
+    .seleccion-btn {
+        display: block;
+    }
+
+    .table-row {
+        transition: .1s;
+
+        &:hover {
+            transition: .1s;
+            cursor: pointer;
+            background-color: rgba(200,200,200, .5);
+        }
+            
+        &:active {
+            transition: .2s;
+            background-color: rgba(180,180,180, .5);
+        }
+    }
+
+    @media #{$m-tables} {
+        .table-row {
+            &:hover { cursor: initial; }
+
+            &:hover, &:active, &:focus {
+                background-color: #fff;
+            }
+        }
+
+        .mat-cell:last-child {
+            display: flex;
+            justify-content: center;
+        }
+    }
+}
+
+:host /deep/.mat-paginator-container {
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media #{$m} {
+    .actions {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+@media #{$s} {
+    :host /deep/.mat-paginator-page-size {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        margin: 0;
+    }
+
+    :host /deep/.mat-paginator-range-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    :host /deep/.mat-paginator-range-label {
+        margin: 0;
+    }
+}

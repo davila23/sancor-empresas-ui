@@ -1,0 +1,110 @@
+<div class="grid">
+  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+</div>
+
+<mat-card class="custom" *ngIf="edit">
+  <mat-card-header>
+    <mat-card-title>
+      Añadir Sucursal
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="grid responsive-grid" [formGroup]="sucursalesForm">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Descripcion" formControlName="descripcion" required>
+        <mat-error *ngIf="sucursalesForm.get('descripcion').errors && sucursalesForm.get('descripcion').errors?.required">
+          Campo requerido
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="text" placeholder="Domicilio" formControlName="domicilio">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="text" placeholder="Telefono" formControlName="telefono" numMask="11">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="text" placeholder="Email" formControlName="email">
+        <mat-error *ngIf="sucursalesForm.get('email').errors && sucursalesForm.get('email').errors?.email">
+          Formato inválido
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input
+        type="text"
+        placeholder="Localidad"
+        (input)="codigoPostalListFill($event.target.value)"
+        matInput
+        [formControl]="codPostalControl"
+        [matAutocomplete]="auto"
+        required>
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let cod of codPostalList" [value]="cod.codigoPostal" (keyup.enter)="localidadPatchValue(cod)" (click)="localidadPatchValue(cod)">
+            {{cod.detalle + ' ' + cod.codigoPostal}}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error>Campo requerido</mat-error>
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button color="accent" mat-raised-button (click)="sucursalSaveAndRender()" [disabled]="sucursalesForm.invalid">AÑADIR</button>
+  </mat-card-actions>
+</mat-card>
+
+
+<mat-card class="custom" [ngClass]="{'not-show':!sucursalDataSource.data?.length}">
+  <mat-card-header>
+    <mat-card-title>
+      Sucursales
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-table [dataSource]="sucursalDataSource">
+
+    <ng-container matColumnDef="descripcion">
+      <mat-header-cell *matHeaderCellDef> Descripcion </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Descripcion"> {{row.descripcion}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="domicilio">
+      <mat-header-cell *matHeaderCellDef> Domicilio </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Domicilio"> {{row.domicilio}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="categoria">
+      <mat-header-cell *matHeaderCellDef> Categoria </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Categoria"> {{row.categoria}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="telefono">
+        <mat-header-cell *matHeaderCellDef> Telefono 2 </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Telefono 2"> {{row.telefono}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="email">
+          <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="Email"> {{row.email}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="localidad">
+            <mat-header-cell *matHeaderCellDef> Localidad </mat-header-cell>
+            <mat-cell *matCellDef="let row" data-label="Localidad"> {{row.localidad.detalle}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="delete">
+      <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="eliminar">
+        <button mat-icon-button color="accent" *ngIf="delete" matTooltip="eliminar" (click)="sucursalDelete(row)"><mat-icon>delete</mat-icon></button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="sucursal_displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: sucursal_displayedColumns;" class="table-row"></mat-row>
+  </mat-table>
+  <mat-paginator class="paginator--centered"
+        *ngIf="sucursalDataSource.data?.length > 0 && sucursalDataSource.filteredData?.length > 0"
+        #paginator
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</mat-card>
+
+<div class="no-data-container" *ngIf="!sucursalDataSource.data?.length">
+  No hay sucursales cargados...
+</div>

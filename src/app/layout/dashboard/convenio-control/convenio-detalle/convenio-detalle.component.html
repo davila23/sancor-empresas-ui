@@ -1,0 +1,172 @@
+<div class="container">
+
+  <mat-accordion #matAccordion="matAccordion" [multi]="multi">
+
+    <mat-expansion-panel #datosgenerales (afterExpand)="focusPanel(datosgenerales)" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Datos Generales
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <datos-generales-control [convenioId]="convenioId"></datos-generales-control>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #contacto (afterExpand)="focusPanel(contacto)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Contacto
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ng-template matExpansionPanelContent>
+        <contacto-control [convenioId]="convenioId"></contacto-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #referentes (afterExpand)="focusPanel(referentes)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Referentes
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ng-template matExpansionPanelContent>
+        <referentes-control [convenioId]="convenioId"></referentes-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #grillas (afterExpand)="focusPanel(grillas)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Grillas
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ng-template matExpansionPanelContent>
+        <grillas-control [convenioId]="convenioId"></grillas-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #planesconvenidos (afterExpand)="focusPanel(planesconvenidos)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Planes convenidos (Solo rol Ejecutivo)
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      
+      <ng-template matExpansionPanelContent>
+        <planes-convenidos-control [convenioId]="convenioId"></planes-convenidos-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #subsidios (afterExpand)="focusPanel(subsidios)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Subsidios
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      
+      <ng-template matExpansionPanelContent>
+        <subsidios-control [convenioId]="convenioId"></subsidios-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #formadepago (afterExpand)="focusPanel(formadepago)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Forma de pago
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      
+      <ng-template matExpansionPanelContent>
+        <forma-pago-control [convenioId]="convenioId"></forma-pago-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #entidades (afterExpand)="focusPanel(entidades)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Entidades empleadoras relacionadas
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ng-template matExpansionPanelContent>
+        <entidades-control [convenioId]="convenioId"></entidades-control>
+      </ng-template>
+      
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #sucursales (afterExpand)="focusPanel(sucursales)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Sucursales
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ng-template matExpansionPanelContent>
+        <sucursales-control [convenioId]="convenioId"></sucursales-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #vip (afterExpand)="focusPanel(vip)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          VIP's
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ng-template matExpansionPanelContent>
+        <vip-control [convenioId]="convenioId"></vip-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #adjunte (afterExpand)="focusPanel(adjunte)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Adjunte de archivos
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      
+      <ng-template matExpansionPanelContent>
+        <archivos-control [convenioId]="convenioId"></archivos-control>
+      </ng-template>
+
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Panel de control de convenio temporal</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" class="grid responsive-grid">
+        <mat-form-field>
+          <textarea matInput type="textarea" placeholder="Observaciones" formControlName="observaciones">
+          </textarea>
+          <mat-hint>Campo requerido en caso de enviar a corrección</mat-hint>
+          <mat-error *ngIf="form.get('observaciones').errors && form.get('observaciones').errors?.required">Campo requerido</mat-error>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer align="end">
+      <app-button color="accent"  type="button" routerLink="/convenioscontrol/listado"><mat-icon>arrow_back_ios</mat-icon>Atrás</app-button>
+      <app-button color="primary" [disabled]="form.invalid" type="button" (click)="cambiarEstado(3, 'correccion')"><mat-icon>feedback</mat-icon>Enviar a corrección</app-button>
+      <app-button color="primary"  type="button" (click)="cambiarEstado(4, 'aprobar')"><mat-icon>check</mat-icon>Aprobar</app-button>
+    </mat-card-footer>
+
+  </mat-card>
+</div>

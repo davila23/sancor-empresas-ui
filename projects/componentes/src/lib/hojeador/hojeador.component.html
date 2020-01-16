@@ -1,0 +1,169 @@
+<div [ngStyle]="{display: inicializado ? 'initial' : 'none'}">
+	<div class="row no-margin">
+		<mat-form-field class="col s10 offset-s1" *ngIf="busca">
+			<input id="bus" matInput [(ngModel)]="search" tabindex="-1" placeholder="Buscar" (ngModelChange)="refreshTable()">
+			<button mat-button *ngIf="search" matSuffix mat-icon-button aria-label="Clear" tabindex="-1" (click)="search='';refreshTable()">
+				<i class="material-icons">close</i>
+			</button>
+		</mat-form-field>
+	</div>
+	<div class="loading consultas" *ngIf="isLoading">
+		<mat-spinner></mat-spinner>
+	</div>
+	<div class="row table">
+		<div class="col s12 center-align">
+			<table width="100%" class="fija scroll-table" mat-table [dataSource]="dataSource" matSort [matSortDisabled]="!sortable" (matSortChange)="cambiaOrden($event)"
+			 multiTemplateDataRows>
+				<ng-container *ngFor="let columna of columnas" [matColumnDef]="columna.def">
+					<!--
+						Definición de columna común
+					-->
+					<ng-container *ngIf="columna.def != 'acciones'">
+						<th [title]="columna.nombre" [width]="(columna.ancho ? columna.ancho : 100) + '%'" mat-header-cell
+						 *matHeaderCellDef mat-sort-header (contextmenu)="menuHeader(columna, $event)">
+							<span [matMenuTriggerData]="{columna: columna}" [matMenuTriggerFor]="contextMenu"></span>
+							{{ columna.nombre }}
+						</th>
+						<td *matCellDef="let element" (click)="columna.modifica ? modifica(element, columna) : ''" [ngClass]="['tbl',columna.clase ? columna.clase : '']"
+						 [class.accion]="columna.modifica" [class.rtl]="columna.tipo == 'comprobante'" [width]="(columna.ancho ? columna.ancho : 100) + '%'"
+						 mat-cell [style.text-align]="columna.tipo == 'numero' || columna.tipo == 'monto' ? 'right' : ''" [title]="columna.tipo == 'monto' ? numForm(element[columna.def], false) : (element[columna.def]) ? element[columna.def] : ''" [ngSwitch]="columna.tipo">
+
+							<ng-container *ngIf="!estaVacio(element)" [ngSwitch]="columna.tipo">
+								<ng-container *ngSwitchCase="'imagen'">
+									<img style="max-height: 4rem;margin-top: 1rem;" [src]="element[columna.def]">
+								</ng-container>
+								<ng-container *ngSwitchCase="'boton'">
+									<button type="button" (click)="columna.accion[0].handler(element)" mat-button> {{ columna.accion[0].title(element[columna.def]) }}
+										<i [ngStyle]="{'color': columna.accion[0].color(element)}" class="material-icons">{{ columna.accion[0].icon(element) }} </i>
+									</button>
+								</ng-container>
+								<ng-container *ngSwitchCase="'fecha'">
+									<span>{{ element[columna.def] | date : 'dd/MM/yyyy' }}</span>
+								</ng-container>
+								<ng-container *ngSwitchDefault>
+									<span *ngIf="columna.tipo == 'monto' && mostrarPeso" matPrefix>$&nbsp;</span>{{ columna.tipo == 'monto' ? numForm(element[columna.def], false) : element[columna.def] }}
+								</ng-container>
+							</ng-container>
+
+						</td>
+					</ng-container>
+
+					<!--
+						Definición de columna acciones
+					-->
+					<ng-container *ngIf="columna.def == 'acciones'">
+						<th [title]="columna.nombre" width="{{ columna.ancho ? columna.ancho : 100 }}%" mat-header-cell *matHeaderCellDef>
+							<ng-container *ngIf="selecciona">
+								<button mat-button [matMenuTriggerFor]="menumarcar"> {{ columna.nombre }} <i class="material-icons">
+										keyboard_arrow_down </i> </button>
+								<mat-menu #menumarcar="matMenu">
+									<button (click)="marcar('todas')" mat-menu-item> Marcar los {{ resultsLength }} resultados </button>
+									<button (click)="marcar('pagina')" mat-menu-item> Marcar página ({{ dataSource.data.length }}) </button>
+									<button (click)="marcar('reiniciar')" mat-menu-item> Reiniciar </button>
+								</mat-menu>
+							</ng-container>
+							<ng-container *ngIf="!selecciona">
+								{{ columna.nombre }}
+							</ng-container>
+						</th>
+						<td mat-cell *matCellDef="let element">
+							<tr-checkbox [condicion]="selecciona && !estaVacio(element)" [checked]="checked(element)" [disabled]="seleccionaSi && !seleccionaSi(element)" (change)="check(element, $event)"></tr-checkbox>
+							<mat-slide-toggle *ngIf="toggle" color="primary" [disabled]="!toggle.enabled(element)" [checked]="toggle.checked(element)" (dragChange)="toggle.onChange(element)"
+							 (toggleChange)="toggle.onChange(element)" [ngClass]="{'hide': (toggle.visible != undefined && !toggle.visible(element))}"></mat-slide-toggle>
+							<ng-container *ngIf="acciones.length <= accionesMinimo">
+								<ng-container *ngFor="let accion of acciones">
+									<i *ngIf="!estaVacio(element) && (!accion.condicion || accion.condicion(element))" (click)="accion.handler ? accion.handler(element, $event) : ''"
+									 class="material-icons" [ngStyle]="{'color': accion.color ? accion.color() : ''}" [ngClass]="{'accion': accion.handler, 'visualiza': !accion.handler}"
+									 [title]="matTooltip ? '' : accion.title(element)" [matTooltip]="matTooltip ? accion.title(element) : null" matTooltipPosition="above"> {{ accion.icon(element) }} </i>
+								</ng-container>
+							</ng-container>
+							<ng-container *ngIf="acciones.length > accionesMinimo && !estaVacio(element)">
+								<button mat-button [matMenuTriggerFor]="menuacciones">
+									<i class="material-icons">more_vert</i>
+								</button>
+								<mat-menu #menuacciones="matMenu">
+									<ng-container *ngFor="let accion of acciones">
+										<button mat-menu-item *ngIf="!estaVacio(element) && (!accion.condicion || accion.condicion(element))" (click)="accion.handler ? accion.handler(element, $event) : ''"
+										 [ngStyle]="{'color': accion.color ? accion.color(element) : ''}" [ngClass]="{'accion': accion.handler, 'visualiza': !accion.handler}"
+										 [title]="accion.title(element)">
+											<mat-icon class="material-icons" [ngStyle]="{'color': accion.color ? accion.color(element) : ''}">{{ accion.icon(element) }}</mat-icon>
+											<span>{{ accion.title(element) }}</span>
+										</button>
+									</ng-container>
+								</mat-menu>
+							</ng-container>
+						</td>
+					</ng-container>
+
+				</ng-container>
+				<ng-container matColumnDef="expansion">
+					<td class="expansion" mat-cell *matCellDef="let element" [attr.colspan]="columnas.length">
+						<div (contextmenu)="$event.preventDefault()" class="contenido-expandible" [@collapsible]="expandedElement.indexOf(element) !== -1 ? 'expanded' : 'collapsed'">
+							<table class="mat-table subtabla">
+								<thead class="subtablahead">
+									<tr class="mat-header-row">
+										<th *ngFor="let columna of columnasSubtabla" class="mat-header-cell">{{ columna.nombre }}</th>
+										<th *ngIf="accionesSubtabla.length > 0" class="mat-header-cell">Acciones</th>
+									</tr>
+								</thead>
+								<tbody class="center-align">
+									<tr class="mat-header-row" *ngFor="let detalle of element.detalles">
+										<td *ngFor="let columna of columnasSubtabla" class="mat-cell" [ngClass]="{'num': columna.tipo == 'numero' || columna.tipo == 'monto'}">
+											<ng-container *ngIf="columna.tipo === 'html'">
+												<div [innerHtml]="detalle[columna.def]"></div>
+											</ng-container>
+											<ng-container *ngIf="columna.tipo!== 'html'">
+												{{ columna.tipo == 'monto' ? numForm(detalle[columna.def], false) : detalle[columna.def] }}
+											</ng-container>
+											<ng-container *ngIf="columna.accion">
+												<ng-container *ngFor="let accion of columna.accion">
+													<i *ngIf="!accion.condicion || accion.condicion(detalle)" (click)="accion.handler(detalle, $event)" class="material-icons accion td-subtabla"
+													 [ngStyle]="{'color': accion.color ? accion.color() : ''}" [title]="accion.title(element)"> {{
+														accion.icon() }} </i>
+												</ng-container>
+											</ng-container>
+										</td>
+										<td *ngIf="accionesSubtabla.length > 0" class="mat-cell">
+											<ng-container *ngFor="let accion of accionesSubtabla">
+												<i *ngIf="!accion.condicion || accion.condicion(detalle)" (click)="accion.handler(detalle, $event)" class="material-icons accion"
+												 [ngStyle]="{'color': accion.color ? accion.color() : ''}" [title]="accion.title(element)"> {{
+													accion.icon() }} </i>
+											</ng-container>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</ng-container>
+				<ng-container matColumnDef="itemsSel">
+					<td mat-footer-cell *matFooterCellDef [attr.colspan]="columnas.length" [title]="preview()" style="text-align: right"
+					 [style.display]="itemsSeleccionados.ids.length > 0 ? 'table-cell' : 'none'">
+						{{ nombreElementosSeleccionados }}: {{ itemsSeleccionados.ids.length }}
+					</td>
+				</ng-container>
+				<tr mat-header-row *matHeaderRowDef="headers"></tr>
+				<tr mat-row *matRowDef="let row; columns: headers;" [ngClass]="clasesRow(row)" (contextmenu)="detalleCustomTrigger ? '' : detallar(row, $event)"></tr>
+				<ng-container *ngIf="detalla">
+					<tr mat-row *matRowDef="let row; columns: ['expansion']" [ngClass]="{'fila-expansion': detalla}" [class.editando]="row.editando"></tr>
+				</ng-container>
+				<tr mat-footer-row *matFooterRowDef="['itemsSel']"></tr>
+			</table>
+			<div class="center-align" *ngIf="!dataSource.data.length">
+				<p>
+					No hay resultados que cumplan con el filtro aplicado
+				</p>
+			</div>
+			<mat-paginator tabindex="-1" [length]="resultsLength" [pageSize]="cuantos" showFirstLastButtons></mat-paginator>
+			<mat-menu #contextMenu="matMenu">
+				<ng-template matMenuContent let-columna="columna">
+					<button *ngIf="!columna.ancho || columna.ancho < 100" (click)="modificaAncho(columna, 'mas', $event)"
+					 mat-menu-item>Más ancho</button>
+					<button *ngIf="!columna.ancho || columna.ancho > 5" (click)="modificaAncho(columna, 'menos', $event)"
+					 mat-menu-item>Menos ancho</button>
+					<button *ngIf="columna.ancho" (click)="borraAncho(columna)" mat-menu-item>Reiniciar</button>
+				</ng-template>
+			</mat-menu>
+		</div>
+	</div>
+</div>

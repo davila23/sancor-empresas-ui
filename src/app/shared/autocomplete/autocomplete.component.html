@@ -1,0 +1,17 @@
+<mat-form-field [ngClass]="clase" [formGroup]="form" style="width: 100%;">
+	<input *ngIf="form === formDefault" [autofocus]="autoFocus" (focus)="onFocus($event)" #input [disabled]="disabled" [ngModelOptions]="{standalone: true}" [required]="required" [tabindex]="tab" matInput [placeholder]="placeholder" [matAutocomplete]="autocomplete" [name]="nombre" [(ngModel)]="modelo[nombre]" (ngModelChange)="buscar($event)" (blur)="onBlur($event)" [readonly]="readonly">
+	<input *ngIf="form !== formDefault" [autofocus]="autoFocus" (focus)="onFocus($event)" #input [required]="required" [tabindex]="tab" matInput [placeholder]="placeholder" [matAutocomplete]="autocomplete" [name]="nombre" (blur)="onBlur($event)" [readonly]="readonly" formControlName="{{ name }}" >
+	<mat-hint *ngIf="hint.length > 0" align="start">{{ hint }}</mat-hint>
+	<button #limpiarBtn *ngIf="readonly" mat-button (click)="limpiar()" matSuffix mat-icon-button>
+		<mat-icon>close</mat-icon>
+	</button>
+	<button *ngIf="boton.length > 0" tabindex="-1" mat-button (click)="onClickBoton($event)" matSuffix mat-icon-button>
+		<mat-icon>{{boton}}</mat-icon>
+	</button>
+	<mat-autocomplete autoActiveFirstOption="true" #autocomplete="matAutocomplete" (optionSelected)="establecer($event)">
+		<mat-option *ngFor="let resultado of resultadosFiltrados" [value]="resultado">
+			{{ resultado[nombreResultado] }}
+		</mat-option>
+	</mat-autocomplete>
+	<mat-icon *ngIf="request != null" class="spin-on-load" matSuffix>search</mat-icon>
+</mat-form-field>
