@@ -77,8 +77,8 @@ export class DetallePlanesConvenidosComponent implements OnInit {
     .pipe(startWith(''),
 			switchMap(value => {
 				if (typeof value === "object") value = this.productoCtrl.value.descripcion;
-        
-				if (value !== '') return this.lookup(value);	
+
+				if (value !== '') return this.lookup(value);
 				else return of(null);
 			})
 		);
@@ -90,13 +90,14 @@ export class DetallePlanesConvenidosComponent implements OnInit {
     .subscribe(res => {
       if (res != null && res[0]) {
         this.cabeceraConvenio = res[0];
-        this.planesConvenidosService.getPlanesConvenidosD(res[0].id)
+				var myJSON = JSON.stringify(res[0]);
+        this.planesConvenidosService.getPlanesConvenidosD(res[0])
         .subscribe(res => {
-          if (res == null) res = [];  
-  
+          if (res == null) res = [];
+
           this.cabeceraDataSource.data = res;
         });
-      } 
+      }
     });
 
   }
@@ -163,8 +164,12 @@ export class DetallePlanesConvenidosComponent implements OnInit {
 			planConvenido.plan = new MaestroPlanDTO();
 			planConvenido.plan.codigo = this.planesConvenidosForm.value["plan"]["codigo"];
 			planConvenido.plan.descripcion = this.planesConvenidosForm.value["plan"]["descripcionParaSocio"];
-			planConvenido.porcentaje = 0;//this.planesConvenidosForm.value["porcentaje"];
-			planConvenido.porcentajeBonificacion = 0;// this.planesConvenidosForm.value["porcentajeBonificacion"];
+
+			// console.log(this.planesConvenidosForm.value["plan"]);
+			planConvenido.planId = 1;
+
+			planConvenido.porcentaje = 1;//this.planesConvenidosForm.value["porcentaje"];
+			planConvenido.porcentajeBonificacion = 1;// this.planesConvenidosForm.value["porcentajeBonificacion"];
 			planConvenido.bonificacionRecaudo = 'B'; //this.planesConvenidosForm.value["bonificacionRecaudo"];
 			planConvenido.vigencia = new Date() ;
 
@@ -176,9 +181,10 @@ export class DetallePlanesConvenidosComponent implements OnInit {
 				cabecera.empresa = empresa;
 				cabecera.idConvenio = this.convenioIdFlag;
 				cabecera.cantidadGruposParaBonificar = 1;
-				cabecera.porcentaje = 1;
+				cabecera.porcentaje = 0;
 				cabecera.cantidadIntegrantesParaBonificar = 1;
 				cabecera.vigencia =  new Date();
+
 
         this.planesConvenidosService.addCabeceraConvenioD(cabecera)
         .subscribe(res => {
@@ -189,7 +195,7 @@ export class DetallePlanesConvenidosComponent implements OnInit {
             this.planesConvenidosService.addPlanConvenidoD(planConvenido)
             .subscribe(res => {
               this.utilService.notification('Registro añadido', 'success', 4000);
-              this.planesConvenidosService.getPlanesConvenidosD(this.cabeceraConvenio.id)
+							this.planesConvenidosService.getPlanesConvenidosD(res[0])
               .subscribe(res => {
                 if (res == null) res = [];
                 this.cabeceraDataSource.data = res;
@@ -202,17 +208,19 @@ export class DetallePlanesConvenidosComponent implements OnInit {
 			} else {
 				planConvenido.cabecera = this.cabeceraConvenio;
         this.planesConvenidosService.addPlanConvenidoD(planConvenido)
-        .subscribe(res => {
-					this.utilService.notification('Registro añadido', 'success', 4000);
-          this.planesConvenidosService.getPlanesConvenidosD(this.cabeceraConvenio.id)
-          .subscribe(res => {
-            if (res == null) res = [];
-
-            this.cabeceraDataSource.data = res;
-          });
-        }).add(() => {
-          this.isPosting = false;
-        });
+				.subscribe(res => {
+					this.planesConvenidosService.getCabeceraConvenioD(this.convenioIdFlag)
+					.subscribe(res => {
+						this.utilService.notification('Registro añadido', 'success', 4000);
+						this.planesConvenidosService.getPlanesConvenidosD(res[0])
+						.subscribe(res => {
+							if (res == null) res = [];
+							this.cabeceraDataSource.data = res
+						});
+					}).add(() => {
+						this.isPosting = false;
+					});
+				});
 			}
 		}
 	}
@@ -240,7 +248,7 @@ export class DetallePlanesConvenidosComponent implements OnInit {
             this.planesConvenidosService.getCabeceraConvenioD(this.convenioIdFlag)
             .subscribe(res => {
               this.utilService.notification('Registro eliminado', 'success', 4000);
-              this.planesConvenidosService.getPlanesConvenidosD(res[0].id)
+              this.planesConvenidosService.getPlanesConvenidosD(res[0])
               .subscribe(res => {
                 if (res == null) res = [];
 
@@ -256,6 +264,6 @@ export class DetallePlanesConvenidosComponent implements OnInit {
 			});
 		}
 	}
-  
+
   isPosting = false;
 }

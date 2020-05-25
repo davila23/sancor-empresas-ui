@@ -15,11 +15,12 @@ export class PlanesConvenidosService{
 
     baseUrl = environment.baseUrl;
     baseUrlEmpresas = environment.baseUrlEmpresas;
-    
+
     /**
      * DEFINITIVO
      */
     addCabeceraConvenioD(cabeceraConvenioDTO:CabeceraConvenioDTO): Observable<CabeceraConvenioDTO>{
+
         return this.http.post<CabeceraConvenioDTO>(`${this.baseUrl}/Empresas/api/planConvenido/cabecera`, cabeceraConvenioDTO).pipe(
             catchError(e => throwError(new Error(e)))
         );
@@ -34,18 +35,20 @@ export class PlanesConvenidosService{
 
     /* Alta de Detalle de planes convenidos */
     addPlanConvenidoD(planConvenidoDTO:PlanConvenidoDTO): Observable<PlanConvenidoDTO>{
+    
         return this.http.post<PlanConvenidoDTO>(`${this.baseUrl}/Empresas/api/planConvenido`, planConvenidoDTO).pipe(
             catchError(e => throwError(new Error(e)))
         );
     }
 
     /* Busqueda de Detalles de planes convenidos */
-    getPlanesConvenidosD(idCabecera:number):Observable<PlanConvenidoDTO[]>{
-        return this.http.get<PlanConvenidoDTO[]>(`${this.baseUrl}/Empresas/api/planConvenido?idCabecera=${idCabecera}`).pipe(
-          catchError(e => throwError(new Error(e)))  
+    getPlanesConvenidosD(cabeceraConvenioDTO:CabeceraConvenioDTO):Observable<PlanConvenidoDTO[]>{
+
+        return this.http.get<PlanConvenidoDTO[]>(`${this.baseUrl}/Empresas/api/planConvenido?empresaId=${cabeceraConvenioDTO.empresa.id}&vigencia=${cabeceraConvenioDTO.vigencia}&cantidadGruposParaBonificar=${cabeceraConvenioDTO.cantidadGruposParaBonificar}&cantidadIntegrantesParaBonificar=${cabeceraConvenioDTO.cantidadIntegrantesParaBonificar}`).pipe(
+          catchError(e => throwError(new Error(e)))
         );
     }
-   
+
     deletePlanesConvenidosD(planConvenidoDTO:PlanConvenidoDTO){
 		const options = {
 			headers: new HttpHeaders({
@@ -53,9 +56,11 @@ export class PlanesConvenidosService{
 			}),
 			body: planConvenidoDTO
 		  };
-		
-          return this.http.delete(`${this.baseUrl}/Empresas/api/planConvenido/${planConvenidoDTO.id}`);
-        
+
+          return this.http.delete(`${this.baseUrl}/Empresas/api/planConvenido/`,
+      			options
+      		);
+
 	}
     /**
      * TEMPORARIO
@@ -85,25 +90,24 @@ export class PlanesConvenidosService{
     /* Busqueda de Detalles de planes convenidos */
     getPlanesConvenidos(idCabecera:number):Observable<PlanConvenidoDTO[]>{
         return this.http.get<PlanConvenidoDTO[]>(`${this.baseUrl}/Empresas/api/planConvenido/wizard?idCabecera=${idCabecera}`).pipe(
-          catchError(e => throwError(new Error(e)))  
+          catchError(e => throwError(new Error(e)))
         );
     }
-   
-    deletePlanesConvenidos(planConvenidoDTO:PlanConvenidoDTO){ 
+
+    deletePlanesConvenidos(planConvenidoDTO:PlanConvenidoDTO){
 		const options = {
 			headers: new HttpHeaders({
 			  'Content-Type': 'application/json',
 			}),
 			body: planConvenidoDTO
 		  };
-		
+
           return this.http.delete(`${this.baseUrl}/Empresas/api/planConvenido/wizard/${planConvenidoDTO.id}`);
-        
+
     }
-    
+
     getProductosPlanesConvenidos():Observable<ProductoDTO[]>{
        return this.http.get<ProductoDTO[]>(`${this.baseUrlEmpresas}/SancorSalud/webresources/ServicioProducto/productosSuperadoresPorEmpresa`);
     }
-     
+
 }
-	

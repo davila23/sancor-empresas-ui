@@ -34,7 +34,8 @@ import { ContactoService } from '@app/services/empresa/convenios/alta-wizard/com
 import { DetalleDatosGeneralesComponent } from './detalles-edicion/detalle-datos-generales/detalle-datos-generales.component';
 import { DetalleArchivosComponent } from './detalles-edicion/detalle-archivos/detalle-archivos.component';
 import { DetalleContactoComponent } from './detalles-edicion/detalle-contacto/detalle-contacto.component';
-import { DetalleFormaPagoModalComponent } from './detalles-edicion/detalle-formas-pago/detalle-forma-pago-modal/detalle-forma-pago-modal.component';
+import { DetalleVipComponent } from './detalles-edicion/detalle-vip/detalle-vip.component';
+import { VipService } from '@app/services/empresa/convenios/alta-wizard/componentes/vip.service';
 
 @NgModule({
 	declarations: [
@@ -44,7 +45,6 @@ import { DetalleFormaPagoModalComponent } from './detalles-edicion/detalle-forma
 		// Componentes
 		DetalleDatosGeneralesComponent,
 		DetalleContactoComponent,
-		DetalleFormaPagoModalComponent,
 		DetalleReferenteComponent,
 		DetalleGrillasComponent,
 		DetallePlanesConvenidosComponent,
@@ -54,9 +54,10 @@ import { DetalleFormaPagoModalComponent } from './detalles-edicion/detalle-forma
 		DetalleDatosImpositivosComponent,
 		DetalleCorrespondenciaComponent,
 		DetalleSucursalesComponent,
-		DetalleArchivosComponent
-		
-		
+		DetalleArchivosComponent,
+		DetalleVipComponent
+
+
 	],
 	imports: [
 		ConvenioDefinitivoRoutingModule,
@@ -80,10 +81,8 @@ import { DetalleFormaPagoModalComponent } from './detalles-edicion/detalle-forma
 		SucursalesService,
 		ContactoService,
 		ArchivosService,
-		EmpresaService
-	],
-	entryComponents: [
-		DetalleFormaPagoModalComponent
+		EmpresaService,
+		VipService
 	]
 })
 export class ConvenioDefinitivoModule { }

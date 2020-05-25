@@ -69,7 +69,7 @@ export class DetalleDatosGeneralesComponent implements OnInit {
         copagosACargo: [null, Validators.required],
         recepcionista: [null],
         carEntidadId: [null], //Revisar TODO
-        carEntidadDescripcion: [null],
+        carEntidadDescripcion: [''],
         enviosCredenciales: this._fb.group({
           id: [null, Validators.required],
           descripcion: [null]
@@ -77,7 +77,7 @@ export class DetalleDatosGeneralesComponent implements OnInit {
         firmaDes: [null],
         observaciones: [null, [Validators.maxLength(255)]]
       });
-
+  
       this.credencialesForm = this._fb.group({
         carEntidadId: [],
         descripcion: [],
@@ -173,7 +173,7 @@ export class DetalleDatosGeneralesComponent implements OnInit {
   fillForm() {
     setTimeout(() => {
       this.service.getDatosGeneralesD(this.convenioIdFlag).subscribe(r => {
-        console.log('R', r);
+        //console.log('R', r);
         if (!r.length) {
           this.utilService.notification('Convenio inexistente', 'error', 1000);
           this.router.navigate(['/404']);
@@ -227,7 +227,7 @@ export class DetalleDatosGeneralesComponent implements OnInit {
 
     validatedForm.vigenciaDesde = newDate;
 
-    this.service.postDatosGeneralesD(validatedForm).subscribe(r => {
+    this.service.actualizarDatosGenerales(validatedForm).subscribe(r => {
       this.utilService.notification('¡Datos generales actualizado!', 'success', 1000);
     });
   }

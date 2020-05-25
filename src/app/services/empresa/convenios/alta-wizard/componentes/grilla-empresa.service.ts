@@ -20,7 +20,7 @@ export class GrillaEmpresaService {
  
 
     addGrillaConvenioProductoD(grilla:ProductoGrillaEmpresaDTO):Observable<ProductoGrillaEmpresaDTO>{
-        return this.http.post<ProductoGrillaEmpresaDTO>(`${this.baseUrl}/Empresas/api/grillaEmpresa`,grilla).pipe(
+        return this.http.post<ProductoGrillaEmpresaDTO>(`${this.baseUrl}/Empresas/api/grillaEmpresa/empresas`,grilla).pipe(
             catchError(e => throwError(new Error(e)))
         );
     }

@@ -10,9 +10,9 @@ import { UtilService } from '@app/core';
 import { ContactoService } from '@app/services/empresa/convenios/alta-wizard/componentes/contacto.service';
 
 @Component({
-	selector: 'detalle-sucursales',
-	templateUrl: './detalle-sucursales.component.html',
-	styleUrls: ['./detalle-sucursales.component.scss']
+  selector: 'detalle-sucursales',
+  templateUrl: './detalle-sucursales.component.html',
+  styleUrls: ['./detalle-sucursales.component.scss']
 })
 export class DetalleSucursalesComponent implements OnInit {
 
@@ -20,13 +20,13 @@ export class DetalleSucursalesComponent implements OnInit {
     private _fb: FormBuilder,
     private service: ContactoService,
     private sucursalService: SucursalesService,
-    private utilService: UtilService) { 
+    private utilService: UtilService) {
     this.sucursalesForm = this._fb.group({
       descripcion: ['', [Validators.required]],
       domicilio: [''],
       categoria: [''],
       telefono: [''],
-      email: [''],
+      email: ['', [Validators.email]],
       localidad: this._fb.group({
         codigoPostal: [''],
         detalle: [''],
@@ -38,33 +38,35 @@ export class DetalleSucursalesComponent implements OnInit {
   }
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-		this.paginator = mp;
-		this.sucursalDataSource.paginator = this.paginator;
-	} private paginator: MatPaginator;
+    this.paginator = mp;
+    this.sucursalDataSource.paginator = this.paginator;
+  } private paginator: MatPaginator;
 
   @Input() set isEdition(isEdition) {
-		setTimeout(() => {
-			this.isEditionFlag = isEdition;
-		});
-	} isEditionFlag = false;
 
-	@Input() set empresaId(empresaId) {
-		setTimeout(() => {
-			this.empresaIdFlag = empresaId;
-		});
-	} empresaIdFlag = null;
+    this.isEditionFlag = isEdition;
 
-	@Input() set convenioId(convenioId) {
-		setTimeout(() => {
-      this.convenioIdFlag = convenioId;		
-		});
-	} convenioIdFlag = null;
-  
+  } isEditionFlag = false;
+
+  @Input() set empresaId(empresaId) {
+
+    this.empresaIdFlag = empresaId;
+
+  } empresaIdFlag = null;
+
+  @Input() set convenioId(convenioId) {
+
+    this.convenioIdFlag = convenioId;
+    this.fillSucursales();
+  } convenioIdFlag = null;
+
+  @Output() changeEditionFlag = new EventEmitter<boolean>();
+
+
   sucursalServiceSubject: Subscription;
-	localidadCtrl = new FormControl();
-	filteredLocalidades: Observable<any[]>;
-	sucursalesForm: FormGroup;
-  
+  filteredLocalidades: Observable<any[]>;
+  sucursalesForm: FormGroup;
+
   dialogRef = null;
   isPosting = false;
 
@@ -73,33 +75,44 @@ export class DetalleSucursalesComponent implements OnInit {
 
   sucursalItem: SucursalEmpresaDTO;
 
+  edicionSucuExistente: boolean = false;
+  currentSucursal: SucursalEmpresaDTO = null;
+
   sucursalDataSource = new MatTableDataSource<any>([]);
   //sucursal_list: any = [];
-	sucursal_displayedColumns = [
-		'descripcion',
-		'domicilio',
-		'categoria',
-		'telefono',
-		'email',
-		'localidad',
-		'delete'
-	];
+  sucursal_displayedColumns = [
+    'descripcion',
+    'domicilio',
+    'categoria',
+    'telefono',
+    'email',
+    'localidad',
+    'delete'
+  ];
 
-  fillSucursales() {
-    this.sucursalService.getSucursalesEmpresaD(this.empresaIdFlag)
-    .subscribe(res => {
-      if (res == null) res = [];  
-      this.sucursalDataSource.data = res
-    });
+  ngOnInit() {
+    console.log("INIT");
+    this.fillSucursales();
+    console.log("INIT");
+
   }
 
-	ngOnInit() { }
+  fillSucursales() {
+    this.sucursalService.getSucursalesEmpresaD(this.convenioIdFlag)
+      .subscribe(res => {
+        if (res == null) res = [];
+        res.forEach( x => {
+          x.email = x.email.trim();
+        })
+        this.sucursalDataSource.data = res;
+      });
+  }
 
   codigoPostalListFill(val) {
     setTimeout(() => {
       this.sucursalService.getLocalidades(val).subscribe(r => {
         this.codPostalList = r.listaResultado;
-     });
+      });
     }, 350);
   }
 
@@ -109,53 +122,105 @@ export class DetalleSucursalesComponent implements OnInit {
     });
   }
 
-	sucursalSaveAndRender() {
-		if (this.sucursalesForm.valid) {
+  sucursalSaveAndRender() {
+    if (this.sucursalesForm.valid  || this.codPostalControl.valid) {
 
       this.isPosting = true;
 
-			this.sucursalItem = this.sucursalesForm.value as SucursalEmpresaDTO;
-			this.sucursalItem.empresaId = this.convenioIdFlag;
-			this.sucursalItem.estado = 0;
-		
+      this.sucursalItem = this.sucursalesForm.value as SucursalEmpresaDTO;
+      this.sucursalItem.empresaId = this.convenioIdFlag;
+      this.sucursalItem.estado = 0;
+      this.sucursalItem.idSucursal = null;
+
       this.sucursalService.addSucursalEmpresaD(this.sucursalItem)
+        .subscribe(res => {
+          this.fillSucursales();
+        }).add(() => {
+          this.isPosting = false;
+          this.resetForms();
+        });
+    }
+
+  }
+
+  sucursalEditAndRender() {
+
+    if (this.sucursalesForm.invalid || this.codPostalControl.invalid) {
+      return
+    }
+
+    this.isPosting = true;
+
+    this.sucursalItem = this.sucursalesForm.value as SucursalEmpresaDTO;
+    this.sucursalItem.empresaId = this.convenioIdFlag;
+    this.sucursalItem.estado = 0;
+    this.sucursalItem.idSucursal = this.currentSucursal.idSucursal;
+
+    this.sucursalService.addSucursalEmpresaD(this.sucursalItem)
       .subscribe(res => {
-			  this.fillSucursales();
+        this.utilService.notification('¡Sucursal modificada con éxito!', 'success', 4000);
+        this.fillSucursales();
       }).add(() => {
         this.isPosting = false;
+        this.cancelEdit();
       });
-		}
+  }
 
-    this.sucursalesForm
-    .reset({ descripcion: '', domicilio: '', categoria: '', telefono: '', email: '', localidad: '' });
-	}
+  sucursalEdit(row) {
 
-	sucursalDelete(sucursalItem: SucursalEmpresaDTO) {
+    this.edicionSucuExistente = true;
+    this.isEditionFlag = true;
+    this.changeEditionFlag.emit(true);
+    this.currentSucursal = row;
+    this.sucursalesForm.patchValue(row);
+    this.codPostalControl.setValue(row.localidad.codigoPostal);
+
+  }
+
+  cancelEdit() {
+
+    this.isEditionFlag = false;
+    this.changeEditionFlag.emit(false);
+    this.edicionSucuExistente = false;
+    this.currentSucursal = null;
+    this.resetForms();
+
+  }
+
+  resetForms() {
+
+    this.sucursalesForm.reset();
+    this.codPostalControl.reset();
+
+  }
+
+  sucursalDelete(sucursalItem: SucursalEmpresaDTO) {
     if (this.dialogRef === null) {
-			this.dialogRef = this.utilService.openConfirmDialog({
-				titulo: 'Dialogo de confirmación',
-				texto: '¿Desea eliminar este registro de sucursales?',
-				confirmar: 'Eliminar',
-				cancelar: 'Cancelar'
+      this.dialogRef = this.utilService.openConfirmDialog({
+        titulo: 'Dialogo de confirmación',
+        texto: '¿Desea eliminar este registro de sucursales?',
+        confirmar: 'Eliminar',
+        cancelar: 'Cancelar'
       });
-      
+
       this.utilService.loseFocus();
-      
-			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
+
+      this.dialogRef.afterClosed().toPromise().then((respuesta) => {
         if (respuesta) {
 
           this.isPosting = true;
 
           this.sucursalService.deleteSucursarEmpresaD(sucursalItem)
-          .subscribe(res => {
-            this.fillSucursales();
-          }).add(() => {
-            this.isPosting = false;
-          });
+            .subscribe(res => {
+              this.fillSucursales();
+            }).add(() => {
+              this.isPosting = false;
+            });
         }
 
-				this.dialogRef = null;
-			});
-		}
-	}
-} 
+        this.dialogRef = null;
+      });
+    }
+  }
+
+}

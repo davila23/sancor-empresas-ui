@@ -18,10 +18,10 @@ import { pipe } from 'rxjs';
 export class ConvenioListadoComponent implements OnInit {
 
   constructor(
-    private controlConvenioService: ControlConvenioService,
+    private controlConvenioService: ControlConvenioService, 
     private utilService: UtilService,
     private router: Router,
-    private fb: FormBuilder) {
+    private fb: FormBuilder) { 
       this.filtrosForm = this.fb.group({
         nombre: '',
         usuario: '',
@@ -48,7 +48,7 @@ export class ConvenioListadoComponent implements OnInit {
   conveniosControl: ConvenioMovimientoDTO[] = [];
   selectedConveniosTemporales = new SelectionModel<ConvenioMovimientoDTO>(true, []);
   dataSource = new MatTableDataSource<ConvenioMovimientoDTO>(this.conveniosControl);
-  resultsLength = 0;
+  resultsLength = 0;            
 
   controlsLoading: any = {
     list: {

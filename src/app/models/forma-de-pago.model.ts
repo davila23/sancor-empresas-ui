@@ -13,6 +13,9 @@ export class FormaDePagoConvenioDTO{
     bancoEmisor:number;
     codSeguridad:number;
     fechaVencimiento:number;//fecha
+    cuentaNumero:number;
+	tipoCuenta:string;
+	numeroFormaPago:number;
     //Campos CBU
     codigoEnvio:number;
     nroCbu:string;
@@ -30,5 +33,18 @@ export class FormaDePagoConvenioDTO{
     cuil:number;
     reintegros:string;
     alias:string;
+    extension:ExtensionCbuDTO;
+    numeroAfiliado:number;
+	formaPago:number;
+	
 
+}
+
+export class ExtensionCbuDTO{
+   	
+		tipoCuenta:string;
+  		numeroAfiliado:number;
+  		formaPago:number;
+  		alias:string;
+	
 }

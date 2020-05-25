@@ -91,7 +91,7 @@ export class SucursalesComponent implements OnInit {
 	sucursal_displayedColumns = [
 		'descripcion',
 		'domicilio',
-		'categoria',
+		//'categoria',
 		'telefono',
 		'email',
 		'localidad',

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion, MatTableDataSource, MatDialog } from '@angular/material';
 import { GrillaDTO } from '@app/models/empresa/convenios/grilla.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormasDePagoService } from '@app/services/empresa/convenios/alta-wizard/componentes/formas-de-pago.service';
 
 @Component({
   selector: 'app-detalles-edicion',
@@ -12,12 +13,22 @@ export class DetallesEdicionComponent implements OnInit {
 
   constructor(private dialog: MatDialog,
               private router: Router,
-              private activatedRoute: ActivatedRoute) {
-                
+              private activatedRoute: ActivatedRoute,
+              private formasPagoService:FormasDePagoService) {
+
               this.empresaId = this.activatedRoute.snapshot.params.empresaId || null;
               this.convenioId = this.activatedRoute.snapshot.params.convenioId || null;
 
-              /* Temporarily validation */ 
+              if (localStorage.getItem('bancos') == null){
+                this.formasPagoService.getBancos().subscribe(
+                  res => {
+                  localStorage.setItem('bancos', JSON.stringify(res));
+                  }
+                )
+              }
+              
+              
+              /* Temporarily validation */
               if (!this.empresaId || !this.convenioId) this.router.navigate(['/404']);
               if (!Number(this.empresaId) || !Number(this.convenioId)) this.router.navigate(['/404']);
   }
@@ -39,6 +50,7 @@ export class DetallesEdicionComponent implements OnInit {
     {name: 'datosImpositivos', isEdition: false},
     {name: 'correspondencia', isEdition: false},
     {name: 'sucursales', isEdition: false},
+    {name: 'vip', isEdition: false},
     {name: 'archivos', isEdition: false}
   ]
 

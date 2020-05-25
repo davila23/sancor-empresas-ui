@@ -7,6 +7,7 @@ export const types = [
     {extension: 'gif',  contentType: 'image/gif'},
     {extension: 'jpeg', contentType: 'image/jpeg'},
     {extension: 'jpg',  contentType: 'image/jpeg'},
+    {extension: 'jfif',  contentType: 'image/jpeg'},
     {extension: 'js',   contentType: 'application/x-javascript'},
     {extension: 'atom', contentType: 'application/atom+xml'},
     {extension: 'rss',  contentType: 'application/rss+xml'},
@@ -93,6 +94,7 @@ export const types = [
     {extension: 'xpi',  contentType: 'application/x-xpinstall'},
     {extension: 'xhtml',contentType: 'application/xhtml+xml'},
     {extension: 'zip',  contentType: 'application/zip'},
+    
 
 
     //pdf,xls,xlsx,doc,docx,txt,ods

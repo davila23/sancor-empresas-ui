@@ -45,7 +45,8 @@ app-button {
 			border: 0.2em solid $normal-color;
 		}
 		&.mat-primary {
-			border: 0.2em solid $primary-color;
+			border: 0.2em solid transparent;
+			background-color: $grey-color;
 		}
 		&.mat-accent {
 			border: 0.2em solid transparent;
@@ -72,7 +73,7 @@ app-button {
 
 	button.mat-primary:hover span.mat-button-wrapper {
 		transition: color 0.05s ease-in-out;
-		color: $primary-color;
+		color: white;
 	}
 
 	button.mat-accent:hover span.mat-button-wrapper {

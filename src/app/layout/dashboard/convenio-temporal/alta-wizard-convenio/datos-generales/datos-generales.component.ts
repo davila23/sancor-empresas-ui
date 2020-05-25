@@ -83,7 +83,7 @@ export class DatosGeneralesComponent implements OnInit {
         descripcion: [null]
       }),
       firmaDes: [null],
-      observaciones: [null, [Validators.maxLength(255)]]
+      observaciones: [null, [Validators.maxLength(500)]]
     });
 
     this.credencialesForm = this._fb.group({

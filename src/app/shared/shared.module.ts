@@ -31,6 +31,7 @@ import {
 	MatStepperModule,
 	MatAutocompleteModule,
 	MatProgressBarModule,
+	MatDatepickerModule,
 } from '@angular/material';
 /** Modules */
 import { ComponentesModule, HttpService as ComponentesHttpService } from '@componentes/.';
@@ -55,6 +56,7 @@ import { TelefonoInputComponent } from './telefono-input/telefono-input.componen
 import { ContextMenuComponent } from '@app/layout/dashboard/empresa/empresa/context-menu.component';
 import { AuthInterceptor } from '@app/http-interceptors/auth-interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { DetalleFormaPagoModalComponent } from './detalle-forma-pago-modal/detalle-forma-pago-modal.component';
 
 @NgModule({
 	imports: [
@@ -92,6 +94,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 		MatProgressBarModule,
 		MatAutocompleteModule,
 		MatProgressBarModule,
+		MatDatepickerModule,
 
 		UtilsModule
 	],
@@ -110,7 +113,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 		LoadingComponent,
 		RetryingComponent,
 		TelefonoInputComponent,
-		ContextMenuComponent
+		ContextMenuComponent,
+		DetalleFormaPagoModalComponent
 	],
 	exports: [
 		CommonModule,
@@ -153,6 +157,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 		MatStepperModule,
 		MatAutocompleteModule,
 		MatProgressBarModule,
+		MatDatepickerModule,
 		/** Directives */
 		FocusNextDirective,
 		LoadingDirective,
@@ -165,7 +170,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 		RetryingComponent,
 		AutocompleteModule,
 		TelefonoInputComponent,
-		ContextMenuComponent
+		ContextMenuComponent,
+		DetalleFormaPagoModalComponent
 
 	],
 	providers: [
@@ -180,7 +186,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 		InformationComponent,
 		RetryingComponent,
 		LoadingComponent,
-		ContextMenuComponent
+		ContextMenuComponent,
+		DetalleFormaPagoModalComponent
 	]
 })
 export class SharedModule { }

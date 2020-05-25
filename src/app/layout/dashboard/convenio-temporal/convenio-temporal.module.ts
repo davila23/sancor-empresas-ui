@@ -31,7 +31,6 @@ import { SucursalesService } from '@app/services/empresa/convenios/alta-wizard/c
 import { ContactoService } from '@app/services/empresa/convenios/alta-wizard/componentes/contacto.service';
 import { ArchivosService } from '@app/services/empresa/convenios/alta-wizard/componentes/archivos.service';
 import { EmpresaService } from '@app/services/empresa/empresa.service';
-import { DetalleFormaPagoModalComponent } from './alta-wizard-convenio/formas-pago/detalle-forma-pago-modal/detalle-forma-pago-modal.component';
 import { VipComponent } from './alta-wizard-convenio/vip/vip.component';
 import { VipService } from '@app/services/empresa/convenios/alta-wizard/componentes/vip.service';
 import { ControlConvenioService } from '@app/services/control/control-convenio.service';
@@ -53,7 +52,6 @@ import { ControlConvenioService } from '@app/services/control/control-convenio.s
 		SubsidiosComponent,
 		FormasPagoComponent,
 		ArchivosComponent,
-		DetalleFormaPagoModalComponent,
 		VipComponent
 	],
 	imports: [
@@ -81,9 +79,6 @@ import { ControlConvenioService } from '@app/services/control/control-convenio.s
 		EmpresaService,
 		VipService,
 		ControlConvenioService
-	],
-	entryComponents: [
-		DetalleFormaPagoModalComponent
 	]
 })
 export class ConvenioTemporalModule { }

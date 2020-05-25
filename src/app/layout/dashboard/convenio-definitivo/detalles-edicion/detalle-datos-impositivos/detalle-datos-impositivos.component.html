@@ -30,12 +30,14 @@
           <ng-container *ngIf="row.tipoComprobante == 'R'">Resumen</ng-container>
         </mat-cell>
       </ng-container>
+      <!--
       <ng-container matColumnDef="delete">
         <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="eliminar">
           <button mat-icon-button color="primary" (click)="datosImpositivosDelete(row)"><mat-icon>remove</mat-icon></button>
         </mat-cell>
       </ng-container>
+      -->
       <mat-header-row *matHeaderRowDef="datosImpositivos_displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: datosImpositivos_displayedColumns;" class="table-row"></mat-row>
     </mat-table>
@@ -47,6 +49,7 @@
         [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
     </mat-paginator>
   </mat-card>
+  <!--
   <mat-card class="custom" *ngIf="isEditionFlag">
     <mat-card-header>
       <mat-card-title>
@@ -82,4 +85,5 @@
       <button mat-fab color="accent" (click)="datosImpositivosSaveAndRender()" [disabled]="datosImpositivosForm.invalid"><mat-icon>add</mat-icon></button>
     </mat-card-actions>
   </mat-card>
+  -->
 </form>

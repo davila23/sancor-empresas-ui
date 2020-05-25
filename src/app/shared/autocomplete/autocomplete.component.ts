@@ -155,7 +155,7 @@ export class AutocompleteComponent implements OnInit, DoCheck {
 
     /** Realiza la búsqueda en el backend si es remota o en array resultados */
     buscar(busqueda) {
-        console.log('busqueda', busqueda);
+        
         if ((!busqueda || busqueda.length === 0) && this.min > 0) {
             if (!this.isReactive) {
                 this.limpiar();

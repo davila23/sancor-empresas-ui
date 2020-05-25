@@ -8,11 +8,13 @@ import { HttpClient } from '@angular/common/http';
 @Injectable()
 export class DatosGeneralesService {
 
+
   constructor(private http: HttpClient) { }
 
 
   baseUrl = environment.baseUrl;
   baseUrlEmpresas = environment.baseUrlEmpresas;
+  baseEjecutivoUrl = environment.baseEjecutivoUrl;
 
   /**
     * DEFINITIVO
@@ -26,8 +28,13 @@ export class DatosGeneralesService {
 
   postDatosGeneralesD(value): Observable<any> {
     const url = `${this.baseUrl}/Empresas/api/convenio`;
+     return this.http.post(url, value).pipe(map(this.extractData));
 
-    return this.http.post(url, value).pipe(map(this.extractData));
+  }
+
+  actualizarDatosGenerales(value): Observable<any>{
+     const url = `${this.baseUrl}/Empresas/api/convenio`;
+     return this.http.put(url, value).pipe(map(this.extractData));
   }
   /*
   * TEMPORARIO
@@ -58,8 +65,8 @@ export class DatosGeneralesService {
   }
 
   getEjecutivoConvenio(value): Observable<any> {
+  //  const url = `${this.baseEjecutivoUrl}/Comercial/webresources/ServicioPersona/autocompletarEjecutivo?descripcion=${value}`;
     const url = `http://testcomercialsvc.ams.red:8080/Comercial/webresources/ServicioPersona/autocompletarEjecutivo?descripcion=${value}`;
-
     return this.http.get(url);
   }
 

@@ -1,14 +1,14 @@
 <div class="grid">
   <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
 </div>
-  
+
 <div class="no-data-container" *ngIf="!formaPagoDataSource.data?.length">
   No hay medios de pago añadidos...
 </div>
 
 <mat-card class="custom" [ngClass]="{'not-show':!formaPagoDataSource.data?.length}">
   <mat-card-content>
-    <mat-table [dataSource]="formaPagoDataSource"> 
+    <mat-table [dataSource]="formaPagoDataSource">
       <ng-container matColumnDef="formaPago">
         <mat-header-cell *matHeaderCellDef> Forma de pago </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="formaPago"> {{row.descripcion}} </mat-cell>
@@ -17,8 +17,14 @@
       <ng-container matColumnDef="detalle">
         <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="detalle">
-          <button mat-icon-button color="primary" matTooltip="ver detalle" (click)="openFormaPagoModal(row)"><mat-icon>search</mat-icon></button>
-          <button mat-icon-button color="accent" *ngIf="delete" matTooltip="eliminar" (click)="deleteFormaPagoModal(row)"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button color="primary" matTooltip="ver detalle" (click)="openFormaPagoModal(row)"
+            *ngIf="row.descripcion.trim()==='TC' || row.descripcion.trim()==='CBU'">
+            <mat-icon>search</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" *ngIf="delete" matTooltip="eliminar"
+            (click)="deleteFormaPagoModal(row)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </mat-cell>
       </ng-container>
 
@@ -40,7 +46,8 @@
       <div class="grid responsive-grid">
         <mat-form-field>
           <mat-select placeholder="Forma de pago" required>
-            <mat-option *ngFor="let item of list" value="{{item.id}}" (onSelectionChange)="selectTipo($event)">{{item.descripcion}}</mat-option>
+            <mat-option *ngFor="let item of list" value="{{item.id}}" (onSelectionChange)="selectTipo($event)">
+              {{item.descripcion}}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -55,7 +62,8 @@
       <!-- CBU -->
       <form class="grid responsive-grid" [formGroup]="cbuForm" *ngIf="show == 2">
         <mat-form-field>
-          <input matInput type="text" placeholder="Cuit/Cuil" formControlName="cuit" cuitMask required (focusout)="focusOutFunction()">
+          <input matInput type="text" placeholder="Cuit/Cuil" formControlName="cuit" cuitMask required
+            (focusout)="focusOutFunction()">
           <mat-error *ngIf="cbuForm.get('cuit').errors && cbuForm.get('cuit').errors?.required">
             Campo requerido</mat-error>
           <mat-error *ngIf="cbuForm.get('cuit').errors && cbuForm.get('cuit').errors?.cuit">
@@ -64,7 +72,8 @@
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput placeholder="Nro Cbu" formControlName="nrocbu" cbuMask required (focusout)="focusOutFunction()">
+          <input matInput placeholder="Nro Cbu" formControlName="nrocbu" cbuMask required
+            (focusout)="focusOutFunction()">
           <mat-error *ngIf="cbuForm.get('nrocbu').errors && cbuForm.get('nrocbu').errors?.required">
             Campo requerido
           </mat-error>
@@ -72,21 +81,13 @@
             Formato inválido
           </mat-error>
         </mat-form-field>
-    
+
         <mat-form-field>
-          <input 
-            [formControl]="bancoCtrl" 
-            #stateInput
-            type="text" 
-            placeholder="Banco" 
-            matInput 
-            [matAutocomplete]="auto"
+          <input [formControl]="bancoCtrl" #stateInput type="text" placeholder="Banco" matInput [matAutocomplete]="auto"
             (keyup)="0">
           <mat-autocomplete #auto="matAutocomplete">
-            <mat-option
-              (onSelectionChange)="stateInput.value != undefined && onEnter($event)"  
-              *ngFor="let item of filteredBancos | async" 
-              [value]="item">
+            <mat-option (onSelectionChange)="stateInput.value != undefined && onEnter($event)"
+              *ngFor="let item of filteredBancos | async" [value]="item">
               {{ item.descripcion}}
             </mat-option>
           </mat-autocomplete>
@@ -103,7 +104,7 @@
           </mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput type="number" formControlName="nroctabco" numMask="15" placeholder="Nro Cta Bco"  required>
+          <input matInput type="number" formControlName="nroctabco" numMask="15" placeholder="Nro Cta Bco" required>
           <mat-error *ngIf="cbuForm.get('nroctabco').errors && cbuForm.get('nroctabco').errors?.required">
             Campo requerido
           </mat-error>
@@ -122,23 +123,38 @@
           </mat-error>
         </mat-form-field>
       </form>
-  
+
       <!-- TC -->
       <form class="grid responsive-grid" [formGroup]="tcForm" *ngIf="show == 1">
-        <tr-fecha placeholder="Vencimiento" [form]="tcForm" nombre="vencimiento" required></tr-fecha>
-    
+
         <mat-form-field>
           <input matInput type="number" placeholder="Nro Tarjeta" formControlName="nrotarjeta" numMask="16" required>
-          <mat-error *ngIf="tcForm.get('nrotarjeta').errors && tcForm.get('nrotarjeta').errors?.required">Campo requerido</mat-error>
+          <mat-error *ngIf="tcForm.get('nrotarjeta').errors && tcForm.get('nrotarjeta').errors?.required">Campo
+            requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Quitado para fecha vencimiento tarjeta mes/año -->
+        <!-- <tr-fecha placeholder="Vencimiento" [form]="tcForm" nombre="vencimiento" required></tr-fecha> -->
+        <mat-form-field>
+          <mat-label>Vencimiento</mat-label>
+          <input matInput [matDatepicker]="dp" formControlName="vencimiento">
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event)"
+            (monthSelected)="chosenMonthHandler($event, dp)">
+          </mat-datepicker>
+          <mat-error *ngIf="tcForm.get('vencimiento').errors && tcForm.get('vencimiento').errors?.required">Campo
+            requerido</mat-error>
         </mat-form-field>
 
         <mat-form-field>
-          <mat-select placeholder="Banco" formControlName="bancoEmisor" (selectionChange)="changeBancoTC($event)" required>
+          <mat-select placeholder="Banco" formControlName="bancoEmisor" (selectionChange)="changeBancoTC($event)"
+            required>
             <mat-option *ngFor="let item of tarjetasList;" [value]="item.codigo">
               {{item.descripcion}}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="tcForm.get('bancoEmisor').errors && tcForm.get('bancoEmisor').errors?.required">Campo requerido</mat-error>
+          <mat-error *ngIf="tcForm.get('bancoEmisor').errors && tcForm.get('bancoEmisor').errors?.required">Campo
+            requerido</mat-error>
         </mat-form-field>
       </form>
 
@@ -147,9 +163,12 @@
   </mat-card-content>
 
   <mat-card-actions align="end">
-    <button mat-raised-button color="accent" *ngIf="show == 1" [disabled]="isPosting || tcForm.invalid" (click)="tcSaveRender()">AÑADIR</button>
-    <button mat-raised-button color="accent" *ngIf="show == 2" [disabled]="isPosting || cbuForm.invalid" (click)="cbuSaveRender()">AÑADIR</button>
-    <button mat-raised-button color="accent" *ngIf="show == 3" [disabled]="isPosting" (click)="efSaveRender()">AÑADIR</button>
+    <button mat-raised-button color="accent" *ngIf="show == 1" [disabled]="isPosting || tcForm.invalid"
+      (click)="tcSaveRender()">AÑADIR</button>
+    <button mat-raised-button color="accent" *ngIf="show == 2" [disabled]="isPosting || cbuForm.invalid"
+      (click)="cbuSaveRender()">AÑADIR</button>
+    <button mat-raised-button color="accent" *ngIf="show == 3" [disabled]="isPosting"
+      (click)="efSaveRender()">AÑADIR</button>
   </mat-card-actions>
 
 </mat-card>

@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="header">
+    <button class="close-btn" mat-icon-button matTooltip="cerrar" color="accent" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <span class="title">{{data.datos.descripcion}}</span>
+  </div>
+  <div class="content">
+
+    <div *ngIf="data.tipo == 'TC'">
+      <div class="data-container">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Banco" value="{{data.datos.bancoDesc}}" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Nro tarjeta" value="{{data.datos.numeroTarjeta}}" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field *ngIf="data.datos.fechaVencimiento">
+          <mat-label>Vencimiento</mat-label>
+          <input matInput [matDatepicker]="dp" [formControl]="date" [readonly]="true">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div *ngIf="data.tipo == 'CBU'">
+      <div class="data-container">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Número CBU" value="{{data.datos.cbu}}" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Banco" value="{{data.datos.bancoDesc}}" [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Tipo cuenta" value="{{data.datos.tipoCuenta | uppercase}}"
+            [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Número cuenta de Banco" value="{{data.datos.cuenta}}"
+            [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Apellido" value="{{data.datos.apellido | uppercase}}"
+            [readonly]="true">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Nombre" value="{{data.datos.nombre | uppercase}}" [readonly]="true">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div *ngIf="data.tipo == 'EF'">
+      <div class="data-container">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Forma de pago" value="{{'EFECTIVO'}}" [readonly]="true">
+        </mat-form-field>
+      </div>
+    </div>
+
+  </div>
+</div>

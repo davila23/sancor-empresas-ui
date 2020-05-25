@@ -1,21 +1,22 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReferenteEmpresaService } from '@app/services/empresa/convenios/alta-wizard/componentes/referente-empresa.service';
 import { ReferenteEmpresaDTO } from '@app/models/referente-empresa.model';
 import { UtilService } from '@app/core';
+import * as moment from 'moment';
+moment.locale('es');
 
 @Component({
   selector: 'detalle-referente',
   templateUrl: './detalle-referente.component.html',
-	styleUrls: ['./detalle-referente.component.scss']
+  styleUrls: ['./detalle-referente.component.scss']
 })
 export class DetalleReferenteComponent implements OnInit {
 
-  constructor(private _fb: FormBuilder, 
-              private _service: ReferenteEmpresaService, 
-              private utilService: UtilService)
-  {
+  constructor(private _fb: FormBuilder,
+    private _service: ReferenteEmpresaService,
+    private utilService: UtilService) {
     this.referenteForm = this._fb.group({
       empresaId: ['', Validators.required],
       id: [null],
@@ -39,15 +40,17 @@ export class DetalleReferenteComponent implements OnInit {
     });
   }
 
-  @Input() set convenioId (convenioId) {
-    this.referenteForm.patchValue({empresaId: Number(convenioId)});
+  @Input() set convenioId(convenioId) {
+    this.referenteForm.patchValue({ empresaId: Number(convenioId) });
   };
 
   @Input() set isEdition(isEdition) {
-		setTimeout(() => {
-			this.isEditionFlag = isEdition;
-		});
-	}
+    setTimeout(() => {
+      this.isEditionFlag = isEdition;
+    });
+  }
+
+  @Output() changeEditionFlag = new EventEmitter<boolean>();
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
     this.paginator = mp;
@@ -68,7 +71,8 @@ export class DetalleReferenteComponent implements OnInit {
     'numeroDocumento',
     'numeroTelefono',
     'email',
-    'delete'
+    'delete',
+
   ];
 
   referenteDataSource = new MatTableDataSource<ReferenteEmpresaDTO>([]);
@@ -77,6 +81,10 @@ export class DetalleReferenteComponent implements OnInit {
 
   dialogRef = null;
 
+  edicionRefExistente: boolean = false;
+  currentReferent: ReferenteEmpresaDTO = null;
+
+
   fillTable() {
     this._service.getReferentesD(this.referenteForm.value.empresaId).subscribe(r => {
       this.referenteDataSource.data = (r) ? r : [];
@@ -84,6 +92,11 @@ export class DetalleReferenteComponent implements OnInit {
   }
 
   referenteSaveAndRender() {
+
+    if(this.referenteForm.invalid || this.telefonoForm.invalid){
+      return
+    }
+
     if (this.dialogRef === null) {
       this.dialogRef = this.utilService.openConfirmDialog({
         titulo: 'Dialogo de confirmación',
@@ -93,49 +106,98 @@ export class DetalleReferenteComponent implements OnInit {
       });
 
       this.utilService.loseFocus();
-      
+
       this.dialogRef.afterClosed().toPromise().then((respuesta) => {
-        
+
         if (respuesta) {
 
           this.isPosting = true;
-
-          this._service.addReferenteD(this.referenteForm.value).subscribe(r => {
+          this.referenteForm.controls['fechaNacimiento'].setValue(this.referenteForm.controls['fechaNacimiento'].value.format('YYYY-MM-DD'));
+          let data: ReferenteEmpresaDTO = this.referenteForm.value;
+          data.id = null;
+          this._service.addReferenteD(data).subscribe(r => {
             this.utilService.notification('¡Referente añadido con éxito!', 'success', 4000);
             this.fillTable();
           }).add(() => {
             this.isPosting = false;
           });
-    
-          this.referenteForm.patchValue({
-            nombreApellido: '',
-            cargo: '',
-            fechaNacimiento: '',
-            tipoDocumento: 96,
-            numeroDocumento: '',
-            caracteristicaTelefono: '',
-            numeroTelefono: '',
-            numeroCelular: '',
-            estado:1,
-            email: '',
-            hobbie: '',
-            deporte: ''
-          });
-    
-          this.telefonoForm.reset({
-            caracteristica: '',
-            numero: ''
-          });
-    
-          this.referenteForm.markAsPristine();
-          this.referenteForm.markAsUntouched();
-          this.telefonoForm.markAsPristine();
-          this.telefonoForm.markAsUntouched();           
+
+          this.resetForms();
         }
+        this.dialogRef = null;
+      });
+    }
+  }
+
+  referenteEditAndRender() {
+
+    if(this.referenteForm.invalid || this.telefonoForm.invalid){
+      return
+    }
+
+    if (this.dialogRef === null) {
+      this.dialogRef = this.utilService.openConfirmDialog({
+        titulo: 'Dialogo de confirmación',
+        texto: '¿Desea editar el registro de referente?',
+        confirmar: 'Editar',
+        cancelar: 'Cancelar'
+      });
+
+      this.utilService.loseFocus();
+
+      this.dialogRef.afterClosed().toPromise().then((respuesta) => {
+
+        if (respuesta) {
+
+          this.isPosting = true;
+
+          let newDate = moment(new Date(this.referenteForm.controls['fechaNacimiento'].value)).format('YYYY-MM-DD');
+          this.referenteForm.controls['fechaNacimiento'].setValue(newDate);
+          
+          let data: ReferenteEmpresaDTO = this.referenteForm.value;
+          data.id = this.currentReferent.id;
+          this._service.addReferenteD(data).subscribe(r => {
+            this.utilService.notification('¡Referente modificado con éxito!', 'success', 4000);
+            this.fillTable();
+          }).add(() => {
+            this.isPosting = false;
+          });
+
+        }
+
+        this.cancelEdit();
 
         this.dialogRef = null;
       });
     }
+  }
+
+  resetForms() {
+    this.referenteForm.patchValue({
+      nombreApellido: '',
+      cargo: '',
+      fechaNacimiento: '',
+      tipoDocumento: 96,
+      numeroDocumento: '',
+      caracteristicaTelefono: '',
+      numeroTelefono: '',
+      numeroCelular: '',
+      estado: 1,
+      email: '',
+      hobbie: '',
+      deporte: ''
+    });
+
+    this.telefonoForm.reset({
+      caracteristica: '',
+      numero: ''
+    });
+
+    this.referenteForm.markAsPristine();
+    this.referenteForm.markAsUntouched();
+    this.telefonoForm.markAsPristine();
+    this.telefonoForm.markAsUntouched();
+
   }
 
   referenteDelete(row) {
@@ -148,9 +210,9 @@ export class DetalleReferenteComponent implements OnInit {
       });
 
       this.utilService.loseFocus();
-      
+
       this.dialogRef.afterClosed().toPromise().then((respuesta) => {
-        
+
         if (respuesta) {
 
           this.isPosting = true;
@@ -163,7 +225,7 @@ export class DetalleReferenteComponent implements OnInit {
             this.fillTable();
           }).add(() => {
             this.isPosting = false;
-          });     
+          });
         }
 
         this.dialogRef = null;
@@ -171,21 +233,41 @@ export class DetalleReferenteComponent implements OnInit {
     }
   }
 
+  referenteEdit(row) {
+
+    this.edicionRefExistente = true;
+    this.isEditionFlag = true;
+    this.changeEditionFlag.emit(true);
+    this.currentReferent = row;
+    this.referenteForm.patchValue(row);
+    let date = moment(row.fechaNacimiento);
+    this.referenteForm.controls['fechaNacimiento'].setValue(new Date(date.toLocaleString()));
+    this.telefonoForm.controls['caracteristica'].setValue(row.caracteristicaTelefono);
+    this.telefonoForm.controls['numero'].setValue(row.numeroTelefono);
+
+  }
+
+  cancelEdit() {
+
+    this.isEditionFlag = false;
+    this.changeEditionFlag.emit(false);
+    this.edicionRefExistente = false;
+    this.currentReferent = null;
+    this.resetForms();
+
+  }
+
   patchDate(date) {
-    this.referenteForm.patchValue({fecha_nacimiento: date.modeloValue});
+    this.referenteForm.patchValue({ fecha_nacimiento: date.modeloValue });
   }
 
   ngOnInit(): void {
     this.fillTable();
 
-    this.referenteForm.valueChanges.subscribe(r => {
-      r.fechaNacimiento = (r.fechaNacimiento) ? r.fechaNacimiento.format('YYYY-MM-DD') : null;
-    });
-
     this.telefonoForm.valueChanges.subscribe(r => {
       this.referenteForm.patchValue({
-          caracteristicaTelefono: r.caracteristica,
-          numeroTelefono: r.numero
+        caracteristicaTelefono: r.caracteristica,
+        numeroTelefono: r.numero
       });
     });
   }

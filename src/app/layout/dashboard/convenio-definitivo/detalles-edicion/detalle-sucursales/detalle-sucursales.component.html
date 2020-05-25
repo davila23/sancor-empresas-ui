@@ -27,16 +27,16 @@
         <input matInput type="text" placeholder="Email" formControlName="email">
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <input 
-        type="text" 
-        placeholder="Localidad" 
-        (input)="codigoPostalListFill($event.target.value)" 
-        matInput 
-        [formControl]="codPostalControl" 
-        [matAutocomplete]="auto" 
+        <input
+        type="text"
+        placeholder="Localidad"
+        (input)="codigoPostalListFill($event.target.value)"
+        matInput
+        [formControl]="codPostalControl"
+        [matAutocomplete]="auto"
         required>
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let cod of codPostalList" [value]="cod.codigoPostal" (keyup.enter)="localidadPatchValue(cod)" (click)="localidadPatchValue(cod)">
+          <mat-option *ngFor="let cod of codPostalList" [value]="cod.codigoPostal" (onSelectionChange)="localidadPatchValue(cod)">
             {{cod.detalle + ' ' + cod.codigoPostal}}
           </mat-option>
         </mat-autocomplete>
@@ -45,20 +45,22 @@
     </form>
   </mat-card-content>
   <mat-card-actions align="end">
-    <app-button color="accent" (click)="sucursalSaveAndRender()" [disabled]="sucursalesForm.invalid"><mat-icon>add</mat-icon>Añadir</app-button>
+    <app-button *ngIf="!edicionSucuExistente" color="accent" (click)="sucursalSaveAndRender()" [disabled]="sucursalesForm.invalid || codPostalControl.invalid || isPosting"><mat-icon>add</mat-icon>Añadir</app-button>
+    <app-button *ngIf="edicionSucuExistente" color="primary" (click)="cancelEdit()"><mat-icon>close</mat-icon>Cancelar</app-button>
+      <app-button *ngIf="edicionSucuExistente" color="accent" (click)="sucursalEditAndRender()" [disabled]="sucursalesForm.invalid || codPostalControl.invalid || isPosting"><mat-icon>edit</mat-icon>Guardar cambios</app-button>
   </mat-card-actions>
 </mat-card>
-    
 
-<mat-card class="custom" [ngClass]="{'not-show':!sucursalDataSource.data?.length}">
+
+<mat-card class="custom" [ngClass]="{'not-show':!sucursalDataSource.data?.length}" *ngIf="!edicionSucuExistente">
   <mat-card-header>
     <mat-card-title>
       Sucursales
     </mat-card-title>
   </mat-card-header>
-  
-  <mat-table [dataSource]="sucursalDataSource"> 
-    
+
+  <mat-table [dataSource]="sucursalDataSource">
+
     <ng-container matColumnDef="descripcion">
       <mat-header-cell *matHeaderCellDef> Descripcion </mat-header-cell>
       <mat-cell *matCellDef="let row" data-label="Descripcion"> {{row.descripcion}} </mat-cell>
@@ -90,6 +92,7 @@
       <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
       <mat-cell *matCellDef="let row" data-label="eliminar">
         <button mat-icon-button color="accent" matTooltip="eliminar" (click)="sucursalDelete(row)"><mat-icon>delete</mat-icon></button>
+        <button mat-icon-button  matTooltip="Editar" (click)="sucursalEdit(row)"><mat-icon color="accent">edit</mat-icon></button>
       </mat-cell>
     </ng-container>
 
@@ -97,9 +100,9 @@
     <mat-row *matRowDef="let row; columns: sucursal_displayedColumns;" class="table-row"></mat-row>
   </mat-table>
   <mat-paginator class="paginator--centered"
-        *ngIf="sucursalDataSource.data?.length > 0 && sucursalDataSource.filteredData?.length > 0" 
-        #paginator 
-        [pageSize]="10" 
+        *ngIf="sucursalDataSource.data?.length > 0 && sucursalDataSource.filteredData?.length > 0"
+        #paginator
+        [pageSize]="10"
         [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </mat-card>
 

@@ -38,6 +38,21 @@ export class FormasDePagoService {
         catchError(e => throwError(new Error(e)))
       );
   }
+  /*Guarda una tarjeta de credito */
+  addFormaDePagoTarjetaD(formaDePagoConvenioDTO: FormaDePagoConvenioDTO){
+    return this.http.post<FormaDePagoConvenioDTO>(`${this.baseUrl}/Empresas/api/formadepagoempresa/guardarTarjeta`, formaDePagoConvenioDTO)
+    .pipe(
+      catchError(e => throwError(new Error(e)))
+    );
+  }
+  
+  /*Guarda un CBU */
+  addFormaDePagoCbuD(formaDePagoConvenioDTO: FormaDePagoConvenioDTO){
+    return this.http.post<FormaDePagoConvenioDTO>(`${this.baseUrl}/Empresas/api/formadepagoempresa/guardarCbu`, formaDePagoConvenioDTO)
+    .pipe(
+      catchError(e => throwError(new Error(e)))
+    );
+  }
 
   deleteFormasDePagoEmpresasD(formaDePagoConvenioDTO: FormaDePagoConvenioDTO) {
     const options = {

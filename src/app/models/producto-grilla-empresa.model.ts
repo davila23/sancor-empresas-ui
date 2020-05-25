@@ -4,9 +4,8 @@ import { ProductoDTO } from './producto.model';
 import { GrillaDTO } from './grilla.model';
 
 export class ProductoGrillaEmpresaDTO{
-
+    
     grilla:GrillaDTO;
     convenio:ConvenioDTO;
-    empresa:EmpresaDTO;
-
+    
 }

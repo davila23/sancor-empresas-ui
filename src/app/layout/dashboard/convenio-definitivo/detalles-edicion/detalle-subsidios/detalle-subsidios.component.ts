@@ -23,7 +23,10 @@ export class DetalleSubsidiosComponent implements OnInit {
 	productosList: Observable<any[]>;
 	planesList: PlanDTO[];
 	subsidiosForm: FormGroup;
-  dialogRef = null;
+	dialogRef = null;
+	
+	subsidiosDataSource = new MatTableDataSource<any>([]);
+
 
   constructor(private _fb: FormBuilder, 
               private subsidiosService: SubsidiosService,
@@ -37,8 +40,9 @@ export class DetalleSubsidiosComponent implements OnInit {
 
 		this.subsidiosService.getListaProductosSubsidios().subscribe(
 			result => {
-				console.log(result["listaResultado"]);
+				
 				this.productosList = result["listaResultado"];
+				//this.subsidiosDataSource.data = result["listaResultado"];
 				console.log(this.productosList);
 			}
 		);
@@ -58,15 +62,17 @@ export class DetalleSubsidiosComponent implements OnInit {
 				}
 			})
 
-		)
+		);
+		this.fillTable();
 	}
 
   fillTable() {
     this.subsidiosService.getSubsidiosPorEmpresaD(this.convenioIdFlag)
     .subscribe(res => {
-      if (res==null) res = [];
+		console.log(res);
+      	if (res==null) res = [];
       
-      this.subsidiosDataSource.data = res;
+      	this.subsidiosDataSource.data = res;
     });
   }
 
@@ -97,7 +103,7 @@ export class DetalleSubsidiosComponent implements OnInit {
 		'delete'
 	];
 
-	subsidiosDataSource = new MatTableDataSource<any>([]);
+	
 
 	subsidiosDataSourceSaveAndRender() {
 

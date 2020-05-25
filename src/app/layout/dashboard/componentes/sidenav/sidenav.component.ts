@@ -38,14 +38,14 @@ export class SidenavComponent implements OnInit {
 			children: [
 				{url: '/conveniostemporales', title: 'Listado', icon: 'list'}
 			],
-      rol: [1, 69, 70, 21]
+      rol: [1, 2, 69, 70, 21]
 		},
 		{
 			title: 'Convenios en control',
 			children: [
 				{url: '/convenioscontrol', title: 'Listado', icon: 'list'}
 			],
-      rol: [1, 2, 69, 70]
+      rol: [1, 2,69, 70]
 		},
 	];
 

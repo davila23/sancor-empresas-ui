@@ -58,7 +58,7 @@
           Planes convenidos (Solo rol Ejecutivo)
         </mat-panel-title>
       </mat-expansion-panel-header>
-      
+
       <ng-template matExpansionPanelContent>
         <planes-convenidos-control [convenioId]="convenioId"></planes-convenidos-control>
       </ng-template>
@@ -71,7 +71,7 @@
           Subsidios
         </mat-panel-title>
       </mat-expansion-panel-header>
-      
+
       <ng-template matExpansionPanelContent>
         <subsidios-control [convenioId]="convenioId"></subsidios-control>
       </ng-template>
@@ -84,7 +84,7 @@
           Forma de pago
         </mat-panel-title>
       </mat-expansion-panel-header>
-      
+
       <ng-template matExpansionPanelContent>
         <forma-pago-control [convenioId]="convenioId"></forma-pago-control>
       </ng-template>
@@ -101,7 +101,7 @@
       <ng-template matExpansionPanelContent>
         <entidades-control [convenioId]="convenioId"></entidades-control>
       </ng-template>
-      
+
     </mat-expansion-panel>
 
     <mat-expansion-panel #sucursales (afterExpand)="focusPanel(sucursales)">
@@ -136,7 +136,7 @@
           Adjunte de archivos
         </mat-panel-title>
       </mat-expansion-panel-header>
-      
+
       <ng-template matExpansionPanelContent>
         <archivos-control [convenioId]="convenioId"></archivos-control>
       </ng-template>
@@ -154,18 +154,27 @@
     <mat-card-content>
       <form [formGroup]="form" class="grid responsive-grid">
         <mat-form-field>
-          <textarea matInput type="textarea" placeholder="Observaciones" formControlName="observaciones">
+          <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="4" cdkAutosizeMaxRows="10" type="textarea"
+            placeholder="Observaciones" formControlName="observaciones" maxlength="500">
           </textarea>
-          <mat-hint>Campo requerido en caso de enviar a corrección</mat-hint>
-          <mat-error *ngIf="form.get('observaciones').errors && form.get('observaciones').errors?.required">Campo requerido</mat-error>
+          <mat-hint> {{form.get('observaciones')?.value?.length || '0'}} / {{'500'}}. Campo requerido en caso de enviar a
+            corrección</mat-hint>
+          <mat-error *ngIf="form.get('observaciones').errors && form.get('observaciones').errors?.required">Campo
+            requerido</mat-error>
         </mat-form-field>
       </form>
     </mat-card-content>
 
     <mat-card-footer align="end">
-      <app-button color="accent"  type="button" routerLink="/convenioscontrol/listado"><mat-icon>arrow_back_ios</mat-icon>Atrás</app-button>
-      <app-button color="primary" [disabled]="form.invalid" type="button" (click)="cambiarEstado(3, 'correccion')"><mat-icon>feedback</mat-icon>Enviar a corrección</app-button>
-      <app-button color="primary"  type="button" (click)="cambiarEstado(4, 'aprobar')"><mat-icon>check</mat-icon>Aprobar</app-button>
+      <app-button color="accent" type="button" routerLink="/convenioscontrol/listado">
+        <mat-icon>arrow_back_ios</mat-icon>Atrás
+      </app-button>
+      <app-button color="primary" [disabled]="form.invalid" type="button" (click)="cambiarEstado(3, 'correccion')">
+        <mat-icon>feedback</mat-icon>Enviar a corrección
+      </app-button>
+      <app-button color="primary" type="button" (click)="cambiarEstado(4, 'aprobar')">
+        <mat-icon>check</mat-icon>Aprobar
+      </app-button>
     </mat-card-footer>
 
   </mat-card>

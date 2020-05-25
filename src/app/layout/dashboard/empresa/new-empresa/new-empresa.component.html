@@ -151,7 +151,7 @@
       </div>
     </mat-card-content>
     <mat-card-footer align="end">
-      <app-button color="accent"  type="button" routerLink="/empresa/busqueda"><mat-icon>close</mat-icon>Cancelar</app-button>
+      <app-button color="accent"  type="button" (click)="cancel()"><mat-icon>close</mat-icon>Cancelar</app-button>
       <app-button color="primary" type="button" (click)="onSubmit()" [disabled]="formGroup.invalid || posting">
         <mat-icon>add</mat-icon>Añadir
       </app-button>

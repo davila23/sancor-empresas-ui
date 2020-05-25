@@ -32,7 +32,7 @@ export class DatosGeneralesServiceDef {
   }
 
   getEjecutivoConvenio(value): Observable<any> {
-    const url = `http://testcomercialsvc.ams.red:8080/Comercial/webresources/ServicioPersona/autocompletarEjecutivo?descripcion=${value}`;
+    const url = `${this.baseUrlEmpresas}/Comercial/webresources/ServicioPersona/autocompletarEjecutivo?descripcion=${value}`;
     return this.http.get(url);
   }
 

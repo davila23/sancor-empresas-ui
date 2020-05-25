@@ -27,7 +27,7 @@ export class ConvenioDetalleComponent implements OnInit {
       if (!Number(this.convenioId)) this.router.navigate(['/404']);
 
       this.form = this.fb.group({
-        observaciones: ['', [Validators.required, Validators.maxLength(255)]]
+        observaciones: ['', [Validators.required, Validators.maxLength(500)]]
       });
   }
 

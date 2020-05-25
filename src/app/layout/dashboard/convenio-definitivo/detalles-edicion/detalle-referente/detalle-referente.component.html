@@ -47,7 +47,9 @@
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
-      <app-button color="accent" (click)="referenteSaveAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting"><mat-icon>add</mat-icon>Añadir</app-button>
+      <app-button *ngIf="!edicionRefExistente" color="accent" (click)="referenteSaveAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting"><mat-icon>add</mat-icon>Añadir</app-button>
+      <app-button *ngIf="edicionRefExistente" color="primary" (click)="cancelEdit()"><mat-icon>close</mat-icon>Cancelar</app-button>
+      <app-button *ngIf="edicionRefExistente" color="accent" (click)="referenteEditAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting"><mat-icon>edit</mat-icon>Guardar cambios</app-button>
     </mat-card-actions>
   </mat-card>
 
@@ -55,7 +57,7 @@
     No hay referentes cargados...
   </div>
 
-  <mat-card class="custom" [ngClass]="{'not-show':!referenteDataSource.data?.length}">
+  <mat-card class="custom" [ngClass]="{'not-show':!referenteDataSource.data?.length}" *ngIf="!edicionRefExistente">
     <mat-card-header>
       <mat-card-title>
         Referentes
@@ -90,9 +92,11 @@
       <ng-container matColumnDef="delete">
         <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="eliminar">
-          <button mat-icon-button color="primary" [disabled]="!isEditionFlag" matTooltip="eliminar" (click)="referenteDelete(row)"><mat-icon color="accent">delete</mat-icon></button>
+          <button mat-icon-button color="primary"  matTooltip="eliminar" (click)="referenteDelete(row)"><mat-icon color="accent">delete</mat-icon></button>
+          <button mat-icon-button  matTooltip="Editar" (click)="referenteEdit(row)"><mat-icon color="accent">edit</mat-icon></button>
         </mat-cell>
       </ng-container>
+
 
       <mat-header-row *matHeaderRowDef="referente_displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: referente_displayedColumns;" class="table-row"></mat-row>

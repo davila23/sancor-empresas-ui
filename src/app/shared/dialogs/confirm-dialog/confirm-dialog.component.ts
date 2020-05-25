@@ -16,9 +16,9 @@ export class ConfirmDialogComponent implements OnInit {
 	isHtml = false;
 
 	ngOnInit() {
-		if (!this.data.titulo) {
-			this.data.titulo = '¿Desea confirmar la acción?';
-		}
+		// if (!this.data.titulo) {
+		// 	this.data.titulo = '¿Desea confirmar la acción?';
+		// }
 		if (!this.data.confirmar) {
 			this.data.confirmar = 'Confirmar';
 		}
@@ -27,9 +27,9 @@ export class ConfirmDialogComponent implements OnInit {
 		} else {
 			this.isHtml = this.data.texto.includes('</');
 		}
-		if (!this.data.cancelar) {
-			this.data.cancelar = 'Cancelar';
-		}
+		// if (!this.data.cancelar) {
+		// 	this.data.cancelar = 'Cancelar';
+		// }
 	}
 
 	closeDialog() {

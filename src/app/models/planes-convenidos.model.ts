@@ -13,6 +13,7 @@ export class PlanConvenidoDTO {
     plan:MaestroPlanDTO;//extrae el codigo
     producto:number;
     cantidadMeses:number;
+    planId:number;
     porcentaje:number;
     porcentajeBonificacion:number;
     bonificacionRecaudo:string;//Bonificacion y Recaudo
@@ -22,7 +23,7 @@ export class PlanConvenidoDTO {
     cantidadGruposParaBonificar:number;
     cantidadIntegrantesParaBonificar:number;
     fechaVigenciaHasta:string;
-   
+
     fechaFinVigenciaBonificacion:string;
-    
+
 }

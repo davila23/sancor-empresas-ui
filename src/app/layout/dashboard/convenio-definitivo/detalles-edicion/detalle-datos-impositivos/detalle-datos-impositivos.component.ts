@@ -49,8 +49,7 @@ export class DetalleDatosImpositivosComponent implements OnInit {
   datosImpositivos_displayedColumns = [
     'modalidadImpresion',
     'empresasFacturan',
-    'tipoComprobante',
-    'delete'
+    'tipoComprobante'
   ];
 
   

@@ -22,7 +22,7 @@
         </mat-form-field>
 
         <mat-form-field formGroupName="modalidadLiquidacion">
-          <mat-select placeholder="Modalidad de liquidación" formControlName="id">
+          <mat-select placeholder="Modalidad de liquidación" formControlName="id"> 
             <mat-option [value]="1">Anticipada</mat-option>
             <mat-option [value]="2">Vencida</mat-option>
           </mat-select>
@@ -155,9 +155,9 @@
 
         <custom-autocomplete *ngIf="showCredenciales"
                              [form]="credencialesForm"
-                             nombre="carEntidadDescripcion"
+                             nombre="descripcion"
                              idNombre="carEntidadId"
-                             nombreResultado="carEntidadDescripcion"
+                             nombreResultado="descripcion"
                              idNombreResultado="id"
                              [customSearch]="entidadesCustom"
                              [min]="1"
@@ -172,12 +172,12 @@
           </mat-form-field>
         </form>
       </div>
-    </mat-expansion-panel>
+    </mat-expansion-panel> 
   </mat-accordion>
-</form>
+</form> 
 <div class="stepper-btns">
-  <button mat-button
+  <button mat-button 
           [disabled]="datosGeneralesForm.invalid || isPosting || credencialesForm.invalid || datosGeneralesForm.disabled"
-          (click)="postDatosGenerales()"
+          (click)="postDatosGenerales()" 
           style="float: right; margin-top: 10px;">Guardar</button>
 </div>

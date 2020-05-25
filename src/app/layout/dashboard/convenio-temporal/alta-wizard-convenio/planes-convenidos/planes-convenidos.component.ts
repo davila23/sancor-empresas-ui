@@ -170,7 +170,7 @@ export class PlanesConvenidosComponent implements OnInit {
 				cabecera.empresa = empresa;
 				cabecera.idConvenio = this.convenioIdFlag;
 				cabecera.cantidadGruposParaBonificar = 1;
-				cabecera.porcentaje = 1;
+				cabecera.porcentaje = 0;
 				cabecera.cantidadIntegrantesParaBonificar = 1;
 				cabecera.vigencia =new Date();
 

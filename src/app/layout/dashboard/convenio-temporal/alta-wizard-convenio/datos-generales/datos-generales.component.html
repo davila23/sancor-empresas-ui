@@ -33,7 +33,9 @@
 
 
         <mat-form-field class="observaciones">
-          <textarea matInput placeholder="Observaciones" formControlName="observaciones" maxlength="255"></textarea>
+          <textarea matInput placeholder="Observaciones" formControlName="observaciones" maxlength="500"
+            cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="10"></textarea>
+          <mat-hint> {{datosGeneralesForm.get('observaciones')?.value?.length || '0'}} / {{'500'}}</mat-hint>
         </mat-form-field>
       </div>
     </mat-expansion-panel>
@@ -45,18 +47,14 @@
 
       <div class="grid responsive-grid">
         <mat-form-field>
-          <input matInput type="number" formControlName="cantidadEmpleados" numMask="5" placeholder="Cant. de cápitas prometidas" required>
+          <input matInput type="number" formControlName="cantidadEmpleados" numMask="5"
+            placeholder="Cant. de cápitas prometidas" required>
           <mat-error>Campo requerido</mat-error>
         </mat-form-field>
 
-        <custom-autocomplete [form]="datosGeneralesForm.get('ejecutivoConvenio')"
-                             nombre="nombre"
-                             idNombre="idpersona"
-                             nombreResultado="nombre"
-                             idNombreResultado="idpersona"
-                             [customSearch]="ejecutivoConvenioCustom"
-                             [min]="1"
-                             placeholder="Ejecutivo convenio">
+        <custom-autocomplete [form]="datosGeneralesForm.get('ejecutivoConvenio')" nombre="nombre" idNombre="idpersona"
+          nombreResultado="nombre" idNombreResultado="idpersona" [customSearch]="ejecutivoConvenioCustom" [min]="1"
+          placeholder="Ejecutivo convenio">
         </custom-autocomplete>
 
         <mat-form-field>
@@ -74,12 +72,9 @@
           </mat-select>
         </mat-form-field>
 
-        <custom-autocomplete [form]="datosGeneralesForm.get('relacionista')"
-                             nombre="nombre"
-                             idNombre="idpersona"
-                             busca="/Empresas/api/RelacionistaConvenio/autocompletar?descripcion={query}"
-                             [min]="1"
-                             placeholder="Ejecutivo de venta">
+        <custom-autocomplete [form]="datosGeneralesForm.get('relacionista')" nombre="nombre" idNombre="idpersona"
+          busca="/Empresas/api/RelacionistaConvenio/autocompletar?descripcion={query}" [min]="1"
+          placeholder="Ejecutivo de venta">
         </custom-autocomplete>
 
         <mat-form-field>
@@ -106,7 +101,8 @@
 
         <mat-form-field formGroupName="tipoMovimientoAsociado" *apploading="controlsLoading.movimientosAsociados">
           <mat-select placeholder="Movimiento de asociado" formControlName="id" required>
-            <mat-option *ngFor="let item of movimientosAsociadosList" [value]="item.id">{{item.descripcion}}</mat-option>
+            <mat-option *ngFor="let item of movimientosAsociadosList" [value]="item.id">{{item.descripcion}}
+            </mat-option>
           </mat-select>
           <mat-error>Campo requerido</mat-error>
         </mat-form-field>
@@ -143,7 +139,8 @@
         </mat-form-field>
 
         <mat-form-field formGroupName="enviosCredenciales" *apploading="controlsLoading.credenciales">
-          <mat-select placeholder="Credenciales" formControlName="id" required (selectionChange)="listenCredencialesId($event.value)">
+          <mat-select placeholder="Credenciales" formControlName="id" required
+            (selectionChange)="listenCredencialesId($event.value)">
             <mat-option *ngFor="let item of credencialesList" [value]="item.id">{{item.descripcion}}</mat-option>
           </mat-select>
           <mat-error>Campo requerido</mat-error>
@@ -157,21 +154,15 @@
              cada vez que filtrás.
              [min]: mínimo de caracteres antes de que haga la primer búsqueda  -->
 
-        <custom-autocomplete *ngIf="showCredenciales"
-                             [form]="credencialesForm"
-                             nombre="descripcion"
-                             idNombre="carEntidadId"
-                             nombreResultado="descripcion"
-                             idNombreResultado="id"
-                             [customSearch]="entidadesCustom"
-                             [min]="1"
-                             placeholder="Car - Entidad"
-                             required>
+        <custom-autocomplete *ngIf="showCredenciales" [form]="credencialesForm" nombre="descripcion"
+          idNombre="carEntidadId" nombreResultado="descripcion" idNombreResultado="id" [customSearch]="entidadesCustom"
+          [min]="1" placeholder="Car - Entidad" required>
         </custom-autocomplete>
 
         <form [formGroup]="credencialesForm" *ngIf="showCredenciales">
           <mat-form-field>
-            <input matInput type="text" formControlName="recepcionista" placeholder="Recepcionista" maxlength="50" required>
+            <input matInput type="text" formControlName="recepcionista" placeholder="Recepcionista" maxlength="50"
+              required>
             <mat-error>Campo requerido</mat-error>
           </mat-form-field>
         </form>
@@ -180,9 +171,7 @@
   </mat-accordion>
 </form>
 <div class="stepper-btns">
-  <button mat-button *ngIf="edit"
-          matStepperNext
-          [disabled]="datosGeneralesForm.invalid || isPosting || credencialesForm.invalid"
-          (click)="postDatosGenerales()"
-          style="float: right; margin-top: 10px;">Guardar</button>
+  <button mat-button *ngIf="edit" matStepperNext
+    [disabled]="datosGeneralesForm.invalid || isPosting || credencialesForm.invalid" (click)="postDatosGenerales()"
+    style="float: right; margin-top: 10px;">Guardar</button>
 </div>

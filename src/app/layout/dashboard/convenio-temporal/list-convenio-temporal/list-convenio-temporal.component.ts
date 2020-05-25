@@ -50,13 +50,23 @@ export class ListConvenioTemporalComponent implements OnInit {
 
   redirectToDetails(value) {
     let estado = value.estadoControlDescripcion;
-
+    
+    if(!estado){
+      estado ='CARGA'
+    }
+    
+    if(estado == 'CARGA' || estado == 'CORRECCION'){ 
+      this.router.navigate([`/conveniostemporales/empresa/${value.empresaId}/edicion/${value.id}`]);
+    } else {
+      this.utilService.notification('Solo se pueden editar los convenios en estado de CARGA o CORRECCION', 'warning', 4000); 
+    }
+    
     if (estado && estado == 'CONTROL') {
       this.utilService.notification('Para acceder a este convenio debe ingresar por convenios en control.', 'warning', 4000);
       return false;
     }
-
-    this.router.navigate([`/conveniostemporales/empresa/${value.empresaId}/edicion/${value.id}`]);
+    
+   
   }
 
 	ngOnInit() {
