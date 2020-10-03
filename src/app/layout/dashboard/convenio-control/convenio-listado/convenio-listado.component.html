@@ -8,8 +8,8 @@
       <form [formGroup]="filtrosForm" class="grid responsive-grid">
 
         <mat-form-field>
-          <input matInput placeholder="Filtrar" (keyup)="applyFilter($event.target.value)">
-          <mat-hint>filtro por cualquier campo</mat-hint>
+          <input matInput placeholder="Filtrar" (keyup)="applyFilter($event.target.value)" uppercase>
+          <mat-hint>Filtro por cualquier campo</mat-hint>
         </mat-form-field>
 
         <!--

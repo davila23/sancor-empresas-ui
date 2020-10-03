@@ -155,7 +155,7 @@
       <form [formGroup]="form" class="grid responsive-grid">
         <mat-form-field>
           <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="4" cdkAutosizeMaxRows="10" type="textarea"
-            placeholder="Observaciones" formControlName="observaciones" maxlength="500">
+            placeholder="Observaciones" formControlName="observaciones" maxlength="500" uppercase>
           </textarea>
           <mat-hint> {{form.get('observaciones')?.value?.length || '0'}} / {{'500'}}. Campo requerido en caso de enviar a
             corrección</mat-hint>

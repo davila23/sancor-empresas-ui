@@ -13,6 +13,11 @@
       <mat-cell *matCellDef="let row" data-label="Producto"> {{row.producto}} </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="porcentaje">
+      <mat-header-cell *matHeaderCellDef> Porcentaje Bonificación (%) </mat-header-cell>
+      <mat-cell *matCellDef="let row" data-label="Porcentaje"> {{row.porcentaje}} </mat-cell>
+    </ng-container>
+
     <mat-header-row *matHeaderRowDef="cabeceraDisplayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: cabeceraDisplayedColumns;" class="table-row"></mat-row>
   </mat-table>

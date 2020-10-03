@@ -1,72 +1,81 @@
 <div class="convenios-container">
 
-  <div class="filter" *ngIf="!empresaId">
-    <mat-form-field>
-      <input matInput type="text" placeholder="Buscar convenio por empresa" (keyup)="fillTableOnKeyUp($event.target.value)">
-    </mat-form-field>
-  </div>
-
-  <mat-card class="custom info" *ngIf="!dataSource.data.length">
+  <mat-card class="ribbon">
     <mat-card-header>
-      <mat-card-title><mat-icon style="vertical-align: middle !important; padding-bottom: 3px;">info</mat-icon>&nbsp;Info</mat-card-title>
+      <mat-card-title>
+        {{ titleText }}
+      </mat-card-title>
     </mat-card-header>
-    <mat-card-content>
-      <p>No existen convenios definitivos para esta empresa...</p>
+    <mat-card-content *apploading="controlsLoading.list">
+      <mat-card-actions align="end" style="padding: 0 20px 20px 0" *ngIf="empresaId">
+        <app-button color="accent" (click)="redirectToAdd()">Agregar</app-button>
+      </mat-card-actions>
+
+      <!-- Filtro contra backend -->
+      <div class="grid responsive-grid" *ngIf="!empresaId">
+        <mat-form-field>
+          <input matInput placeholder="Buscar por Nro. de convenio" #filtro numMask="8">
+        </mat-form-field>
+        <app-button color="primary" (click)="fillTableFilter(filtro.value)">
+          <mat-icon>search</mat-icon>Buscar
+        </app-button>
+      </div>
+
+      <!-- <div class="grid responsive-grid" *ngIf="!empresaId">
+        <mat-form-field>
+          <input matInput type="text" (keyup)="applyFilter($event.target.value)" placeholder="Filtrar" uppercase>
+          <mat-hint>Filtra por todas las columnas</mat-hint>
+        </mat-form-field>
+      </div> -->
+
+      <div *apploading="controlsLoading.table">
+        <p *ngIf="!dataSource.data.length">{{noResultText}}</p>
+        <div *ngIf="dataSource.data.length">
+          <mat-table [dataSource]="dataSource" [trackBy]="trackById" matSort>
+            <ng-container matColumnDef="id">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Numero de convenio </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="id"> {{row.id}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="nombre">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="nombre"> {{row.nombre}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="vigenciaDesde">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de vigencia Desde </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="fecha_desde"> {{row.vigenciaDesde}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="fecha_hasta">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de vigencia Hasta </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="fecha_hasta">
+                {{(row.fecha_hasta) ? row.fecha_hasta : 'Vigente'}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="seleccionar">
+              <mat-header-cell *matHeaderCellDef></mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <app-button color="primary" id="{{row.id}}" (click)="redirectToDetails($event, 'btn', row.empresa.id)"
+                  class="seleccion-btn">
+                  <mat-icon>pageview_outline</mat-icon>
+                  Seleccionar
+                </app-button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row matTooltip="Ver en detalle" [matTooltipDisabled]="hiddenToolTip"
+              *matRowDef="let row; columns: displayedColumns;" id="{{row.id}}"
+              (click)="redirectToDetails($event, 'row', row.empresaId)" class="table-row"></mat-row>
+          </mat-table>
+          <div *ngIf="dataSource.data.length <= 0 || dataSource.filteredData.length <= 0">
+            <span>No se han encontrado resultados</span>
+          </div>
+          <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
     </mat-card-content>
-    <mat-card-actions align="end" style="padding: 0 20px 20px 0">
-      <app-button color="accent" (click)="redirectToAdd()">Agregar</app-button>
-    </mat-card-actions>
   </mat-card>
 
-  <div [hidden]="!dataSource.data.length">
-    <mat-card class="ribbon">
-      <mat-card-header>
-        <mat-card-title>
-          {{ titleText }}
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-table [dataSource]="dataSource" #ds [trackBy]="trackById" matSort> 
-          <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Numero de convenio </mat-header-cell>
-            <mat-cell *matCellDef="let row" data-label="id"> {{row.id}} </mat-cell>
-          </ng-container>
-          
-          <ng-container matColumnDef="nombre">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
-            <mat-cell *matCellDef="let row" data-label="nombre"> {{row.nombre}} </mat-cell>
-          </ng-container>
-          
-          <ng-container matColumnDef="vigenciaDesde">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de vigencia Desde </mat-header-cell>
-            <mat-cell *matCellDef="let row" data-label="fecha_desde"> {{row.vigenciaDesde}} </mat-cell>
-          </ng-container>
-          
-          <ng-container matColumnDef="fecha_hasta">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de vigencia Hasta </mat-header-cell>
-            <mat-cell *matCellDef="let row" data-label="fecha_hasta"> {{(row.fecha_hasta) ? row.fecha_hasta : 'Vigente'}} </mat-cell>
-          </ng-container>
-          
-          <ng-container matColumnDef="seleccionar">
-            <mat-header-cell *matHeaderCellDef></mat-header-cell>
-            <mat-cell *matCellDef="let row">
-              <app-button color="primary" id="{{row.id}}" (click)="redirectToDetails($event, 'btn', row.empresa.id)" class="seleccion-btn">
-                <mat-icon>pageview_outline</mat-icon>
-                Seleccionar
-              </app-button>
-            </mat-cell>
-          </ng-container>
-          
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row matTooltip="Ver en detalle" [matTooltipDisabled]="hiddenToolTip" *matRowDef="let row; columns: displayedColumns;" id="{{row.id}}" (click)="redirectToDetails($event, 'row', row.empresaId)" class="table-row"></mat-row>
-        </mat-table>
-        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-        </mat-card-content>
-        <!--
-        <mat-card-actions align="end" class="actions">
-          <app-button color="accent" (click)="redirectToAdd()">Agregar</app-button>
-        </mat-card-actions>
-        -->
-      </mat-card>
-    </div>
-  </div>
+</div>

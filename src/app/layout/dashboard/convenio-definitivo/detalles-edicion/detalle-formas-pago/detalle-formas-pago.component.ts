@@ -48,7 +48,7 @@ export const MY_FORMATS = {
 export class DetalleFormasPagoComponent implements OnInit {
 
 	private _convenioId = new BehaviorSubject<number>(0);
-	bancoCtrl = new FormControl();
+	bancoCtrl = new FormControl('', Validators.required);
 	filteredBancos: Observable<any[]>;
 	bancos: BancoDTO[];
 	tarjetasList: SimpleDTO[];
@@ -110,6 +110,18 @@ export class DetalleFormasPagoComponent implements OnInit {
 		});
 	}
 
+	@Input() set isAllowedToEdit(boolean) {
+		setTimeout(() => {
+			this.edit = boolean;
+		});
+	} edit = false;
+
+	@Input() set isAllowedToDelete(boolean) {
+		setTimeout(() => {
+			this.delete = boolean;
+		});
+	} delete = false;
+
 	constructor(private _fb: FormBuilder,
 		private dialog: MatDialog,
 		private formaPagoService: FormasDePagoService,
@@ -143,21 +155,7 @@ export class DetalleFormasPagoComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this._convenioId.subscribe(x => {
-			this.formaPagoService.getFormasDePagoEmpresasD(x).subscribe(
-				res => {
-					if (res == null) {
-						res = [];
-					}
-					console.log(res);
-					this.formasDePagoList = res;
-					this.formaPagoDataSource.data = res;
-					if (res[0]) {
-						this.formaDePagoSelected = res[0].descripcion;
-					}
-				}
-			);
-		});
+		this.getAllFormasDePago();
 
 		this.filteredBancos = this.bancoCtrl.valueChanges.pipe(
 			startWith(''),
@@ -183,7 +181,7 @@ export class DetalleFormasPagoComponent implements OnInit {
 	}
 
 	filterBancos(name: string) {
-		return this.bancos.filter(banco => banco.descripcion.toLowerCase().indexOf(name.toString().toLowerCase()) === 0);
+		return this.bancos.filter(banco => banco.descripcion.toLowerCase().includes(name.toString().toLowerCase()));
 	}
 
 	onEnter(evt: any) {
@@ -225,85 +223,120 @@ export class DetalleFormasPagoComponent implements OnInit {
 	}
 
 	tcSaveRender() {
+		if (this.tcForm.invalid) {
+			(<any>Object).values(this.tcForm.controls).forEach(control => {
+				control.markAsTouched();
+			});
+			return
+		}
 		this.isPosting = true;
-		let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
-		formaDePagoConvenioDTO.fechaVencimiento = this.tcForm.value["vencimiento"];
-		formaDePagoConvenioDTO.bancoEmisor = this.bancoTC;
-		formaDePagoConvenioDTO.numeroTarjeta = this.tcForm.value["nrotarjeta"];
-		formaDePagoConvenioDTO.tipoCuenta = 'E'; 
-		formaDePagoConvenioDTO.cuentaNumero = this.convenioIdFlag; 
-		formaDePagoConvenioDTO.codigoTarjeta = this.tcForm.value["codigotarjeta"];
-		formaDePagoConvenioDTO.codSeguridad = 0; 
-		formaDePagoConvenioDTO.numeroFormaPago = 0; 
-		this.markControlsPristine(this.tcForm);
-		console.log(formaDePagoConvenioDTO);
-		this.formaPagoService.addFormaDePagoTarjetaD(formaDePagoConvenioDTO).subscribe(res => {
-			let fp = new FormaDePagoConvenioDTO();
-			fp.tipo = 'E';
-			fp.descripcion = 'TC';
-			fp.cuenta = this.convenioIdFlag;
-			fp.numero = 1;
-			this.formaPagoService.addFormasDePagoEmpresasD(fp).subscribe(res => {
-				this.getAllFormasDePago();
-			})
-		}).add(() => {
+		let fp = new FormaDePagoConvenioDTO();
+		fp.descripcion = 'TC';
+		fp.tipo = 'E';
+		fp.numero = 1;
+		fp.cuenta = this.convenioIdFlag;
+		this.formaPagoService.addFormasDePagoEmpresasD(fp).subscribe(res => {
 			this.isPosting = false;
-		});
-	}
-
-	cbuSaveRender() {
-		let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
-		let cuit = this.cbuForm.value.cuit.replace(/-/gi, "");
-		formaDePagoConvenioDTO.cuil = Number(cuit);
-		formaDePagoConvenioDTO.nroCbu = this.cbuForm.value.nrocbu;
-		formaDePagoConvenioDTO.banco = this.bancoCBU;
-		formaDePagoConvenioDTO.numeroCuenta = this.cbuForm.value.nroctabco;
-		formaDePagoConvenioDTO.apellido = this.cbuForm.value.apellido;
-		formaDePagoConvenioDTO.nombre = this.cbuForm.value.nombre;
-		formaDePagoConvenioDTO.numeroAfiliado = this.convenioIdFlag;
-		formaDePagoConvenioDTO.tipoCuenta = 'E';
-		formaDePagoConvenioDTO.formaPago = 1;
-		formaDePagoConvenioDTO.tipoCuentaString = this.cbuForm.value.tipoCuenta;
-		let extensionCBU = new ExtensionCbuDTO();
-		extensionCBU.tipoCuenta = 'E'
-		extensionCBU.numeroAfiliado = this.convenioIdFlag;
-		extensionCBU.formaPago = 1;
-		extensionCBU.alias = "";
-		formaDePagoConvenioDTO.extension = extensionCBU;
-		this.markControlsPristine(this.cbuForm);
-		console.log(formaDePagoConvenioDTO);
-		this.formaPagoService.addFormaDePagoCbuD(formaDePagoConvenioDTO).subscribe(res => {
-			let fp = new FormaDePagoConvenioDTO();
-			fp.tipo = 'E';
-			fp.descripcion = 'CBU';
-			fp.cuenta = this.convenioIdFlag;
-			fp.numero = 1;
-			this.formaPagoService.addFormasDePagoEmpresasD(fp).subscribe(res => {
-				this.getAllFormasDePago();
-			})
-		}).add(() => {
-			this.isPosting = false;
-		});
-		
-	}
-
-	efSaveRender() {
-		let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
-		formaDePagoConvenioDTO.descripcion = 'EF';
-		formaDePagoConvenioDTO.tipo = 'E';
-		formaDePagoConvenioDTO.numero = 1;
-		console.log(formaDePagoConvenioDTO);
-	}
-
-	postData(DTO) {
-		this.isPosting = true;
-		this.formaPagoService.addFormasDePagoEmpresasD(DTO)
-			.subscribe(res => {
-				this.utilService.notification('¡Forma de pago añadida con éxito!', 'success');
+			let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
+			formaDePagoConvenioDTO.fechaVencimiento = this.tcForm.value["vencimiento"];
+			formaDePagoConvenioDTO.bancoEmisor = this.bancoTC;
+			formaDePagoConvenioDTO.numeroTarjeta = this.tcForm.value["nrotarjeta"];
+			formaDePagoConvenioDTO.tipoCuenta = 'E';
+			formaDePagoConvenioDTO.cuentaNumero = this.convenioIdFlag;
+			formaDePagoConvenioDTO.codigoTarjeta = this.bancoTC;
+			formaDePagoConvenioDTO.codSeguridad = 0;
+			formaDePagoConvenioDTO.numeroFormaPago = 0;
+			this.markControlsPristine(this.tcForm);
+			this.isPosting = true;
+			this.formaPagoService.addFormaDePagoTarjetaD(formaDePagoConvenioDTO).subscribe(res => {
+				this.utilService.notification('¡Forma de pago agregada con éxito!', 'success');
 				this.getAllFormasDePago();
 			}).add(() => {
 				this.isPosting = false;
 			});
+		})
+	}
+
+	cbuSaveRender() {
+		if (this.cbuForm.invalid) {
+			(<any>Object).values(this.cbuForm.controls).forEach(control => {
+				control.markAsTouched();
+			});
+			return
+		}
+
+		if (this.bancoCtrl.invalid) {
+			this.bancoCtrl.markAsTouched();
+			return
+		}
+
+		if (this.bancoCtrl.value) {
+			if (this.bancoCtrl.value.id == null) {
+				this.bancoCtrl.setValue('');
+				this.utilService.notification('Debe seleccionar un banco de la lista', 'warning');
+				return
+			}
+		}
+
+		this.isPosting = true;
+		let fp = new FormaDePagoConvenioDTO();
+		fp.descripcion = 'CBU';
+		fp.tipo = 'E';
+		fp.numero = 1;
+		fp.cuenta = this.convenioIdFlag;
+		this.formaPagoService.addFormasDePagoEmpresasD(fp).subscribe(res => {
+			this.isPosting = false;
+			let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
+			let cuit = this.cbuForm.value.cuit.replace(/-/gi, "");
+			formaDePagoConvenioDTO.cuil = Number(cuit);
+			formaDePagoConvenioDTO.nroCbu = this.cbuForm.value.nrocbu;
+			formaDePagoConvenioDTO.banco = this.bancoCBU;
+			formaDePagoConvenioDTO.numeroCuenta = this.cbuForm.value.nroctabco;
+			formaDePagoConvenioDTO.apellido = this.cbuForm.value.apellido;
+			formaDePagoConvenioDTO.nombre = this.cbuForm.value.nombre;
+			formaDePagoConvenioDTO.numeroAfiliado = this.convenioIdFlag;
+			formaDePagoConvenioDTO.tipoCuenta = 'E';
+			formaDePagoConvenioDTO.formaPago = 1;
+			formaDePagoConvenioDTO.tipoCuentaString = this.cbuForm.value.tipoCuenta;
+			let extensionCBU = new ExtensionCbuDTO();
+			extensionCBU.tipoCuenta = 'E'
+			extensionCBU.numeroAfiliado = this.convenioIdFlag;
+			extensionCBU.formaPago = 1;
+			extensionCBU.alias = "";
+			formaDePagoConvenioDTO.extension = extensionCBU;
+			this.markControlsPristine(this.cbuForm);
+			this.isPosting = true;
+			this.formaPagoService.addFormaDePagoCbuD(formaDePagoConvenioDTO).subscribe(res => {
+				if(res.length > 0){
+					this.utilService.openConfirmDialog(
+					  {
+						titulo: 'No fue posible completar la acción',
+						texto: res[0].detalle,
+						confirmar: 'ACEPTAR'
+					  });
+				  } else{
+					this.utilService.notification('¡Forma de pago agregada con éxito!', 'success');
+					this.getAllFormasDePago();
+				  }
+			}).add(() => {
+				this.isPosting = false;
+			});
+		});
+	}
+
+	efSaveRender() {
+		this.isPosting = true;
+		let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
+		formaDePagoConvenioDTO.descripcion = 'EF';
+		formaDePagoConvenioDTO.tipo = 'E';
+		formaDePagoConvenioDTO.numero = 1;
+		formaDePagoConvenioDTO.cuenta = this.convenioIdFlag;
+		this.formaPagoService.addFormasDePagoEmpresasD(formaDePagoConvenioDTO).subscribe(res => {
+			this.utilService.notification('¡Forma de pago agregada con éxito!', 'success');
+			this.getAllFormasDePago();
+		}).add(() => {
+			this.isPosting = false;
+		});
 	}
 
 	checkFormaPago() {
@@ -329,11 +362,15 @@ export class DetalleFormasPagoComponent implements OnInit {
 					formaDePagoConvenioDTO.tipo = 'E';
 					this.formaPagoService.deleteFormasDePagoEmpresasD(formaDePagoConvenioDTO)
 						.subscribe(res => {
+							this.utilService.notification('¡Forma de pago eliminada con éxito!', 'success');
 							this.formaPagoService.getFormasDePagoEmpresasD(this.convenioIdFlag)
 								.subscribe(res => {
 									if (res == null) res = [];
 									this.formasDePagoList = res;
 									this.formaPagoDataSource.data = res;
+									this.tcForm.reset();
+									this.cbuForm.reset();
+									this.bancoCtrl.reset();
 									this.markControlsPristine(this.tcForm);
 									this.markControlsPristine(this.cbuForm);
 								});
@@ -358,61 +395,48 @@ export class DetalleFormasPagoComponent implements OnInit {
 	}
 
 	openFormaPagoModal(data) {
-		console.log(this.convenioIdFlag, data.descripcion);
-		this.formaPagoService.getFormaDePagodetalle(this.convenioIdFlag, data.descripcion)
-			.subscribe(res => {
-				if (res) {
-					let tipo = 'EF';
-					if (data.descripcion.trim() == 'TC') tipo = 'TC';
-					else if (data.descripcion.trim() == 'CBU') tipo = 'CBU';
-					let parsedData = {
-						tipo: tipo,
-						datos: {
-						}
-					};
-					switch (tipo) {
-						case 'TC':
-							parsedData.datos = {
-								bancoId: res.bancoEmisor,
-								descripcion: res.descripcion,
-								numeroTarjeta: res.numeroTarjeta,
-								fechaVencimiento: res.fechaVencimiento,
-								bancoDesc: ''
-							}
-							break;
-						case 'CBU':
-							parsedData.datos = {
-								nombre: res.nombre,
-								apellido: res.apellido,
-								descripcion: res.descripcion,
-								cbu: res.nroCbu,
-								cuenta: res.numeroCuenta,
-								tipoCuenta: res.tipoCuentaString,
-								bancoId: res.banco,
-								bancoDesc: ''
-							}
-							break;
-						case 'EF':
-							parsedData.datos = {
-								descripcion: 'EFECTIVO'
-							}
-							break;
-					}
-					const modal = this.dialog.open(DetalleFormaPagoModalComponent, {
-						disableClose: true,
-						panelClass: 'responsive-modal',
-						data: parsedData
-					});
-				} else {
-					this.dialogRef = this.utilService.openConfirmDialog({
-						titulo: 'Error',
-						texto: 'No se pudieron obtener los datos',
-						confirmar: 'Aceptar',
-						cancelar: ''
-					});
-					this.dialogRef.afterClosed().toPromise().then((respuesta) => { this.dialogRef = null });
+
+		let tipo = 'EF';
+		if (data.descripcion.trim() == 'TC') tipo = 'TC';
+		else if (data.descripcion.trim() == 'CBU') tipo = 'CBU';
+		let parsedData = {
+			tipo: tipo,
+			datos: {
+			}
+		};
+		switch (tipo) {
+			case 'TC':
+				parsedData.datos = {
+					bancoId: data.codigoTarjeta,
+					descripcion: 'TARJETA DE CREDITO',
+					numeroTarjeta: data.numeroTarjeta,
+					fechaVencimiento: data.fechaVencimiento,
+					bancoDesc: ''
 				}
-			});
+				break;
+			case 'CBU':
+				parsedData.datos = {
+					nombre: data.nombre,
+					apellido: data.apellido,
+					descripcion: 'CLAVE BANCARIA UNIFORME',
+					cbu: data.nroCbu,
+					cuenta: data.numeroCuenta,
+					tipoCuenta: data.tipoCuentaString,
+					bancoId: data.banco,
+					bancoDesc: ''
+				}
+				break;
+			case 'EF':
+				parsedData.datos = {
+					descripcion: 'EFECTIVO'
+				}
+				break;
+		}
+		const modal = this.dialog.open(DetalleFormaPagoModalComponent, {
+			disableClose: true,
+			panelClass: 'responsive-modal',
+			data: parsedData
+		});
 	}
 
 	// (3) Agregado para fecha vencimiento tarjeta mes/año

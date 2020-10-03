@@ -9,8 +9,13 @@
       </mat-expansion-panel-header>
 
       <div class="grid responsive-grid" *apploading="controlsLoading.parteUno">
+
         <mat-form-field>
-          <input matInput type="text" formControlName="nombre" placeholder="Nombre de convenio" maxlength="50" required>
+          <input matInput type="text" [formControl]="cuit" placeholder="CUIT Empresa" readonly>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="nombre" placeholder="Nombre de convenio" maxlength="50" required uppercase>
           <mat-error>Campo requerido</mat-error>
         </mat-form-field>
 
@@ -34,7 +39,7 @@
 
         <mat-form-field class="observaciones">
           <textarea matInput placeholder="Observaciones" formControlName="observaciones" maxlength="500"
-            cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="10"></textarea>
+            cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="10" uppercase></textarea>
           <mat-hint> {{datosGeneralesForm.get('observaciones')?.value?.length || '0'}} / {{'500'}}</mat-hint>
         </mat-form-field>
       </div>
@@ -47,14 +52,19 @@
 
       <div class="grid responsive-grid">
         <mat-form-field>
-          <input matInput type="number" formControlName="cantidadEmpleados" numMask="5"
+          <input matInput type="number" formControlName="cantidadEmpleados" numMask="5" min="0"
             placeholder="Cant. de cápitas prometidas" required>
-          <mat-error>Campo requerido</mat-error>
+          <mat-error *ngIf="datosGeneralesForm.get('cantidadEmpleados').errors && datosGeneralesForm.get('cantidadEmpleados').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="datosGeneralesForm.get('cantidadEmpleados').errors && datosGeneralesForm.get('cantidadEmpleados').errors?.min">
+            Valor incorrecto
+          </mat-error>
         </mat-form-field>
 
         <custom-autocomplete [form]="datosGeneralesForm.get('ejecutivoConvenio')" nombre="nombre" idNombre="idpersona"
           nombreResultado="nombre" idNombreResultado="idpersona" [customSearch]="ejecutivoConvenioCustom" [min]="1"
-          placeholder="Ejecutivo convenio">
+          placeholder="Ejecutivo convenio" uppercase>
         </custom-autocomplete>
 
         <mat-form-field>
@@ -67,14 +77,14 @@
 
         <mat-form-field formGroupName="holding" *apploading="controlsLoading.holdings">
           <mat-select formControlName="id" placeholder="Holding">
+            <mat-option [value]="0">- Sin holding -</mat-option>
             <mat-option *ngFor="let holding of holdingsList" [value]="holding.id">{{holding.descripcion}}</mat-option>
-            <mat-option [value]="0">- sin holding -</mat-option>
           </mat-select>
         </mat-form-field>
 
         <custom-autocomplete [form]="datosGeneralesForm.get('relacionista')" nombre="nombre" idNombre="idpersona"
           busca="/Empresas/api/RelacionistaConvenio/autocompletar?descripcion={query}" [min]="1"
-          placeholder="Ejecutivo de venta">
+          placeholder="Ejecutivo de venta" uppercase>
         </custom-autocomplete>
 
         <mat-form-field>
@@ -108,9 +118,17 @@
         </mat-form-field>
 
         <mat-form-field>
-          <mat-select placeholder="Adicional a cargo de:" formControlName="adicionalACargo" required>
+          <mat-select placeholder="Adicional a cargo de:" formControlName="adicionalACargo" required (selectionChange)="changeAdicional($event.value)">
             <mat-option value="E">Empresa</mat-option>
             <mat-option value="A">Asociado</mat-option>
+          </mat-select>
+          <mat-error>Campo requerido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Traslada adicional" formControlName="trasladaAdicional" required>
+            <mat-option value="S">Si</mat-option>
+            <mat-option value="N">No</mat-option>
           </mat-select>
           <mat-error>Campo requerido</mat-error>
         </mat-form-field>
@@ -156,13 +174,13 @@
 
         <custom-autocomplete *ngIf="showCredenciales" [form]="credencialesForm" nombre="descripcion"
           idNombre="carEntidadId" nombreResultado="descripcion" idNombreResultado="id" [customSearch]="entidadesCustom"
-          [min]="1" placeholder="Car - Entidad" required>
+          [min]="1" placeholder="Car - Entidad" required uppercase>
         </custom-autocomplete>
 
         <form [formGroup]="credencialesForm" *ngIf="showCredenciales">
           <mat-form-field>
             <input matInput type="text" formControlName="recepcionista" placeholder="Recepcionista" maxlength="50"
-              required>
+              required uppercase>
             <mat-error>Campo requerido</mat-error>
           </mat-form-field>
         </form>
@@ -171,7 +189,8 @@
   </mat-accordion>
 </form>
 <div class="stepper-btns">
-  <button mat-button *ngIf="edit" matStepperNext
-    [disabled]="datosGeneralesForm.invalid || isPosting || credencialesForm.invalid" (click)="postDatosGenerales()"
-    style="float: right; margin-top: 10px;">Guardar</button>
+  <app-button *ngIf="edit" matStepperNext color="primary"
+    [disabled]="datosGeneralesForm.invalid || isPosting || credencialesForm.invalid" (click)="postDatosGenerales()">
+    <mat-icon>done</mat-icon>Guardar
+  </app-button>
 </div>

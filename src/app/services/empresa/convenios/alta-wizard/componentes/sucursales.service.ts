@@ -20,8 +20,8 @@ export class SucursalesService {
    */
 
 	 /*POST SUCURSALES*/
-	addSucursalEmpresaD(sucursal: SucursalEmpresaDTO): Observable<SucursalEmpresaDTO> {
-		return this.http.post<SucursalEmpresaDTO>(`${this.baseUrl}/Empresas/api/sucursalempresa`, sucursal);
+	addSucursalEmpresaD(sucursal: SucursalEmpresaDTO): Observable<any> {
+		return this.http.post<any>(`${this.baseUrl}/Empresas/api/sucursalempresa`, sucursal);
 	}
 
 	/*GET SUCURSALES
@@ -53,8 +53,8 @@ export class SucursalesService {
    * TEMPORAL
    */
 	/*POST SUCURSALES*/
-	addSucursalEmpresa(sucursal: SucursalEmpresaDTO): Observable<SucursalEmpresaDTO> {
-		return this.http.post<SucursalEmpresaDTO>(`${this.baseUrl}/Empresas/api/sucursalempresa/wizard`, sucursal);
+	addSucursalEmpresa(sucursal: SucursalEmpresaDTO): Observable<any> {
+		return this.http.post<any>(`${this.baseUrl}/Empresas/api/sucursalempresa/wizard`, sucursal);
 	}
 
 	/*GET SUCURSALES*/

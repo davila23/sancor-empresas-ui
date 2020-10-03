@@ -1,10 +1,14 @@
-import { Component, OnDestroy, OnInit, EventEmitter, Output, Input, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 import { GrillaEmpresaService } from '@app/services/empresa/convenios/alta-wizard/componentes/grilla-empresa.service';
 import { ProductoGrillaEmpresaDTO } from '@app/models/producto-grilla-empresa.model';
 import { GrillaDTO } from '@app/models/grilla.model';
 import { ConvenioDTO } from '@app/models/convenio-temporal/convenio.model';
+import { GrillaTipo } from '@app/models/grilla-tipo.model';
+import { startWith, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { UtilService } from '@app/core/util.service';
 
 @Component({
 	selector: 'app-grillas',
@@ -13,34 +17,12 @@ import { ConvenioDTO } from '@app/models/convenio-temporal/convenio.model';
 })
 export class GrillasComponent implements OnInit {
 
-	constructor(private _fb: FormBuilder,
-		private grillaEmpresaService: GrillaEmpresaService) {
-
-		this.grillasForm = this._fb.group({
-			seleccion: ['', [Validators.required]],
-			nroGrilla: ['', Validators.required]
-		});
-	}
-
 	grillasForm: FormGroup;
-	grillasDataSource = new MatTableDataSource<any>([]);
 	grillasProductoDataSource = new MatTableDataSource<any>([]);
-	grillaProductos: any[] = [];
-
-	caracteristicas_list = [
-		{ id: 2, caracteristica: 'Nuevas Pymes', nroGrilla: 1111, descripcion: 'Descripción no editable', tipo: "PYME" },
-		//{ id: 2, caracteristica: 'Negocios especiales', nroGrilla: 2222, descripcion: 'Descripción no editable', tipo: 'NEGOCIOESP' },
-		//{ id: 3, caracteristica: 'TC/CBU', nroGrilla: 3333, descripcion: 'Descripción no editable', tipo: 'TC-CBU' }
-		{ id: 4, caracteristica: 'Comunes', nroGrilla: 4444, descripcion: 'Descripción no editable', tipo: 'COMUN' },
-		{ id: 23, caracteristica: 'Pyme Comp. 10-49', nroGrilla: 2323, descripcion: 'Descripción no editable', tipo: 'PYME COMP. 10-49' },
-		{ id: 24, caracteristica: 'Pyme Comp. 50-200', nroGrilla: 2424, descripcion: 'Descripción no editable', tipo: 'PYME COMP. 50-200' },
-		//{ id: 5, caracteristica: 'Afinidad', nroGrilla: 5555, descripcion: 'Descripción no editable', tipo: 'AFINIDAD' },
-		{ id: 6, caracteristica: 'Especiales', nroGrilla: 6666, descripcion: 'Descripción no editable', tipo: 'ESPECIAL' }
-	];
-
-	grillas_displayedColumns = [
-		'descripcion'
-	];
+	caracteristicas_list: GrillaTipo[] = [];
+	grillaCtrl = new FormControl('', Validators.required);
+	filteredGrillas: Observable<GrillaDTO[]>;
+	grillasEspeciales: GrillaDTO[] = [];
 
 	grillasProducto_displayedColumns = [
 		'idGrilla',
@@ -48,7 +30,6 @@ export class GrillasComponent implements OnInit {
 	];
 
 	edit = false;
-
 	isPosting = false;
 
 	@ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
@@ -81,23 +62,77 @@ export class GrillasComponent implements OnInit {
 		});
 	} convenioIdFlag = null;
 
+	constructor(
+		private _fb: FormBuilder,
+		private grillaEmpresaService: GrillaEmpresaService,
+		private utilService: UtilService
+	) {
+		this.grillasForm = this._fb.group({
+			seleccion: ['', [Validators.required]],
+			staff: [false]
+		});
+	}
 
-	ngOnInit(): void { }
+	ngOnInit(): void {
+		this.grillaEmpresaService.getGrillasTiposByEjecutivo("S").subscribe(
+			r => {
+				this.caracteristicas_list = r;
+				console.log(this.caracteristicas_list)
+			});
+
+		this.grillaEmpresaService.getGrillasEspeciales().subscribe(
+			r => {
+				this.grillasEspeciales = r;
+			});
+
+		this.filteredGrillas = this.grillaCtrl.valueChanges.pipe(
+			startWith(''),
+			map(grilla => grilla ? this.filterGrillas(grilla) : this.grillasEspeciales.slice())
+		);
+	}
+
+	filterGrillas(name: string) {
+		return this.grillasEspeciales.filter(grilla => (grilla.nrogrilla.toString().includes(name.toString()) || grilla.nombre.toLowerCase().includes(name.toString().toLowerCase())));
+	}
+
+	onEnter(evt: any) {
+		if (evt.source.selected) {
+			this.grillaCtrl.setValue(evt.source.value.nrogrilla + ' - ' + evt.source.value.nombre);
+		}
+	}
 
 	fillGrillas() {
 		this.isPosting = true;
-
 		this.grillaEmpresaService.getAllGrillas(this.convenioIdFlag)
-			.subscribe(r => {
-				if (r == null) r = [];
-
-				this.grillasProductoDataSource.data = r;
-			}).add(() => {
-				this.isPosting = false;
-			});
+			.subscribe(
+				r => {
+					if (r == null) r = [];
+					this.grillasProductoDataSource.data = r;
+					this.isPosting = false;
+				},
+				error => {
+					this.isPosting = false;
+				});
 	}
 
 	grillasSaveAndRender() {
+
+		if (this.grillasForm.invalid && !this.grillasForm.controls['staff'].value) {
+			return
+		}
+
+		if (this.grillaCtrl.invalid && this.grillasForm.controls['seleccion'].value == 6) {
+			this.grillaCtrl.markAsTouched();
+			return
+		}
+
+		if (this.grillaCtrl.value && this.grillasForm.controls['seleccion'].value == 6) {
+			if (this.grillaCtrl.value.nrogrilla == null) {
+				this.grillaCtrl.setValue('');
+				this.utilService.notification('Debe seleccionar una Grilla de la lista', 'warning');
+				return
+			}
+		}
 
 		this.isPosting = true;
 
@@ -107,70 +142,57 @@ export class GrillasComponent implements OnInit {
 		convenio.id = this.convenioIdFlag;
 		pge.convenio = convenio;
 
-		let grilla = new GrillaDTO();
-		grilla.caracteristicas = this.caracteristicaElegida.id;
+		let grilla: GrillaDTO = new GrillaDTO();
+		grilla.list = null;
 
-		grilla.nrogrilla = (this.nrogrillaSelected) ? this.nrogrillaSelected : this.grillasForm.get('nroGrilla').value;
+		let nrogrilla = null;
+		let caracteristicas = null;
+		if (this.grillasForm.valid) {
+			caracteristicas = this.grillasForm.controls['seleccion'].value;
+			if (this.grillaCtrl.value) {
+				nrogrilla = this.grillaCtrl.value.nrogrilla ? this.grillaCtrl.value.nrogrilla : this.grillasForm.controls['seleccion'].value;
+			} else {
+				nrogrilla = this.grillasForm.controls['seleccion'].value;
+			}
+		}
+
+		if (this.grillasForm.controls['staff'].value) {
+			if (nrogrilla) {
+				grilla.list = [];
+				grilla.list.push(Number(this.caracteristicas_list.filter(x => x.descripcion == 'Staff')[0].id));
+				grilla.list.push(Number(caracteristicas));
+				if(caracteristicas == 6){
+					grilla.nrogrillaEspecial = nrogrilla;
+				}
+			} else{
+				grilla.caracteristicas = this.caracteristicas_list.filter(x => x.descripcion == 'Staff')[0].id;
+				grilla.nrogrilla = this.caracteristicas_list.filter(x => x.descripcion == 'Staff')[0].id;
+			}
+		} else{
+			grilla.nrogrilla = nrogrilla;
+			grilla.caracteristicas = caracteristicas;
+		}
 
 		pge.grilla = grilla;
 
 		this.grillaEmpresaService.addGrillaConvenioProducto(pge)
-			.subscribe(res => {
-				this.fillGrillas();
-			});
-	}
-
-	grillasDelete(row) {
-
-		let grillaId = row["grilla"]["nrogrilla"];
-		let convenioId = row["convenio"]["id"];
-		let productId = row["producto"]["codigo"];
-
-		this.grillaEmpresaService.deleteGrillaConvenioProducto(grillaId, convenioId, productId)
-			.subscribe(res => {
-				this.fillGrillas();
-			});
-	}
-
-	nrogrillaSelected: any;
-	caracteristicaSelected: number;
-
-	applyFilter(event: any) {
-		event.preventDefault();
-
-		if (event.key === 'Enter') {
-			if (this.caracteristicaSelected) {
-				this.nrogrillaSelected = event.target.value;
-				this.grillaEmpresaService.getGrillasPorNroGrilla(event.target.value)
-					.subscribe(res => {
-						this.grillasDataSource.data = res;
-					});
-			}
-		}
-	}
-
-	caracteristicaElegida: any;
-
-	patchNroGrilla(caracteristica: any) {
-
-		this.caracteristicaElegida = caracteristica;
-
-		if (caracteristica.tipo == 'ESPECIAL') {
-			this.caracteristicaSelected = 5;
-		} else {
-
-			this.grillaEmpresaService.getGrillasPorCaracteristica(caracteristica.tipo)
-				.subscribe(r => {
-					if (r == null) r = [];
-
-					this.grillaProductos = r;
-					let unique = Array.from(new Set(r.map((item: any) => item.descripcion)));
-					this.grillasDataSource.data = unique;
+			.subscribe(
+				res => {
+					this.isPosting = false;
+					this.fillGrillas();
+				},
+				error => {
+					this.isPosting = false;
 				});
-		}
+	}
 
-		this.grillasForm.patchValue({ nroGrilla: caracteristica.nroGrilla });
+	changeGrilla() {
+		this.grillaCtrl.reset();
+	}
 
+	clearForms(){
+		this.grillasForm.reset();
+		this.grillaCtrl.reset();
 	}
 
 }

@@ -1,7 +1,7 @@
 export class GrillaDTO{
 
     //todo los campos son not null
-    nrogrilla:number;
+    nrogrilla:string;
     copagos:string;
     aportantesMonotributo:string;
     bonifImplicita:string;
@@ -9,4 +9,7 @@ export class GrillaDTO{
     nombre:string;
     hijos:string;
     caracteristicas:string;
+    idGrillaTipo: string;
+    list: number[];
+    nrogrillaEspecial: number;
 }

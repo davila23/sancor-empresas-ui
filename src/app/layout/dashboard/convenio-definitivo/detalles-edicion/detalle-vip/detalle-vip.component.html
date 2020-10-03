@@ -1,8 +1,4 @@
-<div class="grid">
-  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
-</div>
-
-<mat-card class="custom" *ngIf="isEditionFlag">
+<mat-card class="custom" *ngIf="isEditionFlag && edit">
   <mat-card-header>
     <mat-card-title>
       Añadir usuario
@@ -19,12 +15,27 @@
     </form>
   </mat-card-content>
   <mat-card-actions align="end">
-    <button color="accent" mat-raised-button (click)="usuarioSaveAndRender()" [disabled]="vipForm.invalid || isPosting">AÑADIR</button>
+    <app-button *ngIf="!edicionVipExistente" color="primary" (click)="usuarioSaveAndRender()"
+      [disabled]="vipForm.invalid || isPosting">
+      <mat-icon>add</mat-icon>Añadir
+    </app-button>
+    <app-button *ngIf="edicionVipExistente" color="accent" (click)="cancelEdit()">
+      <mat-icon>close</mat-icon>Cancelar
+    </app-button>
+    <app-button *ngIf="edicionVipExistente" color="primary" (click)="usuarioEditAndRender()"
+      [disabled]="vipForm.invalid || isPosting">
+      <mat-icon>edit</mat-icon>Guardar cambios
+    </app-button>
   </mat-card-actions>
 </mat-card>
 
+<mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
 
-<mat-card class="custom" [ngClass]="{'not-show':!vipDataSource.data?.length}">
+<div class="no-data-container" *ngIf="!vipDataSource.data?.length && !isPosting">
+  No hay usuarios vip cargados...
+</div>
+
+<mat-card class="custom" [ngClass]="{'not-show':!vipDataSource.data?.length}" *ngIf="!edicionVipExistente">
   <mat-card-header>
     <mat-card-title>
       VIP'S
@@ -40,7 +51,12 @@
     <ng-container matColumnDef="delete">
       <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
       <mat-cell *matCellDef="let row" data-label="eliminar">
-        <button mat-icon-button color="accent"  (click)="usuarioDelete(row)"><mat-icon color="accent">delete</mat-icon></button>
+        <button mat-icon-button matTooltip="Eliminar" color="accent" (click)="usuarioDelete(row)" *ngIf="delete">
+          <mat-icon color="accent">delete</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Editar" color="primary" (click)="usuarioEdit(row)" *ngIf="edit">
+          <mat-icon color="primary">edit</mat-icon>
+        </button>
       </mat-cell>
     </ng-container>
 
@@ -48,10 +64,7 @@
     <mat-row *matRowDef="let row; columns: vip_displayedColumns;" class="table-row"></mat-row>
   </mat-table>
   <mat-card-footer>
-    <mat-paginator #paginator [length]="vipDataSource.data.length" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    <mat-paginator #paginator [length]="vipDataSource.data.length" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]"
+      showFirstLastButtons *ngIf="vipDataSource.data?.length > 10"></mat-paginator>
   </mat-card-footer>
 </mat-card>
-
-<div class="no-data-container" *ngIf="!vipDataSource.data?.length">
-  No hay usuarios vip cargados...
-</div>

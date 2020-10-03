@@ -50,7 +50,6 @@ export class SucursalesComponent {
   sucursal_displayedColumns = [
     'descripcion',
     'domicilio',
-    'categoria',
     'telefono',
     'email',
     'localidad'

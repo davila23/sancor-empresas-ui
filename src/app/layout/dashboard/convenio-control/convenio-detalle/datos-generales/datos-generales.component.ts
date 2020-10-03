@@ -2,7 +2,7 @@ import { Component, OnInit, Input, QueryList, ViewChildren } from '@angular/core
 import { Router } from '@angular/router';
 import { UtilService } from '@app/core';
 import { DatosGeneralesService } from '@app/services/empresa/convenios/alta-wizard/componentes/datos-generales.service';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import { LoadingDirective } from '@app/shared/loading.directive';
 import * as dayjs from 'dayjs';
 
@@ -12,6 +12,8 @@ import * as dayjs from 'dayjs';
   styleUrls: ['./datos-generales.component.scss']
 })
 export class DatosGeneralesComponent implements OnInit {
+
+  cuit: FormControl = new FormControl();
 
   constructor(private _fb: FormBuilder,
     private service: DatosGeneralesService,
@@ -68,6 +70,7 @@ export class DatosGeneralesComponent implements OnInit {
         descripcion: ''
       }),
       adicionalACargo: [null, Validators.required],
+      trasladaAdicional: [null, Validators.required],
       copagosACargo: [null, Validators.required],
       recepcionista: [null, Validators.required],
       carEntidadDescripcion: [''],
@@ -129,6 +132,11 @@ export class DatosGeneralesComponent implements OnInit {
         }
         const parsedR = r[0];
 
+        let cuit: string = String(parsedR.empresa.cuit);
+        cuit = this.InsertAt(cuit, '-', 2);
+        cuit = this.InsertAt(cuit, '-', cuit.length - 1);
+        this.cuit.setValue(cuit);
+
         parsedR.vigenciaDesde = (parsedR.vigenciaDesde) ? dayjs(parsedR.vigenciaDesde) : null;
         parsedR.vigenciaDesde = (parsedR.vigenciaDesde) ? parsedR.vigenciaDesde.format('YYYY-MM-DD') : null;
 
@@ -145,7 +153,8 @@ export class DatosGeneralesComponent implements OnInit {
 
         this.showFirmaDes = (parsedR.tipoIngreso.id == 3) ? true : false;
 
-        parsedR.adicionalACargo = (parsedR.mutual == 'A') ? 'Asociado' : 'Empresa';
+        parsedR.adicionalACargo = (parsedR.adicionalACargo == 'A') ? 'Asociado' : 'Empresa';
+        parsedR.trasladaAdicional = (parsedR.trasladaAdicional == 'S') ? 'Si' : 'No';
         parsedR.copagosACargo = (parsedR.copagosACargo == 'A') ? 'Asociado' : 'Empresa';
 
         parsedR.modalidadLiquidacion.descripcion = 'Vencida';
@@ -190,6 +199,10 @@ export class DatosGeneralesComponent implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  InsertAt(string, CharToInsert, Position) {
+    return string.slice(0, Position) + CharToInsert + string.slice(Position)
   }
 
 }

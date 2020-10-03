@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChildren, QueryList } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DatosGeneralesService } from '@app/services/empresa/convenios/alta-wizard/componentes/datos-generales.service';
 import { LoadingDirective } from '@app/shared/loading.directive';
 import { UtilService } from '@app/core';
@@ -10,6 +10,7 @@ import { DatosImpositivosService } from '@app/services/empresa/convenios/alta-wi
 import { DatosImpositivosDTO } from '@app/models/datos-impositivos.model';
 import { ControlConvenioService } from '@app/services/control/control-convenio.service';
 import { ConvenioMovimientoDTO } from '@app/models/convenio-movimiento.model';
+import { EmpresaService } from '@app/services/empresa/empresa.service';
 
 @Component({
   selector: 'app-datos-generales',
@@ -18,13 +19,16 @@ import { ConvenioMovimientoDTO } from '@app/models/convenio-movimiento.model';
 })
 export class DatosGeneralesComponent implements OnInit {
 
+  cuit: FormControl = new FormControl();
+
   constructor(private _fb: FormBuilder,
-              private service: DatosGeneralesService,
-              private utilService: UtilService,
-              private router: Router,
-              private _dataTransferService: DataTransferService,
-              private datosImpositivosService: DatosImpositivosService,
-              private controlConvenioService: ControlConvenioService) {
+    private service: DatosGeneralesService,
+    private utilService: UtilService,
+    private router: Router,
+    private _dataTransferService: DataTransferService,
+    private datosImpositivosService: DatosImpositivosService,
+    private controlConvenioService: ControlConvenioService,
+    private empresaService: EmpresaService) {
 
     this.datosGeneralesForm = this._fb.group({
       id: [null],
@@ -42,9 +46,9 @@ export class DatosGeneralesComponent implements OnInit {
       habilitadoSistemaRecepcion: ['N'],
       compensaAportes: [null, [Validators.required]],
       modalidadLiquidacion: this._fb.group({
-        id: [{disabled: true, value: 2}]
+        id: [{ disabled: true, value: 2 }]
       }),
-      cantidadEmpleados: [null, [Validators.required]], //Cantidad cápitas prometidas
+      cantidadEmpleados: [0, [Validators.required, Validators.min(0)]], //Cantidad cápitas prometidas
       horarioAtencion: [''],
       ejecutivoConvenio: this._fb.group({
         idpersona: [null],
@@ -74,6 +78,7 @@ export class DatosGeneralesComponent implements OnInit {
         id: [null, Validators.required]
       }),
       adicionalACargo: [null, Validators.required],
+      trasladaAdicional: [{ value: null, disabled: true }, Validators.required],
       copagosACargo: [null, Validators.required],
       recepcionista: [null],
       carEntidadId: [null], //Revisar TODO
@@ -91,6 +96,7 @@ export class DatosGeneralesComponent implements OnInit {
       descripcion: [],
       recepcionista: []
     });
+
   }
 
   @ViewChildren(LoadingDirective) loadings: QueryList<LoadingDirective>;
@@ -104,7 +110,11 @@ export class DatosGeneralesComponent implements OnInit {
         let x = this._dataTransferService.value;
         if (x) {
 
-          if (x.relacionista == null) x.relacionista = {idpersona: null, nombre: null};
+          if (x.relacionista == null) x.relacionista = { idpersona: null, nombre: null };
+
+          if (x.adicionalACargo == 'E') {
+            this.datosGeneralesForm.controls['trasladaAdicional'].enable();
+          }
 
           this.datosGeneralesForm.setValue(x);
           if (x.carEntidadId != null) {
@@ -121,6 +131,7 @@ export class DatosGeneralesComponent implements OnInit {
           this.fillForm();
         }
       } else {
+
         this.utilService.setControlsLoadingState('parteUno', false, this.loadings);
       }
       this.isEditionFlag = isEdition;
@@ -128,7 +139,7 @@ export class DatosGeneralesComponent implements OnInit {
   }
 
   @Input() set isAllowedToEdit(boolean) {
-    setTimeout( () => {
+    setTimeout(() => {
       this.edit = boolean;
       if (!this.edit) {
         this.datosGeneralesForm.disable();
@@ -140,7 +151,7 @@ export class DatosGeneralesComponent implements OnInit {
   @Input() set empresaId(empresaId) {
 
     setTimeout(() => {
-      this.datosGeneralesForm.patchValue({empresa: {id: Number(empresaId)}});
+      this.datosGeneralesForm.patchValue({ empresa: { id: Number(empresaId) } });
       this.empresaIdFlag = empresaId;
     });
   }
@@ -196,7 +207,7 @@ export class DatosGeneralesComponent implements OnInit {
   holdingsList: any;
   tipoIngresoList: any;
   movimientosAsociadosList: any;
-  credencialesList:any;
+  credencialesList: any;
 
   // Fill form from the database
   fillForm() {
@@ -208,7 +219,13 @@ export class DatosGeneralesComponent implements OnInit {
             this.router.navigate(['/empresa']);
             return;
           }
+
           const parsedR = r[0];
+
+          let cuit: string = String(parsedR.empresa.cuit);
+          cuit = this.InsertAt(cuit, '-', 2);
+          cuit = this.InsertAt(cuit, '-', cuit.length - 1);
+          this.cuit.setValue(cuit);
 
           this.observacion.emit({
             estadoControlId: parsedR.estadoControlId,
@@ -227,6 +244,10 @@ export class DatosGeneralesComponent implements OnInit {
                 recepcionista: parsedR.recepcionista
               });
             });
+          }
+
+          if (parsedR.adicionalACargo == 'E') {
+            this.datosGeneralesForm.controls['trasladaAdicional'].enable();
           }
 
           this.datosGeneralesForm.patchValue(parsedR);
@@ -258,7 +279,24 @@ export class DatosGeneralesComponent implements OnInit {
     });
   }
 
+  changeAdicional(element) {
+    if (element === 'E') {
+      this.datosGeneralesForm.controls['trasladaAdicional'].enable();
+      this.datosGeneralesForm.controls['trasladaAdicional'].setValue(null);
+    } else {
+      this.datosGeneralesForm.controls['trasladaAdicional'].disable();
+      this.datosGeneralesForm.controls['trasladaAdicional'].setValue(null);
+    }
+  }
+
   postDatosGenerales() {
+
+    if (this.credencialesForm.invalid || this.datosGeneralesForm.invalid) {
+      this.credencialesForm.markAsTouched();
+      this.datosGeneralesForm.markAsTouched();
+      return
+    }
+
     this.isPosting = true;
 
     let newDate = dayjs(this.datosGeneralesForm.value.vigenciaDesde).format('YYYY-MM-DD');
@@ -267,7 +305,7 @@ export class DatosGeneralesComponent implements OnInit {
     validatedForm.carEntidadId = this.credencialesForm.value.carEntidadId;
     validatedForm.recepcionista = this.credencialesForm.value.recepcionista;
     validatedForm.carEntidadDescripcion = this.credencialesForm.value.descripcion;
-    
+
 
     if (validatedForm.holding.id == null) validatedForm.holding.id = 0;
 
@@ -283,12 +321,12 @@ export class DatosGeneralesComponent implements OnInit {
         //postear Estado
         this.postInitialStateConvenio(r.convenioId);
 
-        this.datosGeneralesForm.patchValue({id: r.convenioId});
+        this.datosGeneralesForm.patchValue({ id: r.convenioId });
         this._dataTransferService.value = validatedForm;
         this.router.navigate([`/conveniostemporales/empresa/${this.datosGeneralesForm.value.empresa.id}/edicion/${r.convenioId}`]);
         this.utilService.notification('¡Convenio creado correctamente!', 'success', 2000);
       } else {
-        this.utilService.notification('¡Datos generales actualizado!', 'success', 1000);
+        this.utilService.notification('¡Datos generales actualizados!', 'success', 1000);
       }
     }).add(() => {
       this.isPosting = false;
@@ -307,7 +345,7 @@ export class DatosGeneralesComponent implements OnInit {
     });
   }
 
-  postInitialStateConvenio(convenioId:number){
+  postInitialStateConvenio(convenioId: number) {
     let convenioMovimientoDTO = new ConvenioMovimientoDTO();
     convenioMovimientoDTO.idConvenioEstado = 1;
     convenioMovimientoDTO.idConvenio = convenioId;
@@ -317,7 +355,7 @@ export class DatosGeneralesComponent implements OnInit {
     //VER DONDE TIENE QUE IR
   }
 
-  postDatosImpositivos(convenioId:number){
+  postDatosImpositivos(convenioId: number) {
     // aca deberia estar las llamadas para el servicio DATOS IMPOSITIVOS
     let datosImpositivosItem = new DatosImpositivosDTO;
     datosImpositivosItem.empresaId = this.empresaIdFlag;
@@ -326,11 +364,11 @@ export class DatosGeneralesComponent implements OnInit {
     datosImpositivosItem.modalidad = 'C'; // Mod Impresion: Conceptos,
     datosImpositivosItem.tipoComprobante = 'F'; // Tipo comprobante: Factura,
     //se llama al servicio con facturadora 2
-    this.datosImpositivosService.addDatosImpositivos(datosImpositivosItem).subscribe(res=>console.log(res));
+    this.datosImpositivosService.addDatosImpositivos(datosImpositivosItem).subscribe(res => console.log(res));
 
     datosImpositivosItem.facturadoraId = 5;//Empresas que facturan: 5
     //se llama al servicio con facturadora 5
-    this.datosImpositivosService.addDatosImpositivos(datosImpositivosItem).subscribe(res=>console.log(res));
+    this.datosImpositivosService.addDatosImpositivos(datosImpositivosItem).subscribe(res => console.log(res));
   }
 
   listenCredencialesId(value) {
@@ -350,9 +388,9 @@ export class DatosGeneralesComponent implements OnInit {
       this.showCredenciales = true;
     }
 
-    this.credencialesForm.controls['carEntidadId'].updateValueAndValidity({emitEvent: false});
-    this.credencialesForm.controls['descripcion'].updateValueAndValidity({emitEvent: false});
-    this.credencialesForm.controls['recepcionista'].updateValueAndValidity({emitEvent: false});
+    this.credencialesForm.controls['carEntidadId'].updateValueAndValidity({ emitEvent: false });
+    this.credencialesForm.controls['descripcion'].updateValueAndValidity({ emitEvent: false });
+    this.credencialesForm.controls['recepcionista'].updateValueAndValidity({ emitEvent: false });
   }
 
   ngOnInit() {
@@ -365,6 +403,23 @@ export class DatosGeneralesComponent implements OnInit {
       this.setForms.emit(this.datosGeneralesForm);
     });
 
+    setTimeout(() => {
+      if (this.empresaIdFlag) {
+        this.empresaService.getEmpresaById(this.empresaIdFlag)
+          .subscribe(r => {
+            let empresa = r[0];
+            let cuit: string = String(empresa.cuit);
+            cuit = this.InsertAt(cuit, '-', 2);
+            cuit = this.InsertAt(cuit, '-', cuit.length - 1);
+            this.cuit.setValue(cuit);
+          });
+      }
+    });
+
     this.fillSelects();
+  }
+
+  InsertAt(string, CharToInsert, Position) {
+    return string.slice(0, Position) + CharToInsert + string.slice(Position)
   }
 }

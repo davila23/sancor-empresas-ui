@@ -78,7 +78,40 @@
 app-button {
 	margin: 0px 5px;
 	justify-self: center;
+	mat-icon {
+        margin-right: 7px;
+    }
 	@media #{$s} {
 		justify-self: center;
 	}
+}
+
+mat-card {
+
+    &.mat-card.ribbon {
+        mat-card-header.mat-card-header {
+            background-color: $primary-color;
+        }
+    }
+}
+
+.custom {
+	margin-top: 25px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    .mat-card-header { 
+        background-color: $primary-color !important;
+        padding-top: 10px;
+        .mat-card-title {
+            color: white; 
+        }
+    }
+
+    .mat-card-content {
+        padding: 25px;
+    }
+}
+
+.row-rp{
+	margin-top: 15px;
 }

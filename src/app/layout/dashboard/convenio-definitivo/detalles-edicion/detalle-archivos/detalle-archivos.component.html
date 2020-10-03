@@ -4,7 +4,7 @@
   <div class="download-card" *ngFor="let x of typesState">
     <label>{{x.descripcion}}</label>
     <div class="wrapper">
-      <button mat-raised-button color="primary" *ngIf="isEditionFlag" (click)="uploadFile(inputFile, $event)" id="{{x.id}}" [disabled]="x.upload.isUploading || x.download.isDownloading">
+      <button mat-raised-button color="primary" *ngIf="isEditionFlag && edit" (click)="uploadFile(inputFile, $event)" id="{{x.id}}" [disabled]="x.upload.isUploading || x.download.isDownloading">
           <mat-icon aria-label="upload button">cloud_upload</mat-icon>
           {{(x.download.file.length) ? 'Resubir' : 'Subir'}}
       </button>

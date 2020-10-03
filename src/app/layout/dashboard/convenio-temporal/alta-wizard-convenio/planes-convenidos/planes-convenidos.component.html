@@ -1,8 +1,4 @@
 <form [formGroup]="planesConvenidosForm">
-  <div class="grid">
-    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
-  </div>
-
   <mat-card class="custom" *ngIf="edit">
     <mat-card-header>
       <mat-card-title>
@@ -10,31 +6,58 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="grid">
+      <div class="grid responsive-grid">
         <mat-form-field>
           <mat-select placeholder="Productos" formControlName="producto" required>
-            <mat-option 
-              (onSelectionChange)="onEnter($event)"
-              *ngFor="let producto of productosList;" [value]="producto">
+            <mat-option (onSelectionChange)="onEnter($event)" *ngFor="let producto of productosList;"
+              [value]="producto">
               {{producto.descripcion}}
             </mat-option>
-          </mat-select>   
+          </mat-select>
+          <mat-error
+            *ngIf="planesConvenidosForm.get('producto').errors && planesConvenidosForm.get('producto').errors?.required">
+            Campo requerido
+          </mat-error>
         </mat-form-field>
-        <mat-form-field>
-          <mat-select placeholder="Planes" 
-                      formControlName="plan">
+        <mat-form-field *ngIf="planesList.length > 0">
+          <mat-select placeholder="Planes" formControlName="plan">
             <mat-option *ngFor="let plan of planesList;" [value]="plan">
-               {{plan.descripcionComercial}}
+              {{plan.descripcionComercial}}
             </mat-option>
           </mat-select>
+          <mat-error
+            *ngIf="planesConvenidosForm.get('plan').errors && planesConvenidosForm.get('plan').errors?.required">
+            Campo requerido
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field *ngIf="planesList.length > 0" class="input-number">
+          <input matInput type="number" placeholder="Porcentaje Bonificacion" formControlName="porcentaje"
+            min="0.01" max="99.99" step="0.01">
+          <span matSuffix>&nbsp; %</span>
+          <mat-error
+            *ngIf="planesConvenidosForm.get('porcentaje').errors && planesConvenidosForm.get('porcentaje').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error
+            *ngIf="planesConvenidosForm.get('porcentaje').errors && planesConvenidosForm.get('porcentaje').errors?.min">
+            Valor mínimo: 0.00</mat-error>
+          <mat-error
+            *ngIf="planesConvenidosForm.get('porcentaje').errors && planesConvenidosForm.get('porcentaje').errors?.max">
+            Valor máximo: 99.99</mat-error>
         </mat-form-field>
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
-      <button color="accent" mat-raised-button color="accent" [disabled]="isPosting || planesConvenidosForm.invalid" (click)="planesCabeceraSaveAndRender()">AÑADIR</button>
+      <app-button color="primary" (click)="planesCabeceraSaveAndRender()"
+        [disabled]="isPosting || planesConvenidosForm.invalid">
+        <mat-icon>add</mat-icon>Añadir
+      </app-button>
     </mat-card-actions>
   </mat-card>
-  <div class="no-data-container" *ngIf="!cabeceraDataSource.data?.length">
+
+  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+
+  <div class="no-data-container" *ngIf="!cabeceraDataSource.data?.length && !isPosting">
     No hay cabeceras cargados...
   </div>
   <mat-card class="custom" [ngClass]="{'not-show':!cabeceraDataSource.data?.length}">
@@ -44,7 +67,7 @@
       </mat-card-title>
     </mat-card-header>
     <mat-table [dataSource]="cabeceraDataSource">
-      
+
       <ng-container matColumnDef="planDescripcion">
         <mat-header-cell *matHeaderCellDef> Plan </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="Plan"> {{row.plan.codigo}} </mat-cell>
@@ -53,12 +76,17 @@
         <mat-header-cell *matHeaderCellDef> Producto </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="Producto"> {{row.producto}} </mat-cell>
       </ng-container>
-     
+
+      <ng-container matColumnDef="porcentaje">
+        <mat-header-cell *matHeaderCellDef> Porcentaje Bonificación (%) </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="Porcentaje"> {{row.porcentaje}} </mat-cell>
+      </ng-container>
 
       <ng-container matColumnDef="delete">
         <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="eliminar">
-          <button mat-icon-button *ngIf="delete" color="accent" matTooltip="eliminar" (click)="planesCabeceraDelete(row)">
+          <button mat-icon-button *ngIf="delete" color="accent" matTooltip="Eliminar"
+            (click)="planesCabeceraDelete(row)">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-cell>
@@ -67,6 +95,7 @@
       <mat-header-row *matHeaderRowDef="cabeceraDisplayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: cabeceraDisplayedColumns;" class="table-row"></mat-row>
     </mat-table>
-    <mat-paginator #entidad_pag [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <mat-paginator #entidad_pag [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+      *ngIf="cabeceraDataSource.data?.length > 10"></mat-paginator>
   </mat-card>
 </form>

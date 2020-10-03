@@ -65,7 +65,7 @@ export class VipComponent implements OnInit {
 
     if (this.dialogRef === null) {
 			this.dialogRef = this.utilService.openConfirmDialog({
-				titulo: 'Dialogo de confirmación',
+				titulo: '',
 				texto: '¿Desea eliminar este usuario vip?',
 				confirmar: 'Eliminar',
 				cancelar: 'Cancelar'
@@ -79,7 +79,7 @@ export class VipComponent implements OnInit {
           this.service.deleteUsuariosVip(row).subscribe(r => {
             if (!r.length) {
               this.fillUsuarios();
-              this.utilService.notification('Registro eliminado', 'success', 4000);
+              this.utilService.notification('¡Usuario eliminado con éxito!', 'success', 4000);
             } else {
               this.utilService.notification('Ocurrió un error', 'warning', 4000);
             }
@@ -100,6 +100,14 @@ export class VipComponent implements OnInit {
   }
 
   usuarioSaveAndRender() {
+
+		if (this.vipForm.invalid) {
+			(<any>Object).values(this.vipForm.controls).forEach(control => {
+				control.markAsTouched();
+			});
+			return
+		}
+
     this.isPosting = true;
 
     this.service.postUsuariosVip(this.vipForm.value).subscribe(r => {
@@ -110,7 +118,7 @@ export class VipComponent implements OnInit {
         this.vipForm.controls['dni'].markAsPristine();
         this.vipForm.controls['dni'].markAsUntouched();
 
-        this.utilService.notification('Usuario añadido', 'success', 4000); 
+        this.utilService.notification('¡Usuario añadido con éxito!', 'success', 4000); 
       } else {
         this.utilService.notification('Ocurrió un error', 'warning', 4000);
       }

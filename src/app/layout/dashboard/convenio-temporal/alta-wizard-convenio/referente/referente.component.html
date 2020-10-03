@@ -1,9 +1,5 @@
  <form [formGroup]="referenteForm">
 
-  <div class="grid">
-    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
-  </div>
-
   <mat-card class="custom" *ngIf="edit">
     <mat-card-header>
       <mat-card-title>
@@ -13,7 +9,7 @@
     <mat-card-content>
       <div class="grid responsive-grid">
         <mat-form-field>
-          <input matInput type="text" placeholder="Nombre y apellido" formControlName="nombreApellido" required>
+          <input matInput type="text" placeholder="Nombre y apellido" formControlName="nombreApellido" required uppercase>
           <mat-error *ngIf="referenteForm.get('nombreApellido').errors && referenteForm.get('nombreApellido').errors?.required">
             Campo requerido
           </mat-error>
@@ -25,7 +21,7 @@
           <input matInput type="text" placeholder="DNI" formControlName="numeroDocumento" numMask="8">
         </mat-form-field>
         <mat-form-field>
-          <input matInput type="text" placeholder="Hobbie" formControlName="hobbie">
+          <input matInput type="text" placeholder="Hobbie" formControlName="hobbie" uppercase>
         </mat-form-field>
         <mat-form-field>
           <telefono-input [form]="telefonoForm" name="telefono" placeholder="Teléfono" #tel required></telefono-input>
@@ -41,17 +37,21 @@
             Campo requerido
           </mat-error>
           <mat-error *ngIf="referenteForm.get('email').errors && referenteForm.get('email').errors?.email">
-            Formato de email inválido
+            Email inválido
           </mat-error>
         </mat-form-field>
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
-      <button color="accent" mat-raised-button (click)="referenteSaveAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting">AÑADIR</button>
+      <app-button color="primary" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting" (click)="referenteSaveAndRender()">
+        <mat-icon>add</mat-icon>Añadir
+      </app-button>
     </mat-card-actions>
   </mat-card>
 
-  <div class="no-data-container" *ngIf="!referenteDataSource.data?.length">
+  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+
+  <div class="no-data-container" *ngIf="!referenteDataSource.data?.length && !isPosting">
     No hay referentes cargados...
   </div>
 
@@ -74,7 +74,7 @@
 
       <ng-container matColumnDef="numeroDocumento">
         <mat-header-cell *matHeaderCellDef> DNI </mat-header-cell>
-        <mat-cell *matCellDef="let row" data-label="numeroDocumento"> {{row.numeroDocumento}} </mat-cell>
+        <mat-cell *matCellDef="let row" data-label="numeroDocumento"> {{(row.numeroDocumento == 0) ? '-' : row.numeroDocumento}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="numeroTelefono">
@@ -97,7 +97,7 @@
       <mat-header-row *matHeaderRowDef="referente_displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: referente_displayedColumns;" class="table-row"></mat-row>
     </mat-table>
-    <mat-card-footer>
+    <mat-card-footer *ngIf="referenteDataSource.data?.length > 10">
       <mat-paginator #paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
     </mat-card-footer>
   </mat-card>

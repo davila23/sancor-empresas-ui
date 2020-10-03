@@ -48,7 +48,7 @@ export const MY_FORMATS = {
 export class FormasPagoComponent implements OnInit {
 
   private _convenioId = new BehaviorSubject<number>(0);
-  bancoCtrl = new FormControl();
+  bancoCtrl = new FormControl('', Validators.required);
   filteredBancos: Observable<any[]>;
   bancos: BancoDTO[];
   tarjetasList: SimpleDTO[];
@@ -133,7 +133,7 @@ export class FormasPagoComponent implements OnInit {
   }
 
   filterBancos(name: string) {
-    return this.bancos.filter(banco => banco.descripcion.toLowerCase().indexOf(name.toString().toLowerCase()) === 0);
+    return this.bancos.filter(banco => banco.descripcion.toLowerCase().includes(name.toString().toLowerCase()));
   }
 
   onEnter(evt: any) {
@@ -199,6 +199,26 @@ export class FormasPagoComponent implements OnInit {
   formaPagoDataSource = new MatTableDataSource<any>([]);
 
   cbuSaveRender() {
+    if (this.cbuForm.invalid) {
+      (<any>Object).values(this.cbuForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      return
+    }
+
+    if (this.bancoCtrl.invalid) {
+      this.bancoCtrl.markAsTouched();
+      return
+    }
+
+    if (this.bancoCtrl.value) {
+      if (this.bancoCtrl.value.id == null) {
+        this.bancoCtrl.setValue('');
+        this.utilService.notification('Debe seleccionar un banco de la lista', 'warning');
+        return
+      }
+    }
+
     let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
     formaDePagoConvenioDTO.descripcion = 'CBU';
     formaDePagoConvenioDTO.tipoCuentaString = this.cbuForm.value.tipoCuenta;
@@ -213,8 +233,14 @@ export class FormasPagoComponent implements OnInit {
   }
 
   tcSaveRender() {
+    if (this.tcForm.invalid) {
+      (<any>Object).values(this.tcForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      return
+    }
     let formaDePagoConvenioDTO = new FormaDePagoConvenioDTO();
-    formaDePagoConvenioDTO.codigoTarjeta = this.tcForm.value["codigotarjeta"];
+    formaDePagoConvenioDTO.codigoTarjeta = this.bancoTC;
     formaDePagoConvenioDTO.numeroTarjeta = this.tcForm.value["nrotarjeta"];
     formaDePagoConvenioDTO.fechaVencimiento = this.tcForm.value["vencimiento"];
     formaDePagoConvenioDTO.idConvenio = this.convenioIdFlag;
@@ -236,10 +262,17 @@ export class FormasPagoComponent implements OnInit {
 
     this.formaPagoService.addFormasDePagoEmpresas(DTO)
       .subscribe(res => {
-
-        this.utilService.notification('¡Forma de pago añadida con éxito!', 'success');
-
-        this.fillFormaDePago();
+        if (res == null) {
+          this.utilService.notification('¡Forma de pago agregada con éxito!', 'success');
+          this.fillFormaDePago();
+        } else {
+          this.utilService.openConfirmDialog(
+            {
+              titulo: 'No fue posible completar la acción',
+              texto: res.detalle,
+              confirmar: 'ACEPTAR'
+            });
+        }
       }).add(() => {
         this.isPosting = false;
       });
@@ -341,7 +374,7 @@ export class FormasPagoComponent implements OnInit {
           switch (tipo) {
             case 'TC':
               parsedData.datos = {
-                bancoId: res.bancoEmisor,
+                bancoId: res.codigoTarjeta,
                 descripcion: res.descripcion,
                 numeroTarjeta: res.numeroTarjeta,
                 fechaVencimiento: res.fechaVencimiento,

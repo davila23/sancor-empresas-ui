@@ -15,12 +15,12 @@ import { UtilService } from '@app/core';
 export class EmpresaComponent implements OnInit {
 
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
-  
-  constructor(private empresaService: EmpresaService,
-              public dialog: MatDialog,
-              private utilService: UtilService  ) {
 
-    if(localStorage.getItem('actividades') == null){
+  constructor(private empresaService: EmpresaService,
+    public dialog: MatDialog,
+    private utilService: UtilService) {
+
+    if (localStorage.getItem('actividades') == null) {
       this.empresaService.obtenerActividadesEmpresa().subscribe(
         res => {
           localStorage.setItem('actividades', JSON.stringify(res));
@@ -28,13 +28,13 @@ export class EmpresaComponent implements OnInit {
       )
     }
   }
- 
-  actividades : ActividadAfipDTO[] = [];
 
-  displayedColumns:  string[] = ['cuit', 'razonSocial', 'nombreFantasia', 'id', 'acciones'];
+  actividades: ActividadAfipDTO[] = [];
+
+  displayedColumns: string[] = ['cuit', 'razonSocial', 'nombreFantasia', 'id', 'acciones'];
   empresas: EmpresaDTO[] = [];
-	selectedEmpresas = new SelectionModel<EmpresaDTO>(true, []);
-	dataSource = new MatTableDataSource<EmpresaDTO>(this.empresas);
+  selectedEmpresas = new SelectionModel<EmpresaDTO>(true, []);
+  dataSource = new MatTableDataSource<EmpresaDTO>(this.empresas);
   resultsLength = 0;
 
   controlsLoading: any = {
@@ -50,23 +50,32 @@ export class EmpresaComponent implements OnInit {
   @ViewChildren(LoadingDirective) loadings: QueryList<LoadingDirective>;
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-      this.paginator = mp;
-      this.dataSource.paginator = this.paginator;
+    this.paginator = mp;
+    this.dataSource.paginator = this.paginator;
   }
 
-  buscarEmpresa(searchTerm:any){
+  buscarEmpresa(searchTerm: any) {
+    searchTerm = String(searchTerm).trim();
     this.utilService.setControlsLoadingState('table', true, this.loadings);
-    this.empresaService.searchEmpresas(searchTerm).subscribe(
-      res =>{
-        this.empresas = res;
-        this.dataSource.data = this.empresas;
-        this.resultsLength = this.empresas.length;
+    this.empresaService.searchEmpresas(searchTerm)
+      .subscribe(
+        res => {
+          this.empresas = res;
+          this.dataSource.data = this.empresas;
+          this.resultsLength = this.empresas.length;
+        }, error => {
+          this.empresas = [];
+          this.dataSource.data = this.empresas;
+          this.resultsLength = this.empresas.length;
+        })
+      .add(() => {
         this.utilService.setControlsLoadingState('table', false, this.loadings);
-      }
-    );
+      });
   }
 
   ngOnInit() {
-    
+    setTimeout(() => {
+      this.buscarEmpresa('');
+    });
   }
 }

@@ -9,33 +9,41 @@ import { GrillaEmpresaService } from '@app/services/empresa/convenios/alta-wizar
 })
 export class GrillasComponent implements OnInit {
 
-	constructor(private grillaEmpresaService: GrillaEmpresaService) { }
+  isPosting: boolean = false;
+
+  constructor(private grillaEmpresaService: GrillaEmpresaService) { }
 
   @Input() set convenioId(convenioId) {
     this.convenioIdFlag = convenioId;
     this.fillGrilla();
   }; private convenioIdFlag = null;
 
-	@ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-		this.paginator = mp;
-		this.grillasProductoDataSource.paginator = this.paginator;
-	}; private paginator: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.grillasProductoDataSource.paginator = this.paginator;
+  }; private paginator: MatPaginator;
 
   grillasProductoDataSource = new MatTableDataSource<any>([]);
 
   grillasProducto_displayedColumns = [
-		'idGrilla',
-		'grilla'
-	];
+    'idGrilla',
+    'grilla'
+  ];
 
   fillGrilla() {
-    this.grillaEmpresaService.getAllGrillas(this.convenioIdFlag).subscribe(res => {
-      if (res == null) res = [];
-        
-      this.grillasProductoDataSource.data = res;
-    });
+    this.isPosting = true;
+    this.grillaEmpresaService.getAllGrillas(this.convenioIdFlag).subscribe(
+      res => {
+        if (res == null) res = [];
+
+        this.grillasProductoDataSource.data = res;
+        this.isPosting = false;
+      },
+      error => {
+        this.isPosting = false;
+      });
   }
 
 
-	ngOnInit() { }
+  ngOnInit() { }
 }

@@ -14,44 +14,56 @@ import { UtilService } from '@app/core';
 	styleUrls: ['./detalle-entidades.component.scss']
 })
 export class DetalleEntidadesComponent implements OnInit {
-	
-	constructor(private _fb: FormBuilder, 
-              private entidadesService: EntidadesService,
-              private utilService: UtilService) { 
+
+	constructor(private _fb: FormBuilder,
+		private entidadesService: EntidadesService,
+		private utilService: UtilService) {
 	}
 
-  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-    this.paginator = mp;
-    this.entidadDataSource.paginator = this.paginator;
-  }; private paginator: MatPaginator;
+	@ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+		this.paginator = mp;
+		this.entidadDataSource.paginator = this.paginator;
+	}; private paginator: MatPaginator;
 
 	@Input() set isEdition(isEdition) {
-	  setTimeout(() => {
-		this.isEditionFlag = isEdition;
-	  });
+		setTimeout(() => {
+			this.isEditionFlag = isEdition;
+		});
 	}
 
 	@Input() set empresaId(empresaId) {
-	  setTimeout(() => {
-      this.empresaIdFlag = empresaId;
-	  });
+		setTimeout(() => {
+			this.empresaIdFlag = empresaId;
+		});
 	}
 
 	@Input() set convenioId(convenioId) {
-	  setTimeout(() => {
-        this.convenioIdFlag = convenioId;
-        this.fillEntidades();
+		setTimeout(() => {
+			this.convenioIdFlag = convenioId;
+			this.fillEntidades();
 
-	  });
+		});
 	}
+
+	@Input() set isAllowedToEdit(boolean) {
+		setTimeout(() => {
+			this.edit = boolean;
+		});
+	} edit = false;
+
+	@Input() set isAllowedToDelete(boolean) {
+		setTimeout(() => {
+			this.delete = boolean;
+		});
+	} delete = false;
 
 	isEditionFlag = false;
 	empresaIdFlag = null;
 	convenioIdFlag = null;
 	empresaRelacionada = new EmpresaDTO;
-  dialogRef = null;
+	dialogRef = null;
 
-  entidadesForm: FormGroup;
+	entidadesForm: FormGroup;
 	entidadDataSource = new MatTableDataSource<any>([]);
 	entidadrelacion = new RelacionEmpresaConFacturadoraDTO();
 	empresaCtrl = new FormControl('', Validators.required);
@@ -59,117 +71,123 @@ export class DetalleEntidadesComponent implements OnInit {
 
 
 	ngOnInit() {
-	  this.entidadesForm = this._fb.group({
-      nro_empresa: ['', Validators.required],
-      cuit: [''],
-      descripcion: [''],
-      empresa: [''],
-    });
-    
-	  this.filteredEmpresas = this.empresaCtrl.valueChanges.pipe(
-		startWith(''),
-		switchMap(value => {
-		  if (typeof value === "object") value = this.entidadesForm.value.descripcion;
-			  
-		  if (value !== '' && value !== null) return this.lookup(value);
-		  else return of(null);
-		
-	  }));
+		this.entidadesForm = this._fb.group({
+			nro_empresa: ['', Validators.required],
+			cuit: [''],
+			descripcion: [''],
+			empresa: [''],
+		});
+
+		this.filteredEmpresas = this.empresaCtrl.valueChanges.pipe(
+			startWith(''),
+			switchMap(value => {
+				if (typeof value === "object") value = this.entidadesForm.value.descripcion;
+
+				if (value !== '' && value !== null) return this.lookup(value);
+				else return of(null);
+
+			}));
 	}
 
 	onEnter(evt: any) {
-	  if (evt.source.selected) {
-		this.empresaCtrl.setValue(evt.source.value.descripcion);
-		this.entidadesForm.controls['cuit'].setValue(evt.source.value.cuit);
-		this.entidadesForm.controls['nro_empresa'].setValue(evt.source.value.id);
-		this.entidadesForm.controls['empresa'].setValue(evt.source.value);
-	  }
+		if (evt.source.selected) {
+			this.empresaCtrl.setValue(evt.source.value.descripcion);
+			this.entidadesForm.controls['cuit'].setValue(evt.source.value.cuit);
+			this.entidadesForm.controls['nro_empresa'].setValue(evt.source.value.id);
+			this.entidadesForm.controls['empresa'].setValue(evt.source.value);
+		}
 	}
 
 	lookup(value: string): Observable<EmpresaDTO[]> {
-	  return this.entidadesService.getEmpresasAutocomplete(value.toLowerCase()).pipe(
-		map(results => results),
-		catchError( res => {
-		  return of(null);
-		}));
+		return this.entidadesService.getEmpresasAutocomplete(value.toLowerCase()).pipe(
+			map(results => results),
+			catchError(res => {
+				return of(null);
+			}));
 	}
 
 	entidad_displayedColumns = [
-	  'nro_empresa',
-	  'cuit',
-	  'descripcion',
-	  'delete'
+		'nro_empresa',
+		'cuit',
+		'descripcion',
+		'delete'
 	];
 
-  isPosting = false;
-	
+	isPosting = false;
+
 	entidadSaveAndRender() {
-	  if (this.entidadesForm.valid) {
 
-      this.isPosting = true;
+		if (this.empresaCtrl.invalid) {
+			this.empresaCtrl.markAsTouched();
+			return
+		}
 
-	    let empresaFacturadora = new EmpresaDTO;
-	    empresaFacturadora.id = Number(this.convenioIdFlag);
-		
-	    this.entidadrelacion.empresaFacturadura = empresaFacturadora;
-        this.entidadrelacion.empresaRelacionada = this.entidadesForm.value['empresa'];
-	    //PASAR DEL FORM A LA RELACION	
-	    this.entidadesService.addEntidadesD(this.entidadrelacion)
-	    .subscribe(res => {
-        this.utilService.notification('Registro añadido', 'success',  4000);  
-        this.fillEntidades();
-        this.entidadesForm.reset();
-        this.empresaCtrl.reset();
-        this.empresaCtrl.markAsUntouched();
-        this.empresaCtrl.markAsPristine();
-	    }).add(() => {
-        this.isPosting = false;
-      });
-	  }
+		if (this.entidadesForm.valid) {
+
+			this.isPosting = true;
+
+			let empresaFacturadora = new EmpresaDTO;
+			empresaFacturadora.id = Number(this.convenioIdFlag);
+
+			this.entidadrelacion.empresaFacturadura = empresaFacturadora;
+			this.entidadrelacion.empresaRelacionada = this.entidadesForm.value['empresa'];
+			//PASAR DEL FORM A LA RELACION	
+			this.entidadesService.addEntidadesD(this.entidadrelacion)
+				.subscribe(res => {
+					this.utilService.notification('¡Registro añadido con éxito!', 'success', 4000);
+					this.fillEntidades();
+					this.entidadesForm.reset();
+					this.empresaCtrl.reset();
+					this.empresaCtrl.markAsUntouched();
+					this.empresaCtrl.markAsPristine();
+				}).add(() => {
+					this.isPosting = false;
+				});
+		}
 	}
 
-  fillEntidades() {
-    this.entidadesService.getEntidadesRelacionadasD(this.convenioIdFlag)
-      .subscribe(res => {
-        if(res==null) res = [];              
-        this.entidadDataSource.data = res
-    });
-  }
+	fillEntidades() {
+		this.entidadesService.getEntidadesRelacionadasD(this.convenioIdFlag)
+			.subscribe(res => {
+				if (res == null) res = [];
+				this.entidadDataSource.data = res
+			});
+	}
 
 	entidadDelete(row) {
-    if (this.dialogRef === null) {
+		if (this.dialogRef === null) {
 			this.dialogRef = this.utilService.openConfirmDialog({
-				titulo: 'Dialogo de confirmación',
+				titulo: '',
 				texto: '¿Desea eliminar esta empresa relacionada?',
 				confirmar: 'Eliminar',
 				cancelar: 'Cancelar'
-      });
-      
-      this.utilService.loseFocus();
-      
+			});
+
+			this.utilService.loseFocus();
+
 			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
-        
-        if (respuesta) {
-          this.isPosting = true;
 
-          let empresaFacturadora = new EmpresaDTO;
-          empresaFacturadora.id = Number(this.convenioIdFlag);
-          this.empresaRelacionada = row as EmpresaDTO;
-          this.entidadrelacion.empresaRelacionada = this.empresaRelacionada;
-          this.entidadrelacion.empresaFacturadura = empresaFacturadora;
+				if (respuesta) {
+					this.isPosting = true;
 
-          this.entidadesService.deleteRelacionFacturadoraEmpresasD(this.entidadrelacion)
-          .subscribe(res => {
-            this.utilService.notification('Registro eliminado', 'success', 4000);
-            this.entidadesService.getEntidadesRelacionadasD(this.convenioIdFlag)
-            .subscribe(res => {
-              if (res == null) res = [];              
-              this.entidadDataSource.data = res
-            });
-          }).add(() => {
-            this.isPosting = false;
-          });
-        }
+					let empresaFacturadora = new EmpresaDTO;
+					empresaFacturadora.id = Number(this.convenioIdFlag);
+					this.empresaRelacionada = row as EmpresaDTO;
+					this.entidadrelacion.empresaRelacionada = this.empresaRelacionada;
+					this.entidadrelacion.empresaFacturadura = empresaFacturadora;
+
+					this.entidadesService.deleteRelacionFacturadoraEmpresasD(this.entidadrelacion)
+						.subscribe(res => {
+							this.utilService.notification('¡Registro eliminado con éxito!', 'success', 4000);
+							this.entidadesService.getEntidadesRelacionadasD(this.convenioIdFlag)
+								.subscribe(res => {
+									if (res == null) res = [];
+									this.entidadDataSource.data = res
+								});
+						}).add(() => {
+							this.isPosting = false;
+						});
+				}
 
 				this.dialogRef = null;
 			});

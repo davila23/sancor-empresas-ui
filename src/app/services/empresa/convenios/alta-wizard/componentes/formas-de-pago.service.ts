@@ -4,7 +4,6 @@ import { environment } from '@env';
 import { Observable, throwError } from 'rxjs';
 import { SimpleDTO } from '@app/models/simple.model';
 import { catchError } from 'rxjs/operators';
-import { FormaDePagoEmpresaDTO } from '@app/models/forma-de-pago-empresa.model';
 import { FormaDePagoConvenioDTO } from '@app/models/forma-de-pago.model';
 import { BancoDTO } from '@app/models/banco.model';
 
@@ -48,7 +47,7 @@ export class FormasDePagoService {
   
   /*Guarda un CBU */
   addFormaDePagoCbuD(formaDePagoConvenioDTO: FormaDePagoConvenioDTO){
-    return this.http.post<FormaDePagoConvenioDTO>(`${this.baseUrl}/Empresas/api/formadepagoempresa/guardarCbu`, formaDePagoConvenioDTO)
+    return this.http.post<any>(`${this.baseUrl}/Empresas/api/formadepagoempresa/guardarCbu`, formaDePagoConvenioDTO)
     .pipe(
       catchError(e => throwError(new Error(e)))
     );
@@ -98,8 +97,8 @@ export class FormasDePagoService {
   }
 
   /*POST Alta de los 3 tipos de pago CBU,Tarjetas,Efectivo */
-  addFormasDePagoEmpresas(formaDePagoConvenioDTO: FormaDePagoConvenioDTO): Observable<FormaDePagoConvenioDTO> {
-    return this.http.post<FormaDePagoConvenioDTO>(`${this.baseUrl}/Empresas/api/formadepagoempresa/wizard`, formaDePagoConvenioDTO)
+  addFormasDePagoEmpresas(formaDePagoConvenioDTO: FormaDePagoConvenioDTO): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/Empresas/api/formadepagoempresa/wizard`, formaDePagoConvenioDTO)
       .pipe(
         catchError(e => throwError(new Error(e)))
       );

@@ -24,7 +24,7 @@ export class DetalleReferenteComponent implements OnInit {
       cargo: [''],
       fechaNacimiento: ['', [Validators.required]],
       tipoDocumento: [96],
-      numeroDocumento: [],
+      numeroDocumento: ['', [Validators.required]],
       caracteristicaTelefono: [''],
       numeroTelefono: [''],
       numeroCelular: [''],
@@ -50,6 +50,19 @@ export class DetalleReferenteComponent implements OnInit {
     });
   }
 
+  @Input() set isAllowedToEdit(boolean) {
+    setTimeout( () => {
+      this.edit = boolean;
+    });
+  }
+
+  @Input() set isAllowedToDelete(boolean) {
+    setTimeout(() => {
+      this.delete = boolean;
+      console.log(this.delete, 'delete ref')
+    });
+  }
+
   @Output() changeEditionFlag = new EventEmitter<boolean>();
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
@@ -60,6 +73,8 @@ export class DetalleReferenteComponent implements OnInit {
   private paginator: MatPaginator;
 
   isEditionFlag;
+  edit = false;
+  delete = false; 
 
   referenteForm: FormGroup;
   telefonoForm: FormGroup;
@@ -94,12 +109,16 @@ export class DetalleReferenteComponent implements OnInit {
   referenteSaveAndRender() {
 
     if(this.referenteForm.invalid || this.telefonoForm.invalid){
+      (<any>Object).values(this.referenteForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      this.telefonoForm.markAsTouched();
       return
     }
 
     if (this.dialogRef === null) {
       this.dialogRef = this.utilService.openConfirmDialog({
-        titulo: 'Dialogo de confirmación',
+        titulo: '',
         texto: '¿Desea añadir el registro de referente?',
         confirmar: 'Añadir',
         cancelar: 'Cancelar'
@@ -132,12 +151,16 @@ export class DetalleReferenteComponent implements OnInit {
   referenteEditAndRender() {
 
     if(this.referenteForm.invalid || this.telefonoForm.invalid){
+      (<any>Object).values(this.referenteForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      this.telefonoForm.markAsTouched();
       return
     }
 
     if (this.dialogRef === null) {
       this.dialogRef = this.utilService.openConfirmDialog({
-        titulo: 'Dialogo de confirmación',
+        titulo: '',
         texto: '¿Desea editar el registro de referente?',
         confirmar: 'Editar',
         cancelar: 'Cancelar'
@@ -203,7 +226,7 @@ export class DetalleReferenteComponent implements OnInit {
   referenteDelete(row) {
     if (this.dialogRef === null) {
       this.dialogRef = this.utilService.openConfirmDialog({
-        titulo: 'Dialogo de confirmación',
+        titulo: '',
         texto: '¿Desea eliminar el registro de referente?',
         confirmar: 'Eliminar',
         cancelar: 'Cancelar'
@@ -221,7 +244,7 @@ export class DetalleReferenteComponent implements OnInit {
             empresaId: row.empresaId,
             id: row.id
           }).subscribe(r => {
-            this.utilService.notification('Registro eliminado con éxito.', 'success', 4000);
+            this.utilService.notification('¡Registro eliminado con éxito!', 'success', 4000);
             this.fillTable();
           }).add(() => {
             this.isPosting = false;

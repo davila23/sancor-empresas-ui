@@ -1,10 +1,6 @@
 <form [formGroup]="referenteForm">
 
-  <div class="grid">
-    <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
-  </div>
-
-  <mat-card class="custom" *ngIf="isEditionFlag">
+  <mat-card class="custom" *ngIf="isEditionFlag && edit">
     <mat-card-header>
       <mat-card-title>
         Añadir referente
@@ -13,7 +9,7 @@
     <mat-card-content>
       <div class="grid responsive-grid">
         <mat-form-field>
-          <input matInput type="text" placeholder="Nombre y apellido" formControlName="nombreApellido" required>
+          <input matInput type="text" placeholder="Nombre y apellido" formControlName="nombreApellido" required uppercase>
           <mat-error *ngIf="referenteForm.get('nombreApellido').errors && referenteForm.get('nombreApellido').errors?.required">
             Campo requerido
           </mat-error>
@@ -23,9 +19,12 @@
 
         <mat-form-field>
           <input matInput type="text" placeholder="DNI" formControlName="numeroDocumento" numMask="8">
+          <mat-error *ngIf="referenteForm.get('numeroDocumento').errors && referenteForm.get('numeroDocumento').errors?.required">
+            Campo requerido
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput type="text" placeholder="Hobbie" formControlName="hobbie">
+          <input matInput type="text" placeholder="Hobbie" formControlName="hobbie" uppercase>
         </mat-form-field>
         <mat-form-field>
           <telefono-input [form]="telefonoForm" name="telefono" placeholder="Teléfono" #tel required></telefono-input>
@@ -47,13 +46,15 @@
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
-      <app-button *ngIf="!edicionRefExistente" color="accent" (click)="referenteSaveAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting"><mat-icon>add</mat-icon>Añadir</app-button>
-      <app-button *ngIf="edicionRefExistente" color="primary" (click)="cancelEdit()"><mat-icon>close</mat-icon>Cancelar</app-button>
-      <app-button *ngIf="edicionRefExistente" color="accent" (click)="referenteEditAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting"><mat-icon>edit</mat-icon>Guardar cambios</app-button>
+      <app-button *ngIf="!edicionRefExistente" color="primary" (click)="referenteSaveAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting"><mat-icon>add</mat-icon>Añadir</app-button>
+      <app-button *ngIf="edicionRefExistente" color="accent" (click)="cancelEdit()"><mat-icon>close</mat-icon>Cancelar</app-button>
+      <app-button *ngIf="edicionRefExistente" color="primary" (click)="referenteEditAndRender()" [disabled]="referenteForm.invalid || telefonoForm.invalid || isPosting"><mat-icon>edit</mat-icon>Guardar cambios</app-button>
     </mat-card-actions>
   </mat-card>
 
-  <div class="no-data-container" *ngIf="!referenteDataSource.data?.length">
+  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+
+  <div class="no-data-container" *ngIf="!referenteDataSource.data?.length && !isPosting">
     No hay referentes cargados...
   </div>
 
@@ -92,8 +93,8 @@
       <ng-container matColumnDef="delete">
         <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
         <mat-cell *matCellDef="let row" data-label="eliminar">
-          <button mat-icon-button color="primary"  matTooltip="eliminar" (click)="referenteDelete(row)"><mat-icon color="accent">delete</mat-icon></button>
-          <button mat-icon-button  matTooltip="Editar" (click)="referenteEdit(row)"><mat-icon color="accent">edit</mat-icon></button>
+          <button mat-icon-button color="accent"  matTooltip="Eliminar" (click)="referenteDelete(row)" *ngIf="delete"><mat-icon color="accent">delete</mat-icon></button>
+          <button mat-icon-button color="primary" matTooltip="Editar" (click)="referenteEdit(row)" *ngIf="edit"><mat-icon color="primary">edit</mat-icon></button>
         </mat-cell>
       </ng-container>
 
@@ -101,7 +102,7 @@
       <mat-header-row *matHeaderRowDef="referente_displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: referente_displayedColumns;" class="table-row"></mat-row>
     </mat-table>
-    <mat-card-footer>
+    <mat-card-footer *ngIf="referenteDataSource.data?.length > 10">
       <mat-paginator #paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
     </mat-card-footer>
   </mat-card>

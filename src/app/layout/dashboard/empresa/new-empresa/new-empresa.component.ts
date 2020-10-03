@@ -7,10 +7,11 @@ import { CondicionIvaDTO } from '@app/models/empresa/condicion-iva-model';
 import { map, startWith, tap, filter } from 'rxjs/operators';
 import { ActividadAfipDTO } from '@app/models/empresa/actividad-afip.model';
 import { Observable } from 'rxjs';
-import { CustomValidators } from '@tres-erres/ngx-utils';
 import { ContactoService } from '@app/services/empresa/convenios/alta-wizard/componentes/contacto.service';
 import { UtilService } from '@app/core';
 import { Router } from '@angular/router';
+import { ResponsableNegocioDTO } from '@app/models/empresa/responsable-negocio.model';
+import { CustomValidators } from '@app/shared/custom-validators';
 
 
 export class State {
@@ -26,19 +27,21 @@ export class NewEmpresaComponent implements OnInit {
 
 	empresa: EmpresaDTO;
 	formGroup: FormGroup;
-
+	respNegocioForm: FormGroup;
 
 	actividadAfip: FormControl = new FormControl();
 	filteredOptionsActividad: any;
 	actividadCtrl: FormControl;
 	filteredActividades: Observable<any[]>;
-	codPostalControl = new FormControl();
+	codPostalControl = new FormControl('', [Validators.required]);
 	codPostalList: any = [];
 
 	posting = false;
 	dialogRef = null;
 
 	empresaCopia: string;
+
+	listaResponsablesDeNegocio: ResponsableNegocioDTO[] = [];
 
 	constructor(private empresaService: EmpresaService,
 		private condicionIvaService: CondicionIvaService,
@@ -117,11 +120,44 @@ export class NewEmpresaComponent implements OnInit {
 			email: [null, [Validators.email, Validators.maxLength(50)]]
 		});
 
+		this.respNegocioForm = this.formBuilder.group({
+			nombre: [null, [Validators.required, Validators.maxLength(100)]],
+			numeroDocumento: [null, Validators.required],
+			tipoDocumento: [null],
+			comentario: [null],
+		});
+
 		this.empresaCopia = JSON.stringify(this.formGroup.getRawValue());
 	}
 
+	addRespNegocio() {
+		if (this.respNegocioForm.invalid) {
+			return
+		}
+
+		let RN: ResponsableNegocioDTO = new ResponsableNegocioDTO();
+		RN.nombre = this.respNegocioForm.controls['nombre'].value;
+		RN.numeroDocumento = this.respNegocioForm.controls['numeroDocumento'].value;
+		RN.comentario = this.respNegocioForm.controls['comentario'].value;
+		RN.tipoDocumento = "DNI";
+
+		this.listaResponsablesDeNegocio.push(RN);
+
+		this.respNegocioForm.reset();
+	}
+
+	deleteRespNegocio(element) {
+		let list = [];
+		this.listaResponsablesDeNegocio.forEach(x => {
+			if (x.nombre != element.nombre || x.numeroDocumento != element.numeroDocumento || x.comentario != element.comentario) {
+				list.push(x);
+			}
+		});
+		this.listaResponsablesDeNegocio = list;
+	}
+
 	onSubmit() {
-		if (this.formGroup.valid) {
+		if (this.formGroup.valid && this.codPostalControl.valid) {
 			this.posting = true;
 			let condicionIva = new CondicionIvaDTO();
 			condicionIva.id = this.formGroup.controls.condicionIvaId.value;
@@ -134,10 +170,27 @@ export class NewEmpresaComponent implements OnInit {
 
 			this.empresaService.addEmpresa(this.empresa).subscribe(r => {
 				if (r) {
-					if (r[0]) {
-						this.utilService.notification(`Código: ${r[0].codigo}, ` + r[0].detalle, 'warning');
-						this.router.navigate(['/empresa/busqueda']);
+					if (r.errores.length > 0) {
+						this.utilService.openConfirmDialog(
+							{
+								titulo: 'No fue posible completar la acción',
+								texto: r.errores[0].detalle,
+								confirmar: 'ACEPTAR'
+							});
 					} else {
+						let errores = null;
+						this.listaResponsablesDeNegocio.forEach(x => {
+							x.empresaID = r.id
+							this.empresaService.postResponsablesNegocio(x).subscribe(
+								resp => {
+									if(r != []){
+										errores = 'Ocurrió un error al agregar un responsable de negocio';
+									}
+								});
+						});
+						if(errores){
+							this.utilService.notification(errores, 'error');
+						}
 						this.utilService.notification('¡Empresa añadida!', 'success');
 						this.router.navigate(['/empresa/busqueda']);
 					}

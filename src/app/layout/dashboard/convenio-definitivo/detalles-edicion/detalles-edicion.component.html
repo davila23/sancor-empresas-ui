@@ -1,7 +1,8 @@
 <div class="container">
 
   <div style="display: flex; justify-content: center;">
-    <button matTooltip="{{ (multi) ? 'Bloquear apertura múltiple' : 'Habilitar apertura múltiple' }}" color="accent" mat-icon-button (click)="toggleAccordion()">
+    <button matTooltip="{{ (multi) ? 'Bloquear apertura múltiple' : 'Habilitar apertura múltiple' }}" color="accent"
+      mat-icon-button (click)="toggleAccordion()">
       <mat-icon style="font-size: 28px">{{(multi) ? 'lock_open' : 'lock'}}</mat-icon>
     </button>
   </div>
@@ -10,25 +11,25 @@
     <mat-expansion-panel #datosgenerales (afterExpand)="focusPanel(datosgenerales)" [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[0].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'datosGenerales')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[0].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'datosGenerales')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[0].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Datos Generales' }}
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <detalle-datos-generales
-        [isEdition]="stepsEditionOrDetail[0].isEdition"
-        [empresaId]="empresaId"
-        [convenioId]="convenioId"
-      ></detalle-datos-generales>
+      <detalle-datos-generales [isEdition]="stepsEditionOrDetail[0].isEdition" [empresaId]="empresaId"
+        [convenioId]="convenioId" [isAllowedToEdit]="renderSteps('edicion', 'datos generales')">
+      </detalle-datos-generales>
 
     </mat-expansion-panel>
 
-    <mat-expansion-panel #contacto (afterExpand)="focusPanel(contacto)">
+    <mat-expansion-panel #contacto (afterExpand)="focusPanel(contacto)" *ngIf="renderSteps('lectura', 'contacto')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[1].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'contacto')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[1].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'contacto')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[1].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Contacto'}}
@@ -36,18 +37,19 @@
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <detalle-contacto [isEdition]="stepsEditionOrDetail[1].isEdition"
-                          [empresaId]="empresaId"
-                          [convenioId]="convenioId">
+        <detalle-contacto [isEdition]="stepsEditionOrDetail[1].isEdition" [empresaId]="empresaId"
+          [convenioId]="convenioId" [isAllowedToEdit]="renderSteps('edicion', 'contacto')"
+          [isAllowedToDelete]="renderSteps('delete', 'contacto')">
         </detalle-contacto>
       </ng-template>
 
     </mat-expansion-panel>
 
-    <mat-expansion-panel #referente (afterExpand)="focusPanel(referente)">
+    <mat-expansion-panel #referente (afterExpand)="focusPanel(referente)" *ngIf="renderSteps('lectura', 'referente')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[2].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'referente')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[2].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'referente')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[2].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Referente'}}
@@ -55,17 +57,18 @@
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <detalle-referente [convenioId]="convenioId"
-                           [isEdition]="stepsEditionOrDetail[2].isEdition"
-                           (changeEditionFlag)="stepsEditionOrDetail[2].isEdition = $event"
-        ></detalle-referente>
+        <detalle-referente [convenioId]="convenioId" [isEdition]="stepsEditionOrDetail[2].isEdition"
+          (changeEditionFlag)="stepsEditionOrDetail[2].isEdition = $event"
+          [isAllowedToEdit]="renderSteps('edicion', 'referente')"
+          [isAllowedToDelete]="renderSteps('delete', 'referente')"></detalle-referente>
       </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #grillas (afterExpand)="focusPanel(grillas)">
+    <mat-expansion-panel #grillas (afterExpand)="focusPanel(grillas)" *ngIf="renderSteps('lectura', 'grillas')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[3].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'grillas')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[3].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'grillas')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[3].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Grillas'}}
@@ -73,10 +76,9 @@
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <detalle-grillas [empresaId]="empresaId"
-                         [convenioId]="convenioId"
-                         [isEdition]="stepsEditionOrDetail[3].isEdition" >
-      </detalle-grillas>
+        <detalle-grillas [empresaId]="empresaId" [convenioId]="convenioId"
+          [isEdition]="stepsEditionOrDetail[3].isEdition" [isAllowedToEdit]="renderSteps('edicion', 'grillas')">
+        </detalle-grillas>
       </ng-template>
       <!--
       <mat-table [dataSource]="dataSource">
@@ -101,10 +103,12 @@
       -->
     </mat-expansion-panel>
 
-    <mat-expansion-panel #planesconvenidos (afterExpand)="focusPanel(planesconvenidos)">
+    <mat-expansion-panel #planesconvenidos (afterExpand)="focusPanel(planesconvenidos)"
+      *ngIf="renderSteps('lectura', 'planes convenidos')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[4].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'planesConvenidos')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[4].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'planesConvenidos')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[4].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Planes convenidos (Solo rol Ejecutivo)'}}
@@ -113,18 +117,21 @@
 
 
       <ng-template matExpansionPanelContent>
-        <detalle-planes-convenidos [empresaId]="empresaId"
-                                   [convenioId]="convenioId"
-                                   [isEdition]="stepsEditionOrDetail[4].isEdition">
+        <detalle-planes-convenidos [empresaId]="empresaId" [convenioId]="convenioId"
+          [isEdition]="stepsEditionOrDetail[4].isEdition"
+          (changeEditionFlag)="stepsEditionOrDetail[4].isEdition = $event"
+          [isAllowedToEdit]="renderSteps('edicion', 'planes convenidos')"
+          [isAllowedToDelete]="renderSteps('delete', 'planes convenidos')">
         </detalle-planes-convenidos>
       </ng-template>
 
     </mat-expansion-panel>
 
-    <mat-expansion-panel #subsidios (afterExpand)="focusPanel(subsidios)">
+    <mat-expansion-panel #subsidios (afterExpand)="focusPanel(subsidios)" *ngIf="renderSteps('lectura', 'subsidios')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[5].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'subsidios')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[5].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'subsidios')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[5].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Subsidios'}}
@@ -132,16 +139,18 @@
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <detalle-subsidios [empresaId]="empresaId"
-                           [convenioId]="convenioId"
-                           [isEdition]="stepsEditionOrDetail[5].isEdition"></detalle-subsidios>
+        <detalle-subsidios [empresaId]="empresaId" [convenioId]="convenioId"
+          [isEdition]="stepsEditionOrDetail[5].isEdition" [isAllowedToEdit]="renderSteps('edicion', 'subsidios')"
+          [isAllowedToDelete]="renderSteps('delete', 'subsidios')"></detalle-subsidios>
       </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #formadepago (afterExpand)="focusPanel(formadepago)">
+    <mat-expansion-panel #formadepago (afterExpand)="focusPanel(formadepago)"
+      *ngIf="renderSteps('lectura', 'formas de pago')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[6].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'formaPago')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[6].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'formaPago')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[6].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Forma de pago'}}
@@ -149,26 +158,29 @@
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <detalle-formas-pago [empresaId]="empresaId"
-                             [convenioId]="convenioId"
-                             [isEdition]="stepsEditionOrDetail[6].isEdition">
+        <detalle-formas-pago [empresaId]="empresaId" [convenioId]="convenioId"
+          [isEdition]="stepsEditionOrDetail[6].isEdition" [isAllowedToEdit]="renderSteps('edicion', 'formas de pago')"
+          [isAllowedToDelete]="renderSteps('delete', 'formas de pago')">
         </detalle-formas-pago>
       </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #entidades (afterExpand)="focusPanel(entidades)">
+    <mat-expansion-panel #entidades (afterExpand)="focusPanel(entidades)"
+      *ngIf="renderSteps('lectura', 'entidades empleadoras')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[7].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'entidades')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[7].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'entidades')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[7].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Entidades empleadoras relacionadas'}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <detalle-entidades [empresaId]="empresaId"
-                           [convenioId]="convenioId"
-                           [isEdition]="stepsEditionOrDetail[7].isEdition">
+        <detalle-entidades [empresaId]="empresaId" [convenioId]="convenioId"
+          [isEdition]="stepsEditionOrDetail[7].isEdition"
+          [isAllowedToEdit]="renderSteps('edicion', 'entidades empleadoras')"
+          [isAllowedToDelete]="renderSteps('delete', 'entidades empleadoras')">
         </detalle-entidades>
       </ng-template>
 
@@ -183,7 +195,7 @@
           {{'Datos impositivos'}}
         </mat-panel-title>
       </mat-expansion-panel-header>
-      
+
       <ng-template matExpansionPanelContent>
         <detalle-datos-impositivos [empresaId]="empresaId"
                                    [convenioId]="convenioId"
@@ -211,47 +223,53 @@
     </mat-expansion-panel> -->
 
 
-    <mat-expansion-panel #sucursales (afterExpand)="focusPanel(sucursales)">
+    <mat-expansion-panel #sucursales (afterExpand)="focusPanel(sucursales)"
+      *ngIf="renderSteps('lectura', 'sucursales')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[10].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'sucursales')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[10].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'sucursales')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[10].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Sucursales'}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <detalle-sucursales [empresaId]="empresaId"
-                            [convenioId]="convenioId"
-                            [isEdition]="stepsEditionOrDetail[10].isEdition"
-                            (changeEditionFlag)="stepsEditionOrDetail[10].isEdition = $event">
+        <detalle-sucursales [empresaId]="empresaId" [convenioId]="convenioId"
+          [isEdition]="stepsEditionOrDetail[10].isEdition"
+          (changeEditionFlag)="stepsEditionOrDetail[10].isEdition = $event"
+          [isAllowedToEdit]="renderSteps('edicion', 'sucursales')"
+          [isAllowedToDelete]="renderSteps('delete', 'sucursales')">
         </detalle-sucursales>
       </ng-template>
     </mat-expansion-panel>
 
 
 
-    <mat-expansion-panel #vip (afterExpand)="focusPanel(vip)">
+    <mat-expansion-panel #vip (afterExpand)="focusPanel(vip)" *ngIf="renderSteps('lectura', 'vip')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[11].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'vip')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[11].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'vip')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[11].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'VIP'}}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <detalle-vip
-        [convenioId]="convenioId"
-        [isEdition]="stepsEditionOrDetail[11].isEdition">
+        <detalle-vip [convenioId]="convenioId" [isEdition]="stepsEditionOrDetail[11].isEdition"
+          (changeEditionFlag)="stepsEditionOrDetail[11].isEdition = $event"
+          [isAllowedToEdit]="renderSteps('edicion', 'vip')" [isAllowedToDelete]="renderSteps('delete', 'vip')">
         </detalle-vip>
       </ng-template>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #adjunte (afterExpand)="focusPanel(adjunte)">
+    <mat-expansion-panel #adjunte (afterExpand)="focusPanel(adjunte)"
+      *ngIf="renderSteps('lectura', 'adjunte de archivos')">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[12].isEdition) ? 'Detalle' : 'Editar'}}" (click)="editOrDetail($event, 'archivos')">
+          <button mat-icon-button matTooltip="{{(stepsEditionOrDetail[12].isEdition) ? 'Detalle' : 'Editar'}}"
+            (click)="editOrDetail($event, 'archivos')">
             <mat-icon color="accent">{{(stepsEditionOrDetail[12].isEdition) ? 'details' : 'edit'}}</mat-icon>
           </button>
           {{'Adjunte de archivos'}}
@@ -259,8 +277,7 @@
       </mat-expansion-panel-header>
 
       <ng-template matExpansionPanelContent>
-        <app-detalle-archivos [convenioId]="convenioId"
-                              [isEdition]="stepsEditionOrDetail[12].isEdition">
+        <app-detalle-archivos [convenioId]="convenioId" [isEdition]="stepsEditionOrDetail[12].isEdition" [isAllowedToEdit]="renderSteps('edicion', 'adjunte de archivos')">
         </app-detalle-archivos>
       </ng-template>
 

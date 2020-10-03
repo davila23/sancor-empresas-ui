@@ -43,6 +43,7 @@ export class DetalleFormaPagoModalComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<DetalleFormaPagoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private service: FormasDePagoService) {
+      
     this.service.getTiposFormasDePago('TC')
       .subscribe(res => {
         if (this.data.tipo == 'TC') {
@@ -53,8 +54,16 @@ export class DetalleFormaPagoModalComponent implements OnInit {
     this.bancosList = JSON.parse(window.localStorage.getItem('bancos'));
 
     if (this.data.tipo == 'CBU') {
-      this.data.datos.bancoDesc = this.bancosList.find(banco => banco.id == this.data.datos.bancoId).descripcion.trim();
-      this.data.datos.tipoCuenta = (this.data.datos.tipoCuenta == 'CC') ? 'Cuenta corriente' : 'Caja de ahorro';
+      if (this.data.datos.bancoId) {
+        let descr = this.bancosList.find(banco => banco.id == this.data.datos.bancoId);
+        if (descr) {
+          this.data.datos.bancoDesc = descr.descripcion.trim();
+        }
+      }
+      if (this.data.datos.tipoCuenta) {
+        this.data.datos.tipoCuenta = (this.data.datos.tipoCuenta == 'CC') ? 'Cuenta corriente' : 'Caja de ahorro';
+      }
+
     }
   }
 

@@ -21,26 +21,26 @@ export class DetalleSubsidiosComponent implements OnInit {
 	productoCtrl = new FormControl();
 	filteredProductos: Observable<any[]>;
 	productosList: Observable<any[]>;
-	planesList: PlanDTO[];
+	planesList: PlanDTO[] = [];
 	subsidiosForm: FormGroup;
 	dialogRef = null;
-	
+
 	subsidiosDataSource = new MatTableDataSource<any>([]);
 
 
-  constructor(private _fb: FormBuilder, 
-              private subsidiosService: SubsidiosService,
-              private utilService: UtilService) { }
+	constructor(private _fb: FormBuilder,
+		private subsidiosService: SubsidiosService,
+		private utilService: UtilService) { }
 
 	ngOnInit(): void {
 		this.subsidiosForm = this._fb.group({
-			plan: [''],
-			producto: ['']
+			plan: ['', [Validators.required]],
+			producto: ['', [Validators.required]]
 		});
 
 		this.subsidiosService.getListaProductosSubsidios().subscribe(
 			result => {
-				
+
 				this.productosList = result["listaResultado"];
 				//this.subsidiosDataSource.data = result["listaResultado"];
 				console.log(this.productosList);
@@ -66,15 +66,15 @@ export class DetalleSubsidiosComponent implements OnInit {
 		this.fillTable();
 	}
 
-  fillTable() {
-    this.subsidiosService.getSubsidiosPorEmpresaD(this.convenioIdFlag)
-    .subscribe(res => {
-		console.log(res);
-      	if (res==null) res = [];
-      
-      	this.subsidiosDataSource.data = res;
-    });
-  }
+	fillTable() {
+		this.subsidiosService.getSubsidiosPorEmpresaD(this.convenioIdFlag)
+			.subscribe(res => {
+				console.log(res);
+				if (res == null) res = [];
+
+				this.subsidiosDataSource.data = res;
+			});
+	}
 
 	lookup(value: string): Observable<ProductoDTO[]> {
 		return this.subsidiosService.getListaProductos(value.toLowerCase()).pipe(
@@ -87,13 +87,18 @@ export class DetalleSubsidiosComponent implements OnInit {
 
 	onEnter(evt: any) {
 		if (evt.source.selected) {
+			this.isPosting = true;
+			this.planesList = [];
 			this.productoCtrl.setValue(evt.source.value);
 			let codigo = evt.source.value.codigo;
 
-      this.subsidiosService.getListaPlanesByProducto(codigo)
-      .subscribe(result => {
-        this.planesList = result["listaResultado"];
-      });
+			this.subsidiosService.getListaPlanesByProducto(codigo)
+				.subscribe(result => {
+					this.planesList = result["listaResultado"];
+				})
+				.add(() => {
+					this.isPosting = false;
+				});
 		}
 	}
 
@@ -103,59 +108,68 @@ export class DetalleSubsidiosComponent implements OnInit {
 		'delete'
 	];
 
-	
+
 
 	subsidiosDataSourceSaveAndRender() {
 
-    if (this.subsidiosForm.valid) {
+		if (this.subsidiosForm.invalid) {
+			(<any>Object).values(this.subsidiosForm.controls).forEach(control => {
+				control.markAsTouched();
+			});
+			return
+		}
 
-      this.isPosting = true;
+		if (this.subsidiosForm.valid) {
 
-      let subsidioEmpresaDTO = new SubsidioEmpresaDTO();
-      subsidioEmpresaDTO.plan = this.subsidiosForm.value["plan"];
-      subsidioEmpresaDTO.producto = this.productoCtrl.value;
-      let convenio = new ConvenioDTO();
-      convenio.id = this.convenioIdFlag;
-      subsidioEmpresaDTO.convenio = convenio;
-      let empresa = new EmpresaDTO();
-      empresa.id = this.empresaIdFlag;
-      subsidioEmpresaDTO.empresa = empresa;
+			this.isPosting = true;
 
-      this.subsidiosService.addSubsidiosPorEmpresaD(subsidioEmpresaDTO)
-      .subscribe(res => {
-        console.log(res);
-        this.fillTable();
-      }).add(() => {
-        this.isPosting = false;
-      });
-    }
+			let subsidioEmpresaDTO = new SubsidioEmpresaDTO();
+			subsidioEmpresaDTO.plan = this.subsidiosForm.value["plan"];
+			subsidioEmpresaDTO.producto = this.productoCtrl.value;
+			let convenio = new ConvenioDTO();
+			convenio.id = this.convenioIdFlag;
+			subsidioEmpresaDTO.convenio = convenio;
+			let empresa = new EmpresaDTO();
+			empresa.id = this.empresaIdFlag;
+			subsidioEmpresaDTO.empresa = empresa;
+
+			this.subsidiosService.addSubsidiosPorEmpresaD(subsidioEmpresaDTO)
+				.subscribe(res => {
+					this.utilService.notification('¡Subsidio agregado con éxito!', 'success', 4000);
+					console.log(res);
+					this.fillTable();
+				}).add(() => {
+					this.isPosting = false;
+				});
+		}
 
 	}
 
 	subsidiosDelete(row) {
-    if (this.dialogRef === null) {
+		if (this.dialogRef === null) {
 			this.dialogRef = this.utilService.openConfirmDialog({
-				titulo: 'Dialogo de confirmación',
+				titulo: '',
 				texto: '¿Desea eliminar este registro de subsidios?',
 				confirmar: 'Eliminar',
 				cancelar: 'Cancelar'
-      });
-      
-      this.utilService.loseFocus();
-      
-			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
-        
-        if (respuesta) {
-          this.isPosting = true;
+			});
 
-          this.subsidiosService.deleteSubsidiosEmpresaD(row)
-          .subscribe(res => {
-            console.log(res);
-            this.fillTable();
-          }).add(() => {
-            this.isPosting = false;
-          });
-        }
+			this.utilService.loseFocus();
+
+			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
+
+				if (respuesta) {
+					this.isPosting = true;
+
+					this.subsidiosService.deleteSubsidiosEmpresaD(row)
+						.subscribe(res => {
+							this.utilService.notification('¡Subsidio eliminado con éxito!', 'success', 4000);
+							console.log(res);
+							this.fillTable();
+						}).add(() => {
+							this.isPosting = false;
+						});
+				}
 
 				this.dialogRef = null;
 			});
@@ -163,17 +177,29 @@ export class DetalleSubsidiosComponent implements OnInit {
 	}
 
 	@Input() set isEdition(isEdition) {
-    this.isEditionFlag = isEdition;
+		this.isEditionFlag = isEdition;
 	} isEditionFlag = false;
 
 	@Input() set empresaId(empresaId) {
-    this.empresaIdFlag = empresaId;
+		this.empresaIdFlag = empresaId;
 	} empresaIdFlag = null;
 
 	@Input() set convenioId(convenioId) {
-    this.convenioIdFlag = convenioId;
-    this.fillTable();
+		this.convenioIdFlag = convenioId;
+		this.fillTable();
 	} convenioIdFlag = null;
 
-  isPosting = false;
+	@Input() set isAllowedToEdit(boolean) {
+		setTimeout(() => {
+			this.edit = boolean;
+		});
+	} edit = false;
+
+	@Input() set isAllowedToDelete(boolean) {
+		setTimeout(() => {
+			this.delete = boolean;
+		});
+	} delete = false;
+
+	isPosting = false;
 }

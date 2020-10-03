@@ -51,7 +51,7 @@ import { ControlConvenioService } from '@app/services/control/control-convenio.s
 		PlanesConvenidosComponent,
 		SubsidiosComponent,
 		FormasPagoComponent,
-		ArchivosComponent,
+
 		VipComponent
 	],
 	imports: [
@@ -61,7 +61,7 @@ import { ControlConvenioService } from '@app/services/control/control-convenio.s
 		CommonModule
 	],
 	exports: [],
-	providers: [ 
+	providers: [
 		ConvenioTemporalService,
 		/* Components services */
 		CorrespondenciaService,
@@ -75,7 +75,7 @@ import { ControlConvenioService } from '@app/services/control/control-convenio.s
 		SubsidiosService,
 		SucursalesService,
 		ContactoService,
-		ArchivosService,
+
 		EmpresaService,
 		VipService,
 		ControlConvenioService

@@ -3,7 +3,7 @@ import { ArchivosService } from '@app/services/empresa/convenios/alta-wizard/com
 import { HttpEventType } from '@angular/common/http';
 import 'rxjs/add/operator/finally';
 import { UtilService } from '@app/core';
-import {types} from '@app/models/types'; 
+import { types } from '@app/models/types';
 
 @Component({
   selector: 'app-detalle-archivos',
@@ -12,15 +12,21 @@ import {types} from '@app/models/types';
 })
 export class DetalleArchivosComponent {
 
-  constructor(private _service: ArchivosService, private _utilService: UtilService) { 
+  constructor(private _service: ArchivosService, private _utilService: UtilService) {
     this.fillDownloads();
   }
 
-  @Input() set convenioId (convenioId) { this.convenioIdFlag = convenioId };
+  @Input() set convenioId(convenioId) { this.convenioIdFlag = convenioId };
   convenioIdFlag = null;
 
-  @Input() set isEdition (isEdition) { this.isEditionFlag = isEdition; } 
+  @Input() set isEdition(isEdition) { this.isEditionFlag = isEdition; }
   isEditionFlag = false;
+
+  @Input() set isAllowedToEdit(boolean) {
+    setTimeout(() => {
+      this.edit = boolean;
+    });
+  } edit = false;
 
   @ViewChild('inputFile') inputFile: ElementRef;
 
@@ -35,7 +41,7 @@ export class DetalleArchivosComponent {
     element.click();
   }
 
-  renderFile($event):any {
+  renderFile($event): any {
     $event.stopPropagation();
 
     if (!$event.target.files.length) return false;
@@ -43,32 +49,32 @@ export class DetalleArchivosComponent {
     const type = $event.target.id;
 
     let index = null;
-    for (let i = 0; i < this.typesState.length; i ++) {
+    for (let i = 0; i < this.typesState.length; i++) {
       if (Number(this.typesState[i].id) == Number(type)) {
         index = i;
       }
     }
 
-    let file:File = $event.target.files[0];
+    let file: File = $event.target.files[0];
     const name = file.name.substr(0, file.name.lastIndexOf('.'));
-    const extension = file.name.substr(file.name.lastIndexOf('.')+1, file.name.length);
+    const extension = file.name.substr(file.name.lastIndexOf('.') + 1, file.name.length);
 
-    let obj = { 
-      convenio:{
+    let obj = {
+      convenio: {
         id: Number(this.convenioIdFlag)
       },
-      tipoAdjunto:{
+      tipoAdjunto: {
         id: Number(type)
       },
       nombreArchivo: name,
-      informacionArchivo:{
+      informacionArchivo: {
         nombreImagen: name,
         extension: extension,
         imagen: null
       }
     }
 
-    let myReader:FileReader = new FileReader();
+    let myReader: FileReader = new FileReader();
 
     let subscription = null;
 
@@ -76,7 +82,7 @@ export class DetalleArchivosComponent {
     myReader.onloadend = () => {
       obj.informacionArchivo.imagen = myReader.result as string;
       obj.informacionArchivo.imagen = obj.informacionArchivo.imagen.split(',')[1];
-      subscription = this._service.postFile(obj).finally(() =>{
+      subscription = this._service.postFile(obj).finally(() => {
         this.typesState[index].progress = 0;
         this.typesState[index].upload.isUploading = false;
         this.typesState[index].upload.waitingForServer = false;
@@ -87,7 +93,7 @@ export class DetalleArchivosComponent {
           if (!this.typesState[index].upload.isUploading && !this.typesState[index].upload.waitingForServer) {
             this.typesState[index].upload.isUploading = true;
           }
-  
+
           if (this.typesState[index].progress != 100) {
             this.typesState[index].progress = Math.round(event.loaded / event.total * 100);
           } else {
@@ -108,11 +114,11 @@ export class DetalleArchivosComponent {
   }
 
   fillDownloads() {
-    let downloads:any = [];
+    let downloads: any = [];
 
     this._service.getTypes().subscribe(r => {
       downloads = r;
-      for (let i = 0; i<downloads.length; i++) {
+      for (let i = 0; i < downloads.length; i++) {
         Object.assign(downloads[i],
           {
             progress: 0,
@@ -146,7 +152,7 @@ export class DetalleArchivosComponent {
         }
 
         this.typesState[index].progress = Math.round(event.loaded / 1000);
-        
+
       } else if (event.type === HttpEventType.Response) {
         this.typesState[index].download.isDownloading = false;
         this.typesState[index].download.waitingForServer = true;
@@ -155,10 +161,10 @@ export class DetalleArchivosComponent {
         const file = event.body.listaResultado[0];
 
         const filename = file.imagennombre.substr(0, file.imagennombre.lastIndexOf('.'));
-        const extension = file.imagennombre.substr(file.imagennombre.lastIndexOf('.')+1, file.imagennombre.length);
+        const extension = file.imagennombre.substr(file.imagennombre.lastIndexOf('.') + 1, file.imagennombre.length);
 
         let contentType = 'text/txt';
-        for (let i = 0; i<types.length; i++) {
+        for (let i = 0; i < types.length; i++) {
           if (types[i].extension == extension) {
             contentType = types[i].contentType;
           }
@@ -173,10 +179,10 @@ export class DetalleArchivosComponent {
 
         const byteArray = new Uint8Array(byteNumbers);
 
-        const blob = new Blob([byteArray], {type: contentType});
+        const blob = new Blob([byteArray], { type: contentType });
 
         const blobUrl = window.URL.createObjectURL(blob);
-        
+
         const a = document.createElement('a');
         document.body.appendChild(a);
         a.href = blobUrl;
@@ -188,35 +194,35 @@ export class DetalleArchivosComponent {
         }, 0);
 
         this.typesState[index].download.waitingForServer = false;
-        
+
         this._utilService.notification('¡Archivo descargado con éxito!', 'success', 2000);
       }
     });
   }
 
-  b64toBlob(b64Data, contentType='', sliceSize=512) {
+  b64toBlob(b64Data, contentType = '', sliceSize = 512) {
     const byteCharacters = atob(b64Data);
     const byteArrays = [];
-  
+
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
       const slice = byteCharacters.slice(offset, offset + sliceSize);
-  
+
       const byteNumbers = new Array(slice.length);
       for (let i = 0; i < slice.length; i++) {
         byteNumbers[i] = slice.charCodeAt(i);
       }
-  
+
       const byteArray = new Uint8Array(byteNumbers);
       byteArrays.push(byteArray);
     }
-      
-    const blob = new Blob(byteArrays, {type: contentType});
+
+    const blob = new Blob(byteArrays, { type: contentType });
     return blob;
   }
 
 
   fillUploadedFiles() {
-    this._service.getList(this.convenioIdFlag).subscribe(r =>{
+    this._service.getList(this.convenioIdFlag).subscribe(r => {
       for (let i in r) {
         for (let j in this.typesState) {
           if (r[i].tipoAdjunto.id == this.typesState[j].id) {

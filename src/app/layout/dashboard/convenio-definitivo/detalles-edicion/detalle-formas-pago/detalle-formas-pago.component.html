@@ -1,39 +1,4 @@
-<div class="grid">
-  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
-</div>
-
-<div class="no-data-container" *ngIf="!formaPagoDataSource.data?.length">
-  No hay medios de pago añadidos...
-</div>
-
-<mat-card class="custom" [ngClass]="{'not-show':!formaPagoDataSource.data?.length}">
-  <mat-card-content>
-    <mat-table [dataSource]="formaPagoDataSource">
-      <ng-container matColumnDef="formaPago">
-        <mat-header-cell *matHeaderCellDef> Forma de pago </mat-header-cell>
-        <mat-cell *matCellDef="let row" data-label="formaPago"> {{row.descripcion}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="detalle">
-        <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
-        <mat-cell *matCellDef="let row" data-label="detalle">
-          <button mat-icon-button color="primary" matTooltip="ver detalle" (click)="openFormaPagoModal(row)"
-            *ngIf="row.descripcion.trim()==='TC' || row.descripcion.trim()==='CBU'">
-            <mat-icon>search</mat-icon>
-          </button>
-          <button mat-icon-button color="accent" matTooltip="eliminar" (click)="deleteFormaPagoModal(row)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="formaPago_displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: formaPago_displayedColumns;" class="table-row"></mat-row>
-    </mat-table>
-  </mat-card-content>
-</mat-card>
-
-<mat-card class="custom" [ngClass]="{'not-show':formaPagoDataSource.data?.length}" *ngIf="isEditionFlag">
+<mat-card class="custom" [ngClass]="{'not-show':formaPagoDataSource.data?.length}" *ngIf="isEditionFlag && edit">
   <mat-card-content>
     <!--<form class="grid" [formGroup]="formaPagoForm">   *ngIf="isEditionFlag"-->
     <!--
@@ -61,6 +26,8 @@
 
         <mat-form-field>
           <input matInput type="number" placeholder="Nro Tarjeta" formControlName="nrotarjeta" numMask="16">
+          <mat-error *ngIf="tcForm.get('nrotarjeta').errors && tcForm.get('nrotarjeta').errors?.required">Campo
+            requerido</mat-error>
         </mat-form-field>
 
         <!-- Quitado para fecha vencimiento tarjeta mes/año -->
@@ -82,6 +49,8 @@
               {{item.descripcion}}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="tcForm.get('bancoEmisor').errors && tcForm.get('bancoEmisor').errors?.required">Campo
+            requerido</mat-error>
         </mat-form-field>
 
       </form>
@@ -106,18 +75,26 @@
 
         <mat-form-field>
           <input matInput placeholder="Nro Cbu" formControlName="nrocbu" cbuMask required>
-          <mat-error>Campo requerido</mat-error>
+          <mat-error *ngIf="cbuForm.get('nrocbu').errors && cbuForm.get('nrocbu').errors?.required">
+            Campo requerido
+          </mat-error>
+          <mat-error *ngIf="cbuForm.get('nrocbu').errors && cbuForm.get('nrocbu').errors?.cbu">
+            Formato inválido
+          </mat-error>
         </mat-form-field>
 
         <mat-form-field>
           <input [formControl]="bancoCtrl" #stateInput type="text" placeholder="Banco" matInput [matAutocomplete]="auto"
-            (keyup)="0">
+            (keyup)="0" uppercase>
           <mat-autocomplete #auto="matAutocomplete">
             <mat-option (onSelectionChange)="stateInput.value != undefined && onEnter($event)"
               *ngFor="let item of filteredBancos | async" [value]="item">
               {{ item.descripcion}}
             </mat-option>
           </mat-autocomplete>
+          <mat-error *ngIf="bancoCtrl.errors && bancoCtrl.errors?.required">
+            Campo requerido
+          </mat-error>
         </mat-form-field>
 
         <mat-form-field>
@@ -126,18 +103,27 @@
               {{tipoCuenta.descripcion}}
             </mat-option>
           </mat-select>
+          <mat-error *ngIf="cbuForm.get('tipoCuenta').errors && cbuForm.get('tipoCuenta').errors?.required">
+            Campo requerido
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
           <input matInput type="number" formControlName="nroctabco" placeholder="Nro Cta Bco" required>
-          <mat-error>Campo requerido</mat-error>
+          <mat-error *ngIf="cbuForm.get('nroctabco').errors && cbuForm.get('nroctabco').errors?.required">
+            Campo requerido
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput type="text" formControlName="apellido" placeholder="Apellido" required>
-          <mat-error>Campo requerido</mat-error>
+          <input matInput type="text" formControlName="apellido" placeholder="Apellido" required uppercase>
+          <mat-error *ngIf="cbuForm.get('apellido').errors && cbuForm.get('apellido').errors?.required">
+            Campo requerido
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput type="text" formControlName="nombre" placeholder="Nombre" required>
-          <mat-error>Campo requerido</mat-error>
+          <input matInput type="text" formControlName="nombre" placeholder="Nombre" required uppercase>
+          <mat-error *ngIf="cbuForm.get('nombre').errors && cbuForm.get('nombre').errors?.required">
+            Campo requerido
+          </mat-error>
         </mat-form-field>
       </form>
     </div>
@@ -145,16 +131,50 @@
   </mat-card-content>
 
   <mat-card-actions align="end">
-    <app-button mat-raised-button color="accent" *ngIf="show == 1" [disabled]="isPosting || tcForm.invalid"
+    <app-button mat-raised-button color="primary" *ngIf="show == 1" [disabled]="isPosting || tcForm.invalid"
       (click)="tcSaveRender()">
       <mat-icon>add</mat-icon>Añadir
     </app-button>
-    <app-button mat-raised-button color="accent" *ngIf="show == 2" [disabled]="isPosting || cbuForm.invalid"
-      (click)="cbuSaveRender()">
+    <app-button mat-raised-button color="primary" *ngIf="show == 2"
+      [disabled]="isPosting || cbuForm.invalid || bancoCtrl.invalid" (click)="cbuSaveRender()">
       <mat-icon>add</mat-icon>Añadir
     </app-button>
-    <app-button mat-raised-button color="accent" *ngIf="show == 3" [disabled]="isPosting" (click)="efSaveRender()">
+    <app-button mat-raised-button color="primary" *ngIf="show == 3" [disabled]="isPosting" (click)="efSaveRender()">
       <mat-icon>add</mat-icon>Añadir
     </app-button>
   </mat-card-actions>
+</mat-card>
+
+<mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+
+<div class="no-data-container" *ngIf="!formaPagoDataSource.data?.length && !isPosting">
+  No hay medios de pago añadidos...
+</div>
+
+<mat-card class="custom" [ngClass]="{'not-show':!formaPagoDataSource.data?.length}">
+  <mat-card-content>
+    <mat-table [dataSource]="formaPagoDataSource">
+      <ng-container matColumnDef="formaPago">
+        <mat-header-cell *matHeaderCellDef> Forma de pago </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="formaPago"> {{row.descripcion}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="detalle">
+        <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="detalle">
+          <button mat-icon-button color="primary" matTooltip="ver detalle" (click)="openFormaPagoModal(row)"
+            *ngIf="row.descripcion.trim()==='TC' || row.descripcion.trim()==='CBU'">
+            <mat-icon>search</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" matTooltip="Eliminar" (click)="deleteFormaPagoModal(row)"
+            *ngIf="delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="formaPago_displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: formaPago_displayedColumns;" class="table-row"></mat-row>
+    </mat-table>
+  </mat-card-content>
 </mat-card>

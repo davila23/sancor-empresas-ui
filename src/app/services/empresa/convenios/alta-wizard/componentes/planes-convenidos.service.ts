@@ -34,9 +34,9 @@ export class PlanesConvenidosService{
     }
 
     /* Alta de Detalle de planes convenidos */
-    addPlanConvenidoD(planConvenidoDTO:PlanConvenidoDTO): Observable<PlanConvenidoDTO>{
+    addPlanConvenidoD(planConvenidoDTO:PlanConvenidoDTO): Observable<any>{
     
-        return this.http.post<PlanConvenidoDTO>(`${this.baseUrl}/Empresas/api/planConvenido`, planConvenidoDTO).pipe(
+        return this.http.post<any>(`${this.baseUrl}/Empresas/api/planConvenido`, planConvenidoDTO).pipe(
             catchError(e => throwError(new Error(e)))
         );
     }
@@ -80,9 +80,9 @@ export class PlanesConvenidosService{
     }
 
     /* Alta de Detalle de planes convenidos */
-    addPlanConvenido(planConvenidoDTO:PlanConvenidoDTO): Observable<PlanConvenidoDTO>{
+    addPlanConvenido(planConvenidoDTO:PlanConvenidoDTO): Observable<any>{
         console.log(planConvenidoDTO);
-        return this.http.post<PlanConvenidoDTO>(`${this.baseUrl}/Empresas/api/planConvenido/wizard`, planConvenidoDTO).pipe(
+        return this.http.post<any>(`${this.baseUrl}/Empresas/api/planConvenido/wizard`, planConvenidoDTO).pipe(
             catchError(e => throwError(new Error(e)))
         );
     }

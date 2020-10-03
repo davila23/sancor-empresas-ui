@@ -6,6 +6,11 @@
       </mat-expansion-panel-header>
 
       <div class="grid responsive-grid" *apploading="controlsLoading.parteUno">
+
+        <mat-form-field>
+          <input matInput type="text" [formControl]="cuit" placeholder="CUIT Empresa" readonly>
+        </mat-form-field>
+        
         <mat-form-field>
           <input matInput type="text" formControlName="nombre" placeholder="Nombre de convenio" [readonly]="true">
           <mat-error>Campo requerido</mat-error>
@@ -78,6 +83,10 @@
 
         <mat-form-field>
           <input matInput type="text" formControlName="adicionalACargo" placeholder="Adicional a cargo de:" [readonly]="true">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput type="text" formControlName="trasladaAdicional" placeholder="Traslada adicional" [readonly]="true">
         </mat-form-field>
 
         <mat-form-field>

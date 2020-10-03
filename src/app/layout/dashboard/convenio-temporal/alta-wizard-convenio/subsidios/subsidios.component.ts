@@ -22,13 +22,13 @@ export class SubsidiosComponent implements OnInit {
 	productoCtrl = new FormControl();
 	filteredProductos: Observable<any[]>;
 	productosList: Observable<any[]>;
-	planesList: PlanDTO[];
+	planesList: PlanDTO[] = [];
 	subsidiosForm: FormGroup;
-  dialogRef = null;
+	dialogRef = null;
 
-  constructor(private _fb: FormBuilder, 
-              private subsidiosService: SubsidiosService,
-              private utilService: UtilService) { }
+	constructor(private _fb: FormBuilder,
+		private subsidiosService: SubsidiosService,
+		private utilService: UtilService) { }
 
 	ngOnInit(): void {
 		this.subsidiosForm = this._fb.group({
@@ -48,7 +48,7 @@ export class SubsidiosComponent implements OnInit {
 			this.subsidiosService.getSubsidiosPorEmpresa(x).subscribe(
 				res => {
 					console.log(res);
-					if(res==null){
+					if (res == null) {
 						res = [];
 					}
 					this.subsidiosDataSource.data = res;
@@ -87,14 +87,17 @@ export class SubsidiosComponent implements OnInit {
 
 	onEnter(evt: any) {
 		if (evt.source.selected) {
+			this.isPosting = true;
+			this.planesList = [];
 			this.productoCtrl.setValue(evt.source.value);
 			let codigo = evt.source.value.codigo;
 
 			this.subsidiosService.getListaPlanesByProducto(codigo).subscribe(
-					result => {
-						console.log(result);
-						this.planesList = result["listaResultado"];
-					}
+				result => {
+					console.log(result);
+					this.planesList = result["listaResultado"];
+					this.isPosting = false;
+				}
 			)
 		}
 	}
@@ -109,63 +112,72 @@ export class SubsidiosComponent implements OnInit {
 
 	subsidiosDataSourceSaveAndRender() {
 
-    if (this.subsidiosForm.valid) {
+		if (this.subsidiosForm.invalid) {
+			(<any>Object).values(this.subsidiosForm.controls).forEach(control => {
+				control.markAsTouched();
+			});
+			return
+		}
 
-      this.isPosting = true;
+		if (this.subsidiosForm.valid) {
 
-      let subsidioEmpresaDTO = new SubsidioEmpresaDTO();
-      subsidioEmpresaDTO.plan = this.subsidiosForm.value["plan"];
-      subsidioEmpresaDTO.producto = this.productoCtrl.value;
-      let convenio = new ConvenioDTO();
-      convenio.id = this.convenioIdFlag;
-      subsidioEmpresaDTO.convenio = convenio;
-      let empresa = new EmpresaDTO();
-      empresa.id = this.empresaIdFlag;
-      subsidioEmpresaDTO.empresa = empresa;
+			this.isPosting = true;
 
-      this.subsidiosService.addSubsidiosPorEmpresa(subsidioEmpresaDTO)
-      .subscribe(res => {
-        this.subsidiosService.getSubsidiosPorEmpresa(this.convenioIdFlag)
-        .subscribe(res => {
-          if (res == null) res = [];
-                        
-          this.subsidiosDataSource.data = res;
-        });
-      }).add(() => {
-        this.isPosting = false;
-      });
-    }
+			let subsidioEmpresaDTO = new SubsidioEmpresaDTO();
+			subsidioEmpresaDTO.plan = this.subsidiosForm.value["plan"];
+			subsidioEmpresaDTO.producto = this.productoCtrl.value;
+			let convenio = new ConvenioDTO();
+			convenio.id = this.convenioIdFlag;
+			subsidioEmpresaDTO.convenio = convenio;
+			let empresa = new EmpresaDTO();
+			empresa.id = this.empresaIdFlag;
+			subsidioEmpresaDTO.empresa = empresa;
+
+			this.subsidiosService.addSubsidiosPorEmpresa(subsidioEmpresaDTO)
+				.subscribe(res => {
+					this.utilService.notification('¡Subsidio agregado con éxito!', 'success', 4000);
+					this.subsidiosService.getSubsidiosPorEmpresa(this.convenioIdFlag)
+						.subscribe(res => {
+							if (res == null) res = [];
+
+							this.subsidiosDataSource.data = res;
+						});
+				}).add(() => {
+					this.isPosting = false;
+				});
+		}
 
 	}
 
 	subsidiosDelete(row) {
-    if (this.dialogRef === null) {
+		if (this.dialogRef === null) {
 			this.dialogRef = this.utilService.openConfirmDialog({
-				titulo: 'Dialogo de confirmación',
+				titulo: '',
 				texto: '¿Desea eliminar este registro de subsidios?',
 				confirmar: 'Eliminar',
 				cancelar: 'Cancelar'
-      });
-      
-      this.utilService.loseFocus();
-      
-			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
-        
-        if (respuesta) {
-          this.isPosting = true;
+			});
 
-          this.subsidiosService.deleteSubsidiosEmpresa(row)
-          .subscribe(res => {
-            this.subsidiosService.getSubsidiosPorEmpresa(this.convenioIdFlag)
-            .subscribe(res => {
-              if (res == null) res = [];
-              
-              this.subsidiosDataSource.data = res
-            });
-          }).add(() => {
-            this.isPosting = false;
-          });
-        }
+			this.utilService.loseFocus();
+
+			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
+
+				if (respuesta) {
+					this.isPosting = true;
+
+					this.subsidiosService.deleteSubsidiosEmpresa(row)
+						.subscribe(res => {
+							this.utilService.notification('¡Subsidio eliminado con éxito!', 'success', 4000);
+							this.subsidiosService.getSubsidiosPorEmpresa(this.convenioIdFlag)
+								.subscribe(res => {
+									if (res == null) res = [];
+
+									this.subsidiosDataSource.data = res
+								});
+						}).add(() => {
+							this.isPosting = false;
+						});
+				}
 
 				this.dialogRef = null;
 			});
@@ -186,17 +198,17 @@ export class SubsidiosComponent implements OnInit {
 		});
 	}
 
-  @Input() set isAllowedToEdit(boolean) {
-    setTimeout( () => {
-      this.edit = boolean;
-    });
-  } edit = false;
+	@Input() set isAllowedToEdit(boolean) {
+		setTimeout(() => {
+			this.edit = boolean;
+		});
+	} edit = false;
 
-  @Input() set isAllowedToDelete(boolean) {
-    setTimeout(() => {
-      this.delete = boolean;
-    });
-  } delete = false;
+	@Input() set isAllowedToDelete(boolean) {
+		setTimeout(() => {
+			this.delete = boolean;
+		});
+	} delete = false;
 
 	@Input() set convenioId(convenioId) {
 		this._convenioId.next(convenioId);
@@ -210,6 +222,6 @@ export class SubsidiosComponent implements OnInit {
 	isEditionFlag = false;
 	empresaIdFlag = null;
 	convenioIdFlag = null;
-  isPosting = false;
+	isPosting = false;
 
 }

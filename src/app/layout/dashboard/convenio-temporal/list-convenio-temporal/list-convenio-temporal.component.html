@@ -7,8 +7,8 @@
 
       <div class="grid responsive-grid">
         <mat-form-field>
-          <input matInput type="text" (keyup)="applyFilter($event.target.value)" placeholder="Filtrar">
-          <mat-hint>filtra por todas las columnas</mat-hint>
+          <input matInput type="text" (keyup)="applyFilter($event.target.value)" placeholder="Filtrar" uppercase>
+          <mat-hint>Filtra por todas las columnas</mat-hint>
         </mat-form-field>
       </div>
 
@@ -35,7 +35,7 @@
       
         <ng-container matColumnDef="observaciones">
           <mat-header-cell *matHeaderCellDef> Observaciones </mat-header-cell>
-          <mat-cell *matCellDef="let element" data-label="Observaciones"> {{element.observaciones}} </mat-cell>
+          <mat-cell *matCellDef="let element" data-label="Observaciones"> {{element.observacionControl}} </mat-cell>
         </ng-container>
       
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -51,6 +51,10 @@
     font-size: .8em;
   
     transition: .1s;
+
+    mat-icon{
+      margin-right: 7px;
+    }
   }
 
   button:hover {

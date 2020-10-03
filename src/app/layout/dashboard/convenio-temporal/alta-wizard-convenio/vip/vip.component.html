@@ -1,7 +1,3 @@
-<div class="grid">
-  <mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
-</div>
-
 <mat-card class="custom" *ngIf="edit">
   <mat-card-header>
     <mat-card-title>
@@ -19,10 +15,17 @@
     </form>
   </mat-card-content>
   <mat-card-actions align="end">
-    <button color="accent" mat-raised-button (click)="usuarioSaveAndRender()" [disabled]="vipForm.invalid || isPosting">AÑADIR</button>
+    <app-button color="primary" (click)="usuarioSaveAndRender()" [disabled]="isPosting || vipForm.invalid">
+      <mat-icon>add</mat-icon>Añadir
+    </app-button>
   </mat-card-actions>
 </mat-card>
-  
+
+<mat-progress-bar *ngIf="isPosting" mode="indeterminate"></mat-progress-bar>
+
+<div class="no-data-container" *ngIf="!vipDataSource.data?.length && !isPosting">
+  No hay usuarios vip cargados...
+</div>
 
 <mat-card class="custom" [ngClass]="{'not-show':!vipDataSource.data?.length}">
   <mat-card-header>
@@ -31,7 +34,7 @@
     </mat-card-title>
   </mat-card-header>
   <mat-table [dataSource]="vipDataSource">
-  
+
     <ng-container matColumnDef="dni">
       <mat-header-cell *matHeaderCellDef> DNI </mat-header-cell>
       <mat-cell *matCellDef="let row" data-label="dni"> {{row.dni}} </mat-cell>
@@ -40,7 +43,9 @@
     <ng-container matColumnDef="delete">
       <mat-header-cell *matHeaderCellDef> Acción </mat-header-cell>
       <mat-cell *matCellDef="let row" data-label="eliminar">
-        <button mat-icon-button color="accent" *ngIf="delete" (click)="usuarioDelete(row)"><mat-icon color="accent">delete</mat-icon></button>
+        <button mat-icon-button color="accent" *ngIf="delete" (click)="usuarioDelete(row)">
+          <mat-icon color="accent">delete</mat-icon>
+        </button>
       </mat-cell>
     </ng-container>
 
@@ -48,10 +53,7 @@
     <mat-row *matRowDef="let row; columns: vip_displayedColumns;" class="table-row"></mat-row>
   </mat-table>
   <mat-card-footer>
-    <mat-paginator #paginator [length]="vipDataSource.data.length" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+    <mat-paginator #paginator [length]="vipDataSource.data.length" [pageSize]="10" [pageSizeOptions]="[1, 10, 25, 100]"
+      showFirstLastButtons *ngIf="vipDataSource.data?.length > 10"></mat-paginator>
   </mat-card-footer>
 </mat-card>
-
-<div class="no-data-container" *ngIf="!vipDataSource.data?.length">
-  No hay usuarios vip cargados...
-</div>

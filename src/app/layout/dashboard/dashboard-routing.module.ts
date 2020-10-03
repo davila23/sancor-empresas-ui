@@ -27,6 +27,10 @@ const routes: Routes = [
 			{
 				path: 'convenioscontrol',
 				loadChildren: 'app/layout/dashboard/convenio-control/convenio-control.module#ConvenioControlModule'
+			},
+			{
+				path: 'reportes',
+				loadChildren: 'app/layout/dashboard/reportes/reportes.module#ReportesModule'
 			}
 		]
 	}

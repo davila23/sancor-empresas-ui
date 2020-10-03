@@ -88,9 +88,18 @@ export class ReferenteComponent implements OnInit {
   }
 
   referenteSaveAndRender() {
+
+    if(this.referenteForm.invalid || this.telefonoForm.invalid){
+      (<any>Object).values(this.referenteForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      this.telefonoForm.markAsTouched();
+      return
+    }
+
     if (this.dialogRef === null) {
       this.dialogRef = this.utilService.openConfirmDialog({
-        titulo: 'Dialogo de confirmación',
+        titulo: '',
         texto: '¿Desea añadir el registro de referente?',
         confirmar: 'Añadir',
         cancelar: 'Cancelar'
@@ -105,7 +114,7 @@ export class ReferenteComponent implements OnInit {
           this.isPosting = true;
 
           this._service.addReferente(this.referenteForm.value).subscribe(r => {
-            this.utilService.notification('¡Referente añadido con éxito!', 'success', 4000);
+            this.utilService.notification('¡Referente agregado con éxito!', 'success', 4000);
             this.fillTable();
           }).add(() => {
             this.isPosting = false;
@@ -145,7 +154,7 @@ export class ReferenteComponent implements OnInit {
   referenteDelete(row) {
     if (this.dialogRef === null) {
       this.dialogRef = this.utilService.openConfirmDialog({
-        titulo: 'Dialogo de confirmación',
+        titulo: '',
         texto: '¿Desea eliminar el registro de referente?',
         confirmar: 'Eliminar',
         cancelar: 'Cancelar'
@@ -163,7 +172,7 @@ export class ReferenteComponent implements OnInit {
             empresaId: row.empresaId,
             id: row.id
           }).subscribe(r => {
-            this.utilService.notification('Registro eliminado con éxito.', 'success', 4000);
+            this.utilService.notification('¡Referente eliminado con éxito!', 'success', 4000);
             this.fillTable();
           }).add(() => {
             this.isPosting = false;

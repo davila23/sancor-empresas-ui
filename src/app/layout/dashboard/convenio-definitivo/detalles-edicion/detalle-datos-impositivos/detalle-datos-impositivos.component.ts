@@ -73,6 +73,8 @@ export class DetalleDatosImpositivosComponent implements OnInit {
     { id: "D", "descripcion": "Detallado" }
   ];
 
+  isPosting = false;
+
   ngOnInit() {
     this.datosImpositivosService.getEmpresasQueFacturanD()
     .subscribe(res => {

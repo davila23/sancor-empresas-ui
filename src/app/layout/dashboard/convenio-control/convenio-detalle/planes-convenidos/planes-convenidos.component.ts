@@ -27,7 +27,8 @@ export class PlanesConvenidosComponent implements OnInit {
 
 	cabeceraDisplayedColumns = [
     'planDescripcion',
-		'producto'
+		'producto',
+		'porcentaje'
 	];
 
   fillPlanesConvenidos() {

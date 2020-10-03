@@ -1,89 +1,87 @@
 <div class="grid">
   <mat-card class="ribbon">
     <mat-card-header>
-      <mat-card-title>Búsqueda empresa</mat-card-title>
+      <mat-card-title>Búsqueda de empresa</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="search-filter">
         <mat-form-field>
-          <input matInput placeholder="CUIT o Razon Social" #razoncuit>
+          <input matInput placeholder="CUIT o Razon Social" #razoncuit uppercase>
         </mat-form-field>
         <app-button color="primary" (click)="buscarEmpresa(razoncuit.value)">
-          <mat-icon>search</mat-icon>Buscar</app-button>
-        <app-button color="primary"  routerLink="/empresa/nueva">
+          <mat-icon>search</mat-icon>Buscar
+        </app-button>
+        <app-button color="primary" routerLink="/empresa/nueva">
           <mat-icon>create</mat-icon>Agregar
         </app-button>
       </div>
+      <div *apploading="controlsLoading.table">
+        <div *ngIf="dataSource.data?.length <= 0 || dataSource.filteredData?.length <= 0" class="zero-result">
+          <span>No existen datos relacionados</span>
+        </div>
+        <div [hidden]="!dataSource.data.length">
+          <mat-table [dataSource]="dataSource">
 
-      <div *ngIf="(dataSource.data?.length <= 0 || dataSource.filteredData?.length <= 0) && !controlsLoading.table.isLoading" class="zero-result">
-        <span>No existen datos relacionados</span>
-      </div>
-      <div [hidden]="!dataSource.data.length" *apploading="controlsLoading.table">
-        <mat-table [dataSource]="dataSource">
-  
-          <ng-container matColumnDef="cuit">
-            <mat-header-cell *matHeaderCellDef> CUIT </mat-header-cell>
-            <mat-cell *matCellDef="let element" data-label="cuit"> {{element.cuit}} </mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="razonSocial"   >
-            <mat-header-cell *matHeaderCellDef> Razón Social </mat-header-cell>
-            <mat-cell *matCellDef="let element" data-label="razonSocial"> 
-              {{element.razonSocial}}
-            </mat-cell>
-          </ng-container>
-        
-  
-          <ng-container matColumnDef="nombreFantasia">
-            <mat-header-cell *matHeaderCellDef> Nombre Fantasía </mat-header-cell>
-            <mat-cell *matCellDef="let element" data-label="nombreFantasia"> 
-              {{element.nombreFantasia}}
-            </mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef> Número Empresa </mat-header-cell>
-            <mat-cell *matCellDef="let element" data-label="id"> {{element.id}} </mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="acciones">
-            <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
-            <mat-cell *matCellDef="let element" data-label="acciones">
-              <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item routerLink="/empresa/{{element.id}}/ver">            
-                  <mat-icon>visibility</mat-icon>
-                  <span>Ver</span>
+            <ng-container matColumnDef="cuit">
+              <mat-header-cell *matHeaderCellDef> CUIT </mat-header-cell>
+              <mat-cell *matCellDef="let element" data-label="cuit"> {{element.cuit}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="razonSocial">
+              <mat-header-cell *matHeaderCellDef> Razón Social </mat-header-cell>
+              <mat-cell *matCellDef="let element" data-label="razonSocial">
+                {{element.razonSocial}}
+              </mat-cell>
+            </ng-container>
+
+
+            <ng-container matColumnDef="nombreFantasia">
+              <mat-header-cell *matHeaderCellDef> Nombre Fantasía </mat-header-cell>
+              <mat-cell *matCellDef="let element" data-label="nombreFantasia">
+                {{element.nombreFantasia}}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="id">
+              <mat-header-cell *matHeaderCellDef> Número Empresa </mat-header-cell>
+              <mat-cell *matCellDef="let element" data-label="id"> {{element.id}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+              <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+              <mat-cell *matCellDef="let element" data-label="acciones">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
                 </button>
-                <button mat-menu-item routerLink="/empresa/{{element.id}}/editar">
-                  <mat-icon>edit</mat-icon>
-                  <span>Editar</span>
-                </button>
-                <button mat-menu-item routerLink="/conveniostemporales/empresa/{{element.id}}/alta">
-                  <mat-icon>add</mat-icon>
-                  <span>Nuevo convenio</span>
-                </button>
-                <button mat-menu-item routerLink="/conveniosdefinitivos/empresa/{{element.id}}">
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item routerLink="/empresa/{{element.id}}/ver">
+                    <mat-icon>visibility</mat-icon>
+                    <span>Ver</span>
+                  </button>
+                  <button mat-menu-item routerLink="/empresa/{{element.id}}/editar">
+                    <mat-icon>edit</mat-icon>
+                    <span>Editar</span>
+                  </button>
+                  <button mat-menu-item routerLink="/conveniostemporales/empresa/{{element.id}}/alta">
+                    <mat-icon>add</mat-icon>
+                    <span>Nuevo convenio</span>
+                  </button>
+                  <button mat-menu-item routerLink="/conveniosdefinitivos/empresa/{{element.id}}">
                     <mat-icon>list</mat-icon>
                     <span>Convenios</span>
-                </button>
-              </mat-menu>
-            </mat-cell>
-          </ng-container>
-  
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>
-        </mat-table>
+                  </button>
+                </mat-menu>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></mat-row>
+          </mat-table>
+          <mat-paginator *ngIf="dataSource.data?.length > 0 && dataSource.filteredData?.length > 0" #paginator
+            [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+          </mat-paginator>
+        </div>
       </div>
-      
-      <mat-paginator 
-        *ngIf="dataSource.data?.length > 0 && dataSource.filteredData?.length > 0" 
-        #paginator
-        [pageSize]="10"
-        [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
-      </mat-paginator>
     </mat-card-content>
   </mat-card>
 </div>

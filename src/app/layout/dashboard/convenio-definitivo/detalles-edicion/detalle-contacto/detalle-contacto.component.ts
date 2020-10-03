@@ -18,17 +18,17 @@ export class DetalleContactoComponent implements OnInit {
     private _empresaService: EmpresaService,
     private _utilService: UtilService) {
     this.contactoForm = this._fb.group({
-      empresaId: [null ,[Validators.required]],
+      empresaId: [null, [Validators.required]],
       codigoDomicilio: [null],
-      calle: [null,[Validators.required]],
-      numero: [null,[Validators.required, Validators.max(99999), Validators.maxLength(5)]],
+      calle: [null, [Validators.required]],
+      numero: [null, [Validators.required, Validators.max(99999)]],
       piso: [null],
       barrio: [null],
       departamento: [null],
-      codigoPostal: [null,[Validators.required]],
+      codigoPostal: [null, [Validators.required]],
       cpArgentino: [null],
       recibeCorrespondencia: ['S'],
-      localidadId: [null,[Validators.required]],
+      localidadId: [null, [Validators.required]],
       edición: [false],
       orientacion: [null],
       otrosDatos1: [null],
@@ -43,7 +43,7 @@ export class DetalleContactoComponent implements OnInit {
       domicilioId: ['', Validators.required],
       codigoTelefonoMail: [null],
       tipoTelefono: ['C', Validators.required],
-      caracteristica: [''],
+      caracteristica: ['', Validators.required],
       numero: ['', Validators.required],
       observaciones: ['']
     });
@@ -80,11 +80,30 @@ export class DetalleContactoComponent implements OnInit {
     setTimeout(() => {
       this.convenioIdFlag = convenioId;
 
-      this.contactoForm.patchValue({empresaId: Number(convenioId)});
-      this.telefonosForm.patchValue({empresaId: Number(convenioId)});
+      this.contactoForm.patchValue({ empresaId: Number(convenioId) });
+      this.telefonosForm.patchValue({ empresaId: Number(convenioId) });
       this.fillForm();
     });
   }
+
+  @Input() set isAllowedToEdit(boolean) {
+    setTimeout(() => {
+      this.edit = boolean;
+      if (!this.edit) {
+        this.contactoForm.disable();
+        this.codPostalControl.disable();
+      }
+    });
+  }
+
+  @Input() set isAllowedToDelete(boolean) {
+    setTimeout(() => {
+      this.delete = boolean;
+    });
+  }
+
+  edit = false;
+  delete = false;
 
   isPosting = false;
 
@@ -92,7 +111,7 @@ export class DetalleContactoComponent implements OnInit {
   convenioIdFlag;
   isEditionFlag;
 
-  codPostalControl = new FormControl();
+  codPostalControl = new FormControl('', [Validators.required]);
   codPostalList: any = [];
 
   contactoForm: FormGroup;
@@ -166,7 +185,7 @@ export class DetalleContactoComponent implements OnInit {
     setTimeout(() => {
       this._service.getLocalidades(val).subscribe(r => {
         this.codPostalList = r.listaResultado;
-     });
+      });
     }, 400);
   }
 
@@ -180,30 +199,41 @@ export class DetalleContactoComponent implements OnInit {
   }
 
   saveAndRenderContacto() {
+    if (this.contactoForm.invalid || this.codPostalControl.invalid) {
+      this.contactoForm.markAsTouched();
+      this.codPostalControl.markAsTouched();
+      return
+    }
+
     this.isPosting = true;
     this._service.postDomicilioD(this.contactoForm.value)
       .subscribe(r => {
         this._utilService.notification('Registro añadido con éxito!', 'success', 4000);
         this.resetNumeroCarac();
-    }).add(() => {
-      this.isPosting = false;
-    });
+      }).add(() => {
+        this.isPosting = false;
+      });
   }
 
   saveAndRenderTel() {
 
+    if (this.telefonosForm.invalid) {
+      this.telefonosForm.markAsTouched();
+      return
+    }
+
     if (this.dialogRef === null) {
 
-			this.dialogRef = this._utilService.openConfirmDialog({
-				titulo: 'Dialogo de confirmación',
-				texto: '¿Desea añadir el registro?',
-				confirmar: 'Añadir',
-				cancelar: 'Cancelar'
+      this.dialogRef = this._utilService.openConfirmDialog({
+        titulo: 'Dialogo de confirmación',
+        texto: '¿Desea añadir el registro?',
+        confirmar: 'Añadir',
+        cancelar: 'Cancelar'
       });
 
       this._utilService.loseFocus();
 
-			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
+      this.dialogRef.afterClosed().toPromise().then((respuesta) => {
 
         if (respuesta) {
 
@@ -211,35 +241,35 @@ export class DetalleContactoComponent implements OnInit {
 
           if (this.telefonosForm.value.tipoTelefono === 'E') {
             this._service.postTelD(this.telefonosForm.value)
-            .subscribe(r => {
-              this._utilService.notification('Registro añadido con éxito!', 'success', 4000);
-              this.resetNumeroCarac();
-            }).add(() => {
-              this.isPosting = false;
-            });
+              .subscribe(r => {
+                this._utilService.notification('Registro añadido con éxito!', 'success', 4000);
+                this.resetNumeroCarac();
+              }).add(() => {
+                this.isPosting = false;
+              });
           } else {
             this._service.postValidarTel(this.telefonosForm.value)
-            .subscribe(r => {
-              if (r.length === 0) {
-                this._service.postTelD(this.telefonosForm.value)
-                .subscribe(r => {
-                  this._utilService.notification('Registro añadido con éxito!', 'success', 4000);
-                  this.resetNumeroCarac();
-                }).add(() => {
-                  this.isPosting = false;
-                });
-              } else {
-                this._utilService.notification('Caracteristica Invalida', 'warning', 4000);
-                this.fillForm();
-              }
-            }).add(() => {
-              this.isPosting = false;
-            });
+              .subscribe(r => {
+                if (r.length === 0) {
+                  this._service.postTelD(this.telefonosForm.value)
+                    .subscribe(r => {
+                      this._utilService.notification('Registro añadido con éxito!', 'success', 4000);
+                      this.resetNumeroCarac();
+                    }).add(() => {
+                      this.isPosting = false;
+                    });
+                } else {
+                  this._utilService.notification('Caracteristica Invalida', 'warning', 4000);
+                  this.fillForm();
+                }
+              }).add(() => {
+                this.isPosting = false;
+              });
           }
         }
 
-				this.dialogRef = null;
-			});
+        this.dialogRef = null;
+      });
     }
   }
 
@@ -253,16 +283,16 @@ export class DetalleContactoComponent implements OnInit {
 
   delTel(val) {
     if (this.dialogRef === null) {
-			this.dialogRef = this._utilService.openConfirmDialog({
-				titulo: 'Dialogo de confirmación',
-				texto: '¿Desea eliminar este registro de telefono/email?',
-				confirmar: 'Eliminar',
-				cancelar: 'Cancelar'
+      this.dialogRef = this._utilService.openConfirmDialog({
+        titulo: 'Dialogo de confirmación',
+        texto: '¿Desea eliminar este registro de telefono/email?',
+        confirmar: 'Eliminar',
+        cancelar: 'Cancelar'
       });
 
       this._utilService.loseFocus();
 
-			this.dialogRef.afterClosed().toPromise().then((respuesta) => {
+      this.dialogRef.afterClosed().toPromise().then((respuesta) => {
 
         if (respuesta) {
           this.isPosting = true;
@@ -279,19 +309,25 @@ export class DetalleContactoComponent implements OnInit {
           });
         }
 
-				this.dialogRef = null;
-			});
+        this.dialogRef = null;
+      });
     }
   }
 
   resetNumeroCarac() {
     if (this.telefonosForm.value.tipoTelefono == 'E') {
       this.telefonosForm.controls['caracteristica'].clearValidators();
-      this.telefonosForm.controls['caracteristica'].updateValueAndValidity({emitEvent: false});
+      this.telefonosForm.controls['caracteristica'].updateValueAndValidity({ emitEvent: false });
+
+      this.telefonosForm.controls['numero'].setValidators(Validators.email);
+      this.telefonosForm.controls['numero'].updateValueAndValidity({ emitEvent: false });
     } else {
-      this.telefonosForm.controls['caracteristica'].clearValidators();
       this.telefonosForm.controls['caracteristica'].setValidators(Validators.required);
-      this.telefonosForm.controls['caracteristica'].updateValueAndValidity({emitEvent: false});
+      this.telefonosForm.controls['caracteristica'].updateValueAndValidity({ emitEvent: false });
+
+      this.telefonosForm.controls['numero'].clearValidators();
+      this.telefonosForm.controls['numero'].setValidators(Validators.required);
+      this.telefonosForm.controls['numero'].updateValueAndValidity({ emitEvent: false });
     }
 
     this.telefonosForm.patchValue({

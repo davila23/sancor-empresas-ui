@@ -1,9 +1,9 @@
-
-<form class="grid" [formGroup]="formGroup">
-  <mat-card>
+<div class="grid">
+<form [formGroup]="formGroup">
+  <mat-card class="ribbon">
 
     <mat-card-header>
-      <mat-card-title>Vista de empresa</mat-card-title>
+      <mat-card-title>Detalle de Empresa {{empresaId ? 'Nro: ' + empresaId : ''}}</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
@@ -54,3 +54,44 @@
     </mat-card-footer>
   </mat-card>
 </form>
+
+<mat-card class="ribbon">
+  <mat-card-header>
+    <mat-card-title>Responsables de Negocio relacionados a la Empresa
+      {{empresaId ? 'Nro: ' + empresaId : ''}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="isPostingRN"></mat-progress-bar>
+
+    <mat-table [dataSource]="listaResponsablesDeNegocio"
+      *ngIf="listaResponsablesDeNegocio.data?.length > 0 && !isPostingRN" class="mat-elevation-z2">
+
+      <ng-container matColumnDef="nombre">
+        <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="nombre"> {{row.nombre}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="numeroDocumento">
+        <mat-header-cell *matHeaderCellDef> Número Documento </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="numeroDocumento"> {{row.numeroDocumento}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="comentario">
+        <mat-header-cell *matHeaderCellDef> Vinculación </mat-header-cell>
+        <mat-cell *matCellDef="let row" data-label="comentario"> {{row.comentario}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="listaResponsablesDeNegocio_displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: listaResponsablesDeNegocio_displayedColumns;" class="table-row">
+      </mat-row>
+    </mat-table>
+    <mat-paginator *ngIf="listaResponsablesDeNegocio.data?.length > 10" class="paginator--centered" #paginator
+      [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+    </mat-paginator>
+
+    <h4 *ngIf="listaResponsablesDeNegocio.data?.length == 0 && !isPostingRN">No se encontraron responsables de negocio relacionados a esta empresa.</h4>
+  </mat-card-content>
+</mat-card>
+</div>

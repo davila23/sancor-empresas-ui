@@ -1,5 +1,9 @@
 @import 'variables';
 
+mat-card-header{
+	margin-bottom: 50px;
+}
+
 .grid-form {
 	grid-template-columns: repeat(2, 1fr);
 	@media #{$m} {
@@ -78,7 +82,18 @@
 app-button {
 	margin: 0px 5px;
 	justify-self: center;
+	mat-icon {
+        margin-right: 7px;
+    }
 	@media #{$s} {
 		justify-self: center;
+	}
+}
+
+mat-card {
+	&.mat-card.ribbon {
+		mat-card-header.mat-card-header {
+			background-color: $primary-color;
+		}
 	}
 }

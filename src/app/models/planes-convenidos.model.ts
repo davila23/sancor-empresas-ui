@@ -26,4 +26,6 @@ export class PlanConvenidoDTO {
 
     fechaFinVigenciaBonificacion:string;
 
+    edicion: boolean;
+
 }

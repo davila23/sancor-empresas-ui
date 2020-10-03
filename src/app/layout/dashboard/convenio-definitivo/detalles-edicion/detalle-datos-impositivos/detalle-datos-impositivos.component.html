@@ -1,6 +1,6 @@
 <form [formGroup]="datosImpositivosForm">
     
-  <div class="no-data-container" *ngIf="!datosImpositivosDataSource.data?.length">
+  <div class="no-data-container" *ngIf="!datosImpositivosDataSource.data?.length && !isPosting">
     No hay datos impositivos cargados...
   </div>
   <mat-card class="custom" [ngClass]="{'not-show':!datosImpositivosDataSource.data?.length}">

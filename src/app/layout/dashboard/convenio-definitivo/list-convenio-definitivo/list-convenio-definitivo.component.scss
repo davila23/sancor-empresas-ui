@@ -1,5 +1,15 @@
 @import '../../../../../styles/variables.scss';
 
+app-button {
+    padding-left: 15px;
+    mat-icon {
+        margin-right: 7px;
+    }
+	@media #{$s} {
+		justify-self: center;
+	}
+}
+
 mat-card {
     &.mat-card.ribbon {
         mat-card-header.mat-card-header {

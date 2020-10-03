@@ -10,20 +10,15 @@
 
     <ng-container matColumnDef="domicilio">
       <mat-header-cell *matHeaderCellDef> Domicilio </mat-header-cell>
-      <mat-cell *matCellDef="let row" data-label="Domicilio"> {{row.domicilio}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="categoria">
-      <mat-header-cell *matHeaderCellDef> Categoria </mat-header-cell>
-      <mat-cell *matCellDef="let row" data-label="Categoria"> {{row.categoria}} </mat-cell>
+      <mat-cell *matCellDef="let row" data-label="Domicilio"> {{row.domicilio ? row.domicilio : '-' }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="telefono">
         <mat-header-cell *matHeaderCellDef> Telefono </mat-header-cell>
-        <mat-cell *matCellDef="let row" data-label="Telefono"> {{row.telefono}} </mat-cell>
+        <mat-cell *matCellDef="let row" data-label="Telefono"> {{row.categoria}} - {{row.telefono}} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="email">
           <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
-          <mat-cell *matCellDef="let row" data-label="Email"> {{row.email}} </mat-cell>
+          <mat-cell *matCellDef="let row" data-label="Email"> {{row.email ? row.email  : '-'}} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="localidad">
             <mat-header-cell *matHeaderCellDef> Localidad </mat-header-cell>

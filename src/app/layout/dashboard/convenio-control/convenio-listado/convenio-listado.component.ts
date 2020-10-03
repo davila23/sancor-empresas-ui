@@ -18,16 +18,16 @@ import { pipe } from 'rxjs';
 export class ConvenioListadoComponent implements OnInit {
 
   constructor(
-    private controlConvenioService: ControlConvenioService, 
+    private controlConvenioService: ControlConvenioService,
     private utilService: UtilService,
     private router: Router,
-    private fb: FormBuilder) { 
-      this.filtrosForm = this.fb.group({
-        nombre: '',
-        usuario: '',
-        estado: ['2']
-      });
-    }
+    private fb: FormBuilder) {
+    this.filtrosForm = this.fb.group({
+      nombre: '',
+      usuario: '',
+      estado: ['2']
+    });
+  }
 
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
     this.paginator = mp;
@@ -38,7 +38,7 @@ export class ConvenioListadoComponent implements OnInit {
 
   filtrosForm: FormGroup;
 
-  displayedColumns:  string[] = [
+  displayedColumns: string[] = [
     'nombreConvenio',
     'nombreEmpresa',
     'usuario',
@@ -48,13 +48,13 @@ export class ConvenioListadoComponent implements OnInit {
   conveniosControl: ConvenioMovimientoDTO[] = [];
   selectedConveniosTemporales = new SelectionModel<ConvenioMovimientoDTO>(true, []);
   dataSource = new MatTableDataSource<ConvenioMovimientoDTO>(this.conveniosControl);
-  resultsLength = 0;            
+  resultsLength = 0;
 
   controlsLoading: any = {
     list: {
-    isLoading: true,
-    descripcion: 'list',
-    type: 'table'
+      isLoading: true,
+      descripcion: 'list',
+      type: 'table'
     }
   };
 
@@ -73,9 +73,12 @@ export class ConvenioListadoComponent implements OnInit {
 
   fillTable(usuario?: '', estado?: '') {
     this.controlConvenioService.obtenerListaControlConvenio(usuario, estado).pipe(delay(300)).subscribe(r => {
-      this.conveniosControl = r;
-      this.dataSource.data = this.conveniosControl;
-      this.resultsLength = this.conveniosControl.length;
+      console.log(r);
+      if (r) {
+        this.conveniosControl = r;
+        this.dataSource.data = this.conveniosControl;
+        this.resultsLength = this.conveniosControl.length;
+      }
     }).add(() => {
       this.utilService.setControlsLoadingState('list', false, this.loadings);
     });

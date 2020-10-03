@@ -76,7 +76,7 @@ export class FormaPagoComponent implements OnInit {
       switch(tipo) {
         case 'TC':
           parsedData.datos = {
-            bancoId: res.bancoEmisor,
+            bancoId: res.codigoTarjeta,
             descripcion: res.descripcion,
             numeroTarjeta: res.numeroTarjeta,
             bancoDesc: ''

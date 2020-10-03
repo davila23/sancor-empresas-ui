@@ -57,6 +57,7 @@ import { ContextMenuComponent } from '@app/layout/dashboard/empresa/empresa/cont
 import { AuthInterceptor } from '@app/http-interceptors/auth-interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DetalleFormaPagoModalComponent } from './detalle-forma-pago-modal/detalle-forma-pago-modal.component';
+import { UppercaseInputDirective } from './uppercase-input.directive';
 
 @NgModule({
 	imports: [
@@ -114,7 +115,8 @@ import { DetalleFormaPagoModalComponent } from './detalle-forma-pago-modal/detal
 		RetryingComponent,
 		TelefonoInputComponent,
 		ContextMenuComponent,
-		DetalleFormaPagoModalComponent
+		DetalleFormaPagoModalComponent,
+		UppercaseInputDirective
 	],
 	exports: [
 		CommonModule,
@@ -171,7 +173,8 @@ import { DetalleFormaPagoModalComponent } from './detalle-forma-pago-modal/detal
 		AutocompleteModule,
 		TelefonoInputComponent,
 		ContextMenuComponent,
-		DetalleFormaPagoModalComponent
+		DetalleFormaPagoModalComponent,
+		UppercaseInputDirective
 
 	],
 	providers: [

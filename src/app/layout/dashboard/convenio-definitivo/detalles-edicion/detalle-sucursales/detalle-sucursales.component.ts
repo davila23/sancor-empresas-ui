@@ -23,9 +23,7 @@ export class DetalleSucursalesComponent implements OnInit {
     private utilService: UtilService) {
     this.sucursalesForm = this._fb.group({
       descripcion: ['', [Validators.required]],
-      domicilio: [''],
-      categoria: [''],
-      telefono: [''],
+      domicilio: ['', [Validators.required, Validators.maxLength(20)]],
       email: ['', [Validators.email]],
       localidad: this._fb.group({
         codigoPostal: [''],
@@ -34,6 +32,11 @@ export class DetalleSucursalesComponent implements OnInit {
         codigoPostalReal: [''],
         provincia: [''],
       }),
+    });
+
+    this.telefonoForm = this._fb.group({
+      caracteristica: ['', Validators.required],
+      numero: ['', Validators.required]
     });
   }
 
@@ -60,12 +63,25 @@ export class DetalleSucursalesComponent implements OnInit {
     this.fillSucursales();
   } convenioIdFlag = null;
 
+  @Input() set isAllowedToEdit(boolean) {
+    setTimeout(() => {
+      this.edit = boolean;
+    });
+  } edit = false;
+
+  @Input() set isAllowedToDelete(boolean) {
+    setTimeout(() => {
+      this.delete = boolean;
+    });
+  } delete = false;
+
   @Output() changeEditionFlag = new EventEmitter<boolean>();
 
 
   sucursalServiceSubject: Subscription;
   filteredLocalidades: Observable<any[]>;
   sucursalesForm: FormGroup;
+  telefonoForm: FormGroup;
 
   dialogRef = null;
   isPosting = false;
@@ -83,7 +99,6 @@ export class DetalleSucursalesComponent implements OnInit {
   sucursal_displayedColumns = [
     'descripcion',
     'domicilio',
-    'categoria',
     'telefono',
     'email',
     'localidad',
@@ -101,7 +116,7 @@ export class DetalleSucursalesComponent implements OnInit {
     this.sucursalService.getSucursalesEmpresaD(this.convenioIdFlag)
       .subscribe(res => {
         if (res == null) res = [];
-        res.forEach( x => {
+        res.forEach(x => {
           x.email = x.email.trim();
         })
         this.sucursalDataSource.data = res;
@@ -123,7 +138,21 @@ export class DetalleSucursalesComponent implements OnInit {
   }
 
   sucursalSaveAndRender() {
-    if (this.sucursalesForm.valid  || this.codPostalControl.valid) {
+
+    if (this.sucursalesForm.invalid || this.telefonoForm.invalid) {
+      (<any>Object).values(this.sucursalesForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      this.telefonoForm.markAsTouched();
+      return
+    }
+
+    if (this.codPostalControl.invalid) {
+      this.codPostalControl.markAsTouched();
+      return
+    }
+
+    if (this.sucursalesForm.valid || this.codPostalControl.valid) {
 
       this.isPosting = true;
 
@@ -131,13 +160,27 @@ export class DetalleSucursalesComponent implements OnInit {
       this.sucursalItem.empresaId = this.convenioIdFlag;
       this.sucursalItem.estado = 0;
       this.sucursalItem.idSucursal = null;
+      this.sucursalItem.categoria = this.telefonoForm.controls['caracteristica'].value;
+      this.sucursalItem.telefono = this.telefonoForm.controls['numero'].value;
 
       this.sucursalService.addSucursalEmpresaD(this.sucursalItem)
         .subscribe(res => {
-          this.fillSucursales();
+          if (res.length == 0) {
+            this.utilService.notification('¡Sucursal agregada con éxito!', 'success', 4000);
+            this.resetForms();
+            this.fillSucursales();
+          } else {
+            if (res[0].detalle) {
+              this.utilService.openConfirmDialog(
+                {
+                  titulo: 'No fue posible completar la acción',
+                  texto: res[0].detalle,
+                  confirmar: 'ACEPTAR'
+                });
+            }
+          }
         }).add(() => {
           this.isPosting = false;
-          this.resetForms();
         });
     }
 
@@ -145,7 +188,16 @@ export class DetalleSucursalesComponent implements OnInit {
 
   sucursalEditAndRender() {
 
-    if (this.sucursalesForm.invalid || this.codPostalControl.invalid) {
+    if (this.sucursalesForm.invalid || this.telefonoForm.invalid) {
+      (<any>Object).values(this.sucursalesForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      this.telefonoForm.markAsTouched();
+      return
+    }
+
+    if (this.codPostalControl.invalid) {
+      this.codPostalControl.markAsTouched();
       return
     }
 
@@ -155,14 +207,27 @@ export class DetalleSucursalesComponent implements OnInit {
     this.sucursalItem.empresaId = this.convenioIdFlag;
     this.sucursalItem.estado = 0;
     this.sucursalItem.idSucursal = this.currentSucursal.idSucursal;
+    this.sucursalItem.categoria = this.telefonoForm.controls['caracteristica'].value;
+    this.sucursalItem.telefono = this.telefonoForm.controls['numero'].value;
 
     this.sucursalService.addSucursalEmpresaD(this.sucursalItem)
       .subscribe(res => {
-        this.utilService.notification('¡Sucursal modificada con éxito!', 'success', 4000);
-        this.fillSucursales();
+        if (res.length == 0) {
+          this.utilService.notification('¡Sucursal modificada con éxito!', 'success', 4000);
+          this.cancelEdit();
+          this.fillSucursales();
+        } else {
+          if (res[0].detalle) {
+            this.utilService.openConfirmDialog(
+              {
+                titulo: 'No fue posible completar la acción',
+                texto: res[0].detalle,
+                confirmar: 'ACEPTAR'
+              });
+          }
+        }
       }).add(() => {
         this.isPosting = false;
-        this.cancelEdit();
       });
   }
 
@@ -174,6 +239,8 @@ export class DetalleSucursalesComponent implements OnInit {
     this.currentSucursal = row;
     this.sucursalesForm.patchValue(row);
     this.codPostalControl.setValue(row.localidad.codigoPostal);
+    this.telefonoForm.controls['caracteristica'].setValue(row.categoria.trim());
+    this.telefonoForm.controls['numero'].setValue(row.telefono.trim());
 
   }
 
@@ -191,13 +258,14 @@ export class DetalleSucursalesComponent implements OnInit {
 
     this.sucursalesForm.reset();
     this.codPostalControl.reset();
+    this.telefonoForm.reset();
 
   }
 
   sucursalDelete(sucursalItem: SucursalEmpresaDTO) {
     if (this.dialogRef === null) {
       this.dialogRef = this.utilService.openConfirmDialog({
-        titulo: 'Dialogo de confirmación',
+        titulo: '',
         texto: '¿Desea eliminar este registro de sucursales?',
         confirmar: 'Eliminar',
         cancelar: 'Cancelar'
@@ -212,6 +280,7 @@ export class DetalleSucursalesComponent implements OnInit {
 
           this.sucursalService.deleteSucursarEmpresaD(sucursalItem)
             .subscribe(res => {
+              this.utilService.notification('¡Sucursal eliminada con éxito!', 'success');
               this.fillSucursales();
             }).add(() => {
               this.isPosting = false;

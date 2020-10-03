@@ -5,6 +5,8 @@ import { LoadingDirective } from '@app/shared/loading.directive';
 import { UtilService } from '@app/core';
 import { Router } from '@angular/router';
 import * as dayjs from 'dayjs';
+import { PlanesConvenidosService } from '@app/services/empresa/convenios/alta-wizard/componentes/planes-convenidos.service';
+import { CabeceraConvenioDTO } from '@app/models/cabecera-convenio.model';
 
 @Component({
   selector: 'detalle-datos-generales',
@@ -13,76 +15,82 @@ import * as dayjs from 'dayjs';
 })
 export class DetalleDatosGeneralesComponent implements OnInit {
 
-  constructor(private _fb: FormBuilder,
-              private service: DatosGeneralesService,
-              private utilService: UtilService,
-              private router: Router) {
+  cuit: FormControl = new FormControl();
 
-      this.datosGeneralesForm = this._fb.group({
+  constructor(private _fb: FormBuilder,
+    private service: DatosGeneralesService,
+    private utilService: UtilService,
+    private router: Router,
+    private planesConvenidosService: PlanesConvenidosService) {
+
+    this.datosGeneralesForm = this._fb.group({
+      id: [null],
+      nombre: [null, [Validators.required, Validators.maxLength(50)]],
+      empresa: this._fb.group({
+        id: [null, Validators.required]
+      }),
+      vigenciaDesde: [null, [Validators.required]],
+      vigenciaHasta: [null],
+      ramo: this._fb.group({
+        id: 15,
+        descripcion: 'EMPRESAS CON CONVENIO'
+      }),
+      codigoAgrupacion: [0],
+      contratoPorBonificacion: ['S', [Validators.required]],
+      habilitadoSistemaRecepcion: ['N'],
+      compensaAportes: [null, [Validators.required]],
+      modalidadLiquidacion: this._fb.group({
+        id: [{ disabled: true, value: 2 }]
+      }),
+      cantidadEmpleados: [0, [Validators.required, Validators.min(0)]], //Cantidad cápitas prometidas
+      cantidadGrupos: [0], //Cantidad grupos prometidos
+      horarioAtencion: [''],
+      ejecutivoConvenio: this._fb.group({
+        idpersona: [''],
+        nombre: ['', Validators.required]
+      }),
+      tipoConvenio: this._fb.group({ //
+        id: [2]
+      }),
+      aceptaMonotributistas: [null, [Validators.required]],
+      holding: this._fb.group({
         id: [null],
-        nombre: [null, [Validators.required, Validators.maxLength(50)]],
-        empresa: this._fb.group({
-          id: [null, Validators.required]
-        }),
-        vigenciaDesde: [null, [Validators.required]],
-        ramo: this._fb.group({
-          id: 15,
-          descripcion: 'EMPRESAS CON CONVENIO'
-        }),
-        codigoAgrupacion: [0],
-        contratoPorBonificacion: ['S', [Validators.required]],
-        habilitadoSistemaRecepcion: ['N'],
-        compensaAportes: [null, [Validators.required]],
-        modalidadLiquidacion: this._fb.group({
-          id: [{disabled: true, value: 2}]
-        }),
-        cantidadEmpleados: [null, [Validators.required]], //Cantidad cápitas prometidas
-        horarioAtencion: [''],
-        ejecutivoConvenio: this._fb.group({
-          idpersona: [''],
-          nombre: ['', Validators.required]
-        }),
-        tipoConvenio: this._fb.group({ //
-          id: [2]
-        }),
-        aceptaMonotributistas: [null, [Validators.required]],
-        holding: this._fb.group({
-          id: [null],
-          descripcion: [null]
-        }),
-        relacionista: this._fb.group({
-          idpersona: [''],
-          nombre: ['', [Validators.required]]
-        }),
-        mutual: [null, [Validators.required]],
-        facturaElectronica: [null, [Validators.required]],
-        interesComercial: ['N', [Validators.required]],
-        documentacionConvenio: ['Documentacion CONVENIO'],
-        estado: ['B'],
-        tipoIngreso: this._fb.group({
-          id: [null, Validators.required]
-        }),
-        tipoMovimientoAsociado: this._fb.group({
-          id: [null, Validators.required]
-        }),
-        adicionalACargo: [null, Validators.required],
-        copagosACargo: [null, Validators.required],
-        recepcionista: [null],
-        carEntidadId: [null], //Revisar TODO
-        carEntidadDescripcion: [''],
-        enviosCredenciales: this._fb.group({
-          id: [null, Validators.required],
-          descripcion: [null]
-        }),
-        firmaDes: [null],
-        observaciones: [null, [Validators.maxLength(255)]]
-      });
-  
-      this.credencialesForm = this._fb.group({
-        carEntidadId: [],
-        descripcion: [],
-        recepcionista: []
-      });
+        descripcion: [null]
+      }),
+      relacionista: this._fb.group({
+        idpersona: [''],
+        nombre: ['']
+      }),
+      mutual: [null, [Validators.required]],
+      facturaElectronica: [null, [Validators.required]],
+      interesComercial: ['N', [Validators.required]],
+      documentacionConvenio: ['Documentacion CONVENIO'],
+      estado: ['B'],
+      tipoIngreso: this._fb.group({
+        id: [null, Validators.required]
+      }),
+      tipoMovimientoAsociado: this._fb.group({
+        id: [null, Validators.required]
+      }),
+      adicionalACargo: [null, Validators.required],
+      trasladaAdicional: [{ value: null, disabled: true }, Validators.required],
+      copagosACargo: [null, Validators.required],
+      recepcionista: [null],
+      carEntidadId: [null], //Revisar TODO
+      carEntidadDescripcion: [''],
+      enviosCredenciales: this._fb.group({
+        id: [null, Validators.required],
+        descripcion: [null]
+      }),
+      firmaDes: [null],
+      observaciones: [null, [Validators.maxLength(255)]]
+    });
+
+    this.credencialesForm = this._fb.group({
+      carEntidadId: [],
+      descripcion: [],
+      recepcionista: []
+    });
   }
 
   @ViewChildren(LoadingDirective) loadings: QueryList<LoadingDirective>;
@@ -93,14 +101,21 @@ export class DetalleDatosGeneralesComponent implements OnInit {
       this.isEditionFlag = isEdition;
 
       (isEdition) ? this.datosGeneralesForm.enable() : this.datosGeneralesForm.disable();
+      (isEdition) ? this.cuit.enable() : this.cuit.disable();
+      (isEdition) ? this.credencialesForm.enable() : this.credencialesForm.disable();
 
       this.datosGeneralesForm.controls['modalidadLiquidacion'].disable();
+
+      if(this.datosGeneralesForm.controls['adicionalACargo'].value == 'A'){
+        this.datosGeneralesForm.controls['trasladaAdicional'].disable();
+      }
+
     });
   }
 
   @Input() set empresaId(empresaId) {
     setTimeout(() => {
-      this.datosGeneralesForm.patchValue({empresa: {id: Number(empresaId)}});
+      this.datosGeneralesForm.patchValue({ empresa: { id: Number(empresaId) } });
       this.empresaIdFlag = empresaId;
     });
   }
@@ -110,6 +125,17 @@ export class DetalleDatosGeneralesComponent implements OnInit {
       this.convenioIdFlag = convenioId;
     });
   }
+
+  @Input() set isAllowedToEdit(boolean) {
+    setTimeout(() => {
+      this.edit = boolean;
+      if (!this.edit) {
+        this.datosGeneralesForm.disable();
+        this.credencialesForm.disable();
+        this.cuit.disable();
+      }
+    });
+  } edit = false;
 
   // #section
   // public enableDisableControl(group: FormGroup | FormArray): void {
@@ -132,6 +158,8 @@ export class DetalleDatosGeneralesComponent implements OnInit {
   isEditionFlag = false;
   empresaIdFlag = null;
   convenioIdFlag = null;
+
+  currentCabeceraConvenio: CabeceraConvenioDTO = null;
 
   credencialesForm: FormGroup;
   datosGeneralesForm: FormGroup;
@@ -181,7 +209,14 @@ export class DetalleDatosGeneralesComponent implements OnInit {
         }
         const parsedR = r[0];
 
+        let cuit: string = String(parsedR.empresa.cuit);
+        cuit = this.InsertAt(cuit, '-', 2);
+        cuit = this.InsertAt(cuit, '-', cuit.length - 1);
+        this.cuit.setValue(cuit);
+
         parsedR.vigenciaDesde = (parsedR.vigenciaDesde) ? dayjs(parsedR.vigenciaDesde) : null;
+
+        parsedR.vigenciaHasta = (parsedR.vigenciaHasta) ? dayjs(parsedR.vigenciaHasta) : null;
 
         parsedR.modalidadLiquidacion.id = 2;
 
@@ -196,6 +231,18 @@ export class DetalleDatosGeneralesComponent implements OnInit {
         }
 
         this.datosGeneralesForm.patchValue(parsedR);
+      });
+    });
+
+    setTimeout(() => {
+      this.planesConvenidosService.getCabeceraConvenioD(this.convenioIdFlag).subscribe(r => {
+        //console.log('R', r);
+        if (r.length > 0) {
+          this.currentCabeceraConvenio = r[0];
+          this.datosGeneralesForm.controls['cantidadGrupos'].setValue(this.currentCabeceraConvenio.cantidadGruposParaBonificar);
+          this.datosGeneralesForm.controls['cantidadGrupos'].setValidators(Validators.required);
+          this.datosGeneralesForm.controls['cantidadGrupos'].setValidators(Validators.min(0));
+        }
       });
     });
   }
@@ -218,17 +265,45 @@ export class DetalleDatosGeneralesComponent implements OnInit {
     });
   }
 
+  changeAdicional(element) {
+    if (element === 'E') {
+      this.datosGeneralesForm.controls['trasladaAdicional'].enable();
+      this.datosGeneralesForm.controls['trasladaAdicional'].setValue(null);
+    } else {
+      this.datosGeneralesForm.controls['trasladaAdicional'].disable();
+      this.datosGeneralesForm.controls['trasladaAdicional'].setValue(null);
+    }
+  }
+
   postDatosGenerales() {
-    let newDate = dayjs(this.datosGeneralesForm.value.vigenciaDesde).format('YYYY-MM-DD');
+
+    if (this.credencialesForm.invalid || this.datosGeneralesForm.invalid) {
+      this.credencialesForm.markAsTouched();
+      this.datosGeneralesForm.markAsTouched();
+      return
+    }
+
+    let vigenciaDesde = dayjs(this.datosGeneralesForm.value.vigenciaDesde).format('YYYY-MM-DD');
+    let vigenciaHasta = this.datosGeneralesForm.value.vigenciaHasta ? dayjs(this.datosGeneralesForm.value.vigenciaHasta).format('YYYY-MM-DD') : null;
     let validatedForm = this.datosGeneralesForm.getRawValue();
 
     validatedForm.carEntidadId = this.credencialesForm.value.carEntidadId;
     validatedForm.recepcionista = this.credencialesForm.value.recepcionista;
 
-    validatedForm.vigenciaDesde = newDate;
+    validatedForm.vigenciaDesde = vigenciaDesde;
+    validatedForm.vigenciaHasta = vigenciaHasta;
+
+    if (validatedForm.holding.id == 0) { validatedForm.holding.id = null; validatedForm.holding.descripcion = null;};
 
     this.service.actualizarDatosGenerales(validatedForm).subscribe(r => {
-      this.utilService.notification('¡Datos generales actualizado!', 'success', 1000);
+      if (this.currentCabeceraConvenio != null) {
+        this.currentCabeceraConvenio.cantidadGruposParaBonificar = this.datosGeneralesForm.controls['cantidadGrupos'].value;
+        this.planesConvenidosService.addCabeceraConvenioD(this.currentCabeceraConvenio).subscribe(resp => {
+          this.utilService.notification('¡Datos generales actualizados!', 'success', 1000);
+        });
+      } else {
+        this.utilService.notification('¡Datos generales actualizados!', 'success', 1000);
+      }
     });
   }
 
@@ -261,9 +336,9 @@ export class DetalleDatosGeneralesComponent implements OnInit {
       this.showCredenciales = true;
     }
 
-    this.credencialesForm.controls['carEntidadId'].updateValueAndValidity({emitEvent: false});
-    this.credencialesForm.controls['descripcion'].updateValueAndValidity({emitEvent: false});
-    this.credencialesForm.controls['recepcionista'].updateValueAndValidity({emitEvent: false});
+    this.credencialesForm.controls['carEntidadId'].updateValueAndValidity({ emitEvent: false });
+    this.credencialesForm.controls['descripcion'].updateValueAndValidity({ emitEvent: false });
+    this.credencialesForm.controls['recepcionista'].updateValueAndValidity({ emitEvent: false });
   }
 
   ngOnInit() {
@@ -276,5 +351,9 @@ export class DetalleDatosGeneralesComponent implements OnInit {
 
     this.fillSelects();
     this.fillForm();
+  }
+
+  InsertAt(string, CharToInsert, Position) {
+    return string.slice(0, Position) + CharToInsert + string.slice(Position)
   }
 }

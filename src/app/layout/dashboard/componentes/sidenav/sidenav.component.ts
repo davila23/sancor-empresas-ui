@@ -5,6 +5,7 @@ import { MatSidenav } from '@angular/material';
 import { Page, Section } from './interfaces';
 import { Router, NavigationEnd } from '@angular/router';
 import { environment } from '@env';
+import { SideNavRoutes } from '@app/models/permissions/routes-sections';
 
 @Component({
 	selector: 'app-sidenav',
@@ -22,61 +23,41 @@ export class SidenavComponent implements OnInit {
 	user;
 	sViewport = window.innerWidth <= 600;
 
-  sectionsRendered: Section[] = [];
-
-	sections: Section[] = [
-		{
-			title: 'empresas',
-			children: [
-				{url: '/empresa/busqueda', title: 'Busqueda', icon: 'search'},
-				{url: '/empresa/nueva', title: 'Nueva', icon: 'create'}
-      ],
-      rol: [1, 69, 70, 21]
-		},
-		{
-			title: 'Convenios temporales',
-			children: [
-				{url: '/conveniostemporales', title: 'Listado', icon: 'list'}
-			],
-      rol: [1, 2, 69, 70, 21]
-		},
-		{
-			title: 'Convenios en control',
-			children: [
-				{url: '/convenioscontrol', title: 'Listado', icon: 'list'}
-			],
-      rol: [1, 2,69, 70]
-		},
-	];
+	sectionsRendered: Section[] = [];
 
 	@ViewChild(MatSidenav) snav: MatSidenav;
 
 	ngOnInit() {
 
-    this.user = JSON.parse(window.localStorage.getItem('user'));
+		this.user = JSON.parse(window.localStorage.getItem('user'));
 
-    if (!environment.production) {
-      this.sections.push({
-        title: 'Convenios definitivos',
-        children: [{url: '/conveniosdefinitivos', title: 'Listado', icon: 'list'}],
-        rol: [1, 21, 69, 70]
-      });
-    }
+		// if (!environment.production) {
+		// 	this.sections.push({
+		// 		title: 'Convenios definitivos',
+		// 		children: [{ url: '/conveniosdefinitivos', title: 'Listado', icon: 'list' }],
+		// 		rol: [1, 21, 69, 70]
+		// 	});
+		// }
 
-    if (this.user != null && this.user != undefined) {
-      for (let i in this.sections) {
-        if (this.sections[i].rol.find(e => e == this.user.rolId)) {
-          this.sectionsRendered.push(this.sections[i]);
-        }
-      }
-    }
-    
+		if (this.user != null && this.user != undefined) {
+			for (let i in SideNavRoutes) {
+				if (SideNavRoutes[i].rol.length > 0) {
+					if (SideNavRoutes[i].rol.find(e => e == this.user.rolId)) {
+						this.sectionsRendered.push(SideNavRoutes[i]);
+					}
+				} else {
+					this.sectionsRendered.push(SideNavRoutes[i]);
+				}
+
+			}
+		}
+
 		if (document.documentElement.clientWidth <= 600) {
 			setTimeout(() => {
 				this.snav.close();
 			});
-    }
-    
+		}
+
 		this.dashboardService.onSidenavToggle.subscribe((open = null) => {
 			if (open === null) {
 				this.snav.toggle();
@@ -87,9 +68,9 @@ export class SidenavComponent implements OnInit {
 					this.snav.close();
 				}
 			}
-    });
-    
-		this.sections.forEach((section: Section) => {
+		});
+
+		SideNavRoutes.forEach((section: Section) => {
 			section.children.forEach((child: any) => {
 				if (child.pages) {
 					child.pages.forEach((page: Page) => {
@@ -99,8 +80,8 @@ export class SidenavComponent implements OnInit {
 					});
 				}
 			});
-    });
-    
+		});
+
 		this.dashboardService.isSnavOpened = this.snav.opened;
 		this.router.events.subscribe((event) => {
 			if (event instanceof NavigationEnd) {

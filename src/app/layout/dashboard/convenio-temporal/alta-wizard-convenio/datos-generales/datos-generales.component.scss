@@ -1,0 +1,12 @@
+app-button {
+    float: right;
+    mat-icon {
+        margin-right: 7px;
+    }
+}
+
+.stepper-btns{
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 0;
+}

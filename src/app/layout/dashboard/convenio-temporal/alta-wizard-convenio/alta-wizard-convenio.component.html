@@ -12,15 +12,15 @@
         <mat-step #datos_generales [stepControl]="datosGeneralesForm">
           <ng-template matStepLabel>Datos generales</ng-template>
           <app-datos-generales [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition"
-          [isAllowedToEdit]="renderSteps('edicion', 'datos generales')" 
+          [isAllowedToEdit]="renderSteps('edicion', 'datos generales')"
           (observacion)="setObservacionMsg($event)" (setForms)="setForms('datosGeneralesForm', $event)">
           </app-datos-generales>
         </mat-step>
         <div *ngIf="isEdition">
           <mat-step #contacto [stepControl]="contactoForm" *ngIf="renderSteps('lectura', 'contacto')">
             <ng-template matStepLabel>Contacto</ng-template>
-            <ng-container *ngIf="checkStep(contacto)">
-              <app-contacto [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition" [isAllowedToEdit]="renderSteps('edicion', 'contacto')" [isAllowedToDelete]="renderSteps('delete', 'contacto')"></app-contacto>
+            <ng-container>
+              <app-contacto [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition" (sendMsg)="addMsg($event)" (removeMsg)="removeMsg($event)" [isAllowedToEdit]="renderSteps('edicion', 'contacto')" [isAllowedToDelete]="renderSteps('delete', 'contacto')"></app-contacto>
             </ng-container>
           </mat-step>
           <mat-step #referente [stepControl]="referenteForm" *ngIf="renderSteps('lectura', 'referente')">
@@ -37,8 +37,8 @@
           </mat-step>
           <mat-step #planesConvenidos [stepControl]="planesConvenidosForm" *ngIf="renderSteps('lectura', 'planes convenidos')">
             <ng-template matStepLabel>Planes convenidos</ng-template>
-            <ng-container *ngIf="checkStep(planesConvenidos)">
-              <app-planes-convenidos [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition" [isAllowedToEdit]="renderSteps('edicion', 'planes convenidos')" [isAllowedToDelete]="renderSteps('delete', 'planes convenidos')"></app-planes-convenidos>
+            <ng-container>
+              <app-planes-convenidos [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition" (sendMsg)="addMsg($event)" (removeMsg)="removeMsg($event)" [isAllowedToEdit]="renderSteps('edicion', 'planes convenidos')" [isAllowedToDelete]="renderSteps('delete', 'planes convenidos')"></app-planes-convenidos>
             </ng-container>
           </mat-step>
           <mat-step #subsidios [stepControl]="subsidiosForm" *ngIf="renderSteps('lectura', 'subsidios')" >
@@ -59,7 +59,7 @@
               <app-entidades [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition"  [isAllowedToEdit]="renderSteps('edicion', 'entidades empleadoras')" [isAllowedToDelete]="renderSteps('delete', 'entidades empleadoras')"></app-entidades>
             </ng-container>
           </mat-step>
-        
+
         <!--
           <mat-step #datosImpositivos [stepControl]="datosImpositivosForm">
             <ng-template #datos_impositivos matStepLabel>Datos impositivos</ng-template>
@@ -67,11 +67,11 @@
               <app-datos-impositivos [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition"></app-datos-impositivos>
             </ng-container>
           </mat-step>
-  
+
         -->
-        
+
           <!-- <mat-step #correspondencia [stepControl]="correspondenciaForm">
-  
+
             <ng-template matStepLabel>Correspondencia</ng-template>
             <ng-container *ngIf="checkStep(correspondencia)">
               <app-correspondencia [empresaId]="empresaId" [convenioId]="convenioId" [isEdition]="isEdition" ></app-correspondencia>
@@ -86,20 +86,17 @@
           <mat-step [stepControl]="vip" #vip *ngIf="renderSteps('lectura', 'vip')">
             <ng-template matStepLabel>Alta VIP</ng-template>
             <ng-container *ngIf="checkStep(vip)">
-              <app-vip [convenioId]="convenioId" 
-              [isAllowedToEdit]="renderSteps('edicion', 'vip')" 
+              <app-vip [convenioId]="convenioId"
+              [isAllowedToEdit]="renderSteps('edicion', 'vip')"
               [isAllowedToDelete]="renderSteps('delete', 'vip')">
               </app-vip>
             </ng-container>
           </mat-step>
-          <mat-step [stepControl]="archivos" #archivos *ngIf="renderSteps('lectura', 'adjunte de archivos')">
-            <ng-template matStepLabel>Adjuntar archivos</ng-template>
-            <app-archivos [convenioId]="convenioId" (sendMsg)="addMsg($event)" (removeMsg)="removeMsg($event)" [isAllowedToEdit]="renderSteps('edicion', 'adjunte de archivos')"></app-archivos>
-          </mat-step>
+
         </div>
       </mat-vertical-stepper>
     </mat-card-content>
-  </mat-card>      
+  </mat-card>
 </div>
 
 <div class="grid" *ngIf="listadoMensajes.length">
